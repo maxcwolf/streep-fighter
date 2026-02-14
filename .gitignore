@@ -1,0 +1,14 @@
+# Godot
+.godot/
+
+# .NET / C#
+bin/
+obj/
+*.user
+
+# Build output
+build/
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,251 @@
+[gd_scene load_steps=7 format=3 uid="uid://fighthud01"]
+
+[ext_resource type="Script" path="res://Scripts/UI/FightHUD.cs" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_bg"]
+bg_color = Color(0.12, 0.02, 0.02, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.85, 0.68, 0.1, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_fill"]
+bg_color = Color(0.2, 0.85, 0.2, 1)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_timer_frame"]
+bg_color = Color(0.04, 0.02, 0.06, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.95, 0.78, 0.15, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_round_empty"]
+bg_color = Color(0.15, 0.1, 0.08, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.5, 0.42, 0.25, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_round_won"]
+bg_color = Color(0.95, 0.78, 0.15, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.48, 0.08, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_script")
+
+[node name="TopBarBG" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 92.0
+color = Color(0, 0, 0, 0.45)
+
+[node name="TopBarAccent" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 90.0
+offset_bottom = 94.0
+color = Color(0.85, 0.68, 0.1, 1)
+
+[node name="TopBar" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 16.0
+offset_top = 6.0
+offset_right = -16.0
+offset_bottom = 86.0
+theme_override_constants/separation = 8
+
+[node name="P1Section" type="VBoxContainer" parent="TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="P1Name" type="Label" parent="TopBar/P1Section"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6)
+theme_override_constants/outline_size = 5
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 22
+text = "P1"
+
+[node name="P1HealthBar" type="ProgressBar" parent="TopBar/P1Section"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 28)
+theme_override_styles/background = SubResource("StyleBoxFlat_health_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_health_fill")
+max_value = 1000.0
+value = 1000.0
+show_percentage = false
+
+[node name="P1RoundIndicators" type="HBoxContainer" parent="TopBar/P1Section"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="P1Round1" type="Panel" parent="TopBar/P1Section/P1RoundIndicators"]
+layout_mode = 2
+custom_minimum_size = Vector2(16, 16)
+theme_override_styles/panel = SubResource("StyleBoxFlat_round_empty")
+
+[node name="P1Round2" type="Panel" parent="TopBar/P1Section/P1RoundIndicators"]
+layout_mode = 2
+custom_minimum_size = Vector2(16, 16)
+theme_override_styles/panel = SubResource("StyleBoxFlat_round_empty")
+
+[node name="TimerFrame" type="PanelContainer" parent="TopBar"]
+layout_mode = 2
+custom_minimum_size = Vector2(100, 0)
+theme_override_styles/panel = SubResource("StyleBoxFlat_timer_frame")
+
+[node name="TimerLabel" type="Label" parent="TopBar/TimerFrame"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.5)
+theme_override_constants/outline_size = 5
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 48
+text = "90"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="P2Section" type="VBoxContainer" parent="TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="P2Name" type="Label" parent="TopBar/P2Section"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6)
+theme_override_constants/outline_size = 5
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 22
+text = "P2"
+horizontal_alignment = 2
+
+[node name="P2HealthBar" type="ProgressBar" parent="TopBar/P2Section"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 28)
+theme_override_styles/background = SubResource("StyleBoxFlat_health_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_health_fill")
+max_value = 1000.0
+value = 1000.0
+show_percentage = false
+fill_mode = 1
+
+[node name="P2RoundIndicators" type="HBoxContainer" parent="TopBar/P2Section"]
+layout_mode = 2
+alignment = 2
+theme_override_constants/separation = 8
+
+[node name="P2Round1" type="Panel" parent="TopBar/P2Section/P2RoundIndicators"]
+layout_mode = 2
+custom_minimum_size = Vector2(16, 16)
+theme_override_styles/panel = SubResource("StyleBoxFlat_round_empty")
+
+[node name="P2Round2" type="Panel" parent="TopBar/P2Section/P2RoundIndicators"]
+layout_mode = 2
+custom_minimum_size = Vector2(16, 16)
+theme_override_styles/panel = SubResource("StyleBoxFlat_round_empty")
+
+[node name="StageNameLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -400.0
+offset_top = -30.0
+offset_right = 400.0
+offset_bottom = -8.0
+theme_override_colors/font_color = Color(0.9, 0.82, 0.55, 0.7)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.8)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RoundLabel" type="Label" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -80.0
+offset_top = 60.0
+offset_right = 80.0
+offset_bottom = 85.0
+text = "P1: 0  |  P2: 0"
+horizontal_alignment = 1
+
+[node name="AnnouncementLabel" type="Label" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -60.0
+offset_right = 400.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.95, 0.78, 0.15, 1)
+theme_override_colors/font_outline_color = Color(0.85, 0.1, 0.1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_offset_x = 5
+theme_override_constants/shadow_offset_y = 5
+theme_override_font_sizes/font_size = 88
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1

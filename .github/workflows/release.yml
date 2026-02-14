@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Godot & .NET
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.6.0
+          use-dotnet: true
+          include-templates: true
+
+      - name: Import project
+        run: godot --headless --import
+
+      - name: Build C#
+        run: dotnet build
+
+      - name: Export Windows
+        run: |
+          mkdir -p build/windows
+          godot --headless --export-release "Windows Desktop" build/windows/StreepFighter.exe
+
+      - name: Export macOS
+        run: |
+          mkdir -p build/macos
+          godot --headless --export-release "macOS" build/macos/StreepFighter.zip
+
+      - name: Package Windows build
+        run: |
+          cd build/windows
+          zip -r ../../StreepFighter-Windows.zip .
+
+      - name: Package macOS build
+        run: |
+          mv build/macos/StreepFighter.zip StreepFighter-macOS.zip
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            StreepFighter-Windows.zip
+            StreepFighter-macOS.zip

@@ -1,0 +1,22 @@
+is_global = true
+build_property.GodotDisabledSourceGenerators = 
+build_property.GodotProjectDir = /Users/maxwolf/workspace/streep-fighter/
+build_property.GodotProjectDirBase64 = L1VzZXJzL21heHdvbGYvd29ya3NwYWNlL3N0cmVlcC1maWdodGVyLw==
+build_property.GodotSourceGenerators = 
+build_property.IsGodotToolsProject = 
+build_property.TargetFramework = net8.0
+build_property.TargetFrameworkIdentifier = .NETCoreApp
+build_property.TargetFrameworkVersion = v8.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = StreepFighter
+build_property.ProjectDir = /Users/maxwolf/workspace/streep-fighter/
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.EffectiveAnalysisLevelStyle = 8.0
+build_property.EnableCodeStyleSeverity = 

@@ -1,0 +1,255 @@
+[gd_scene load_steps=3 format=3 uid="uid://bg_runway01"]
+
+[ext_resource type="Shader" path="res://Shaders/pixelate.gdshader" id="1"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1"]
+shader = ExtResource("1")
+shader_parameter/pixel_size = 4.0
+
+[node name="RunwayOffice" type="CanvasGroup"]
+material = SubResource("ShaderMaterial_1")
+
+[node name="Sky" type="ColorRect" parent="."]
+z_index = -10
+offset_right = 1280.0
+offset_bottom = 500.0
+color = Color(0.55, 0.72, 0.88, 1)
+
+[node name="Floor" type="ColorRect" parent="."]
+z_index = -9
+offset_top = 500.0
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(0.82, 0.8, 0.78, 1)
+
+[node name="FloorAccent" type="ColorRect" parent="."]
+z_index = -8
+offset_top = 496.0
+offset_right = 1280.0
+offset_bottom = 504.0
+color = Color(0.2, 0.2, 0.22, 1)
+
+[node name="FloorTile1" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.78, 0.76, 0.74, 1)
+polygon = PackedVector2Array(0, 520, 160, 520, 160, 720, 0, 720)
+
+[node name="FloorTile2" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.78, 0.76, 0.74, 1)
+polygon = PackedVector2Array(320, 520, 480, 520, 480, 720, 320, 720)
+
+[node name="FloorTile3" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.78, 0.76, 0.74, 1)
+polygon = PackedVector2Array(640, 520, 800, 520, 800, 720, 640, 720)
+
+[node name="FloorTile4" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.78, 0.76, 0.74, 1)
+polygon = PackedVector2Array(960, 520, 1120, 520, 1120, 720, 960, 720)
+
+[node name="BackWall" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.88, 0.88, 0.86, 1)
+polygon = PackedVector2Array(0, 80, 1280, 80, 1280, 500, 0, 500)
+
+[node name="Ceiling" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.92, 0.92, 0.9, 1)
+polygon = PackedVector2Array(0, 0, 1280, 0, 1280, 80, 0, 80)
+
+[node name="CeilingTrim" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.7, 0.7, 0.68, 1)
+polygon = PackedVector2Array(0, 76, 1280, 76, 1280, 84, 0, 84)
+
+[node name="Baseboard" type="Polygon2D" parent="."]
+z_index = -8
+color = Color(0.7, 0.7, 0.68, 1)
+polygon = PackedVector2Array(0, 488, 1280, 488, 1280, 500, 0, 500)
+
+[node name="WindowL" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.5, 0.68, 0.85, 1)
+polygon = PackedVector2Array(80, 120, 280, 120, 280, 380, 80, 380)
+
+[node name="WindowLFrame" type="Polygon2D" parent="."]
+z_index = -8
+color = Color(0.3, 0.3, 0.32, 1)
+polygon = PackedVector2Array(76, 116, 284, 116, 284, 124, 76, 124, 76, 384, 284, 384, 284, 376, 76, 376, 76, 116, 80, 116, 80, 376, 76, 376, 76, 116)
+
+[node name="WindowLDivider" type="Polygon2D" parent="."]
+z_index = -8
+color = Color(0.3, 0.3, 0.32, 1)
+polygon = PackedVector2Array(178, 120, 182, 120, 182, 380, 178, 380)
+
+[node name="WindowR" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.5, 0.68, 0.85, 1)
+polygon = PackedVector2Array(1000, 120, 1200, 120, 1200, 380, 1000, 380)
+
+[node name="WindowRFrame" type="Polygon2D" parent="."]
+z_index = -8
+color = Color(0.3, 0.3, 0.32, 1)
+polygon = PackedVector2Array(996, 116, 1204, 116, 1204, 124, 996, 124, 996, 384, 1204, 384, 1204, 376, 996, 376, 996, 116, 1000, 116, 1000, 376, 996, 376, 996, 116)
+
+[node name="WindowRDivider" type="Polygon2D" parent="."]
+z_index = -8
+color = Color(0.3, 0.3, 0.32, 1)
+polygon = PackedVector2Array(1098, 120, 1102, 120, 1102, 380, 1098, 380)
+
+[node name="CloudL" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.85, 0.9, 0.95, 0.5)
+polygon = PackedVector2Array(100, 140, 120, 132, 145, 128, 170, 130, 185, 138, 190, 148, 185, 155, 165, 158, 140, 160, 115, 158, 100, 150)
+
+[node name="CloudR" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.85, 0.9, 0.95, 0.45)
+polygon = PackedVector2Array(1020, 150, 1040, 142, 1065, 138, 1090, 140, 1110, 148, 1115, 156, 1105, 162, 1085, 165, 1055, 166, 1035, 163, 1020, 158)
+
+[node name="SkylineL1" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.35, 0.45, 0.55, 1)
+polygon = PackedVector2Array(90, 380, 130, 380, 130, 200, 120, 195, 110, 200, 100, 195, 90, 200)
+
+[node name="SkylineL2" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.3, 0.4, 0.5, 1)
+polygon = PackedVector2Array(140, 380, 180, 380, 180, 240, 170, 220, 160, 230, 150, 235, 140, 260)
+
+[node name="SkylineL3" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.38, 0.48, 0.58, 1)
+polygon = PackedVector2Array(190, 380, 270, 380, 270, 280, 250, 250, 240, 260, 220, 240, 210, 270, 190, 290)
+
+[node name="SkylineLLight1" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.95, 0.88, 0.4, 0.7)
+polygon = PackedVector2Array(100, 220, 108, 220, 108, 228, 100, 228)
+
+[node name="SkylineLLight2" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.95, 0.88, 0.4, 0.6)
+polygon = PackedVector2Array(115, 240, 123, 240, 123, 248, 115, 248)
+
+[node name="SkylineLLight3" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.95, 0.88, 0.4, 0.5)
+polygon = PackedVector2Array(155, 260, 163, 260, 163, 268, 155, 268)
+
+[node name="SkylineLLight4" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.95, 0.88, 0.4, 0.65)
+polygon = PackedVector2Array(220, 290, 228, 290, 228, 298, 220, 298)
+
+[node name="SkylineR1" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.35, 0.45, 0.55, 1)
+polygon = PackedVector2Array(1010, 380, 1060, 380, 1060, 220, 1050, 210, 1040, 220, 1030, 215, 1010, 240)
+
+[node name="SkylineR2" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.3, 0.4, 0.5, 1)
+polygon = PackedVector2Array(1070, 380, 1120, 380, 1120, 250, 1110, 230, 1100, 240, 1090, 260, 1070, 280)
+
+[node name="SkylineR3" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.38, 0.48, 0.58, 1)
+polygon = PackedVector2Array(1130, 380, 1190, 380, 1190, 270, 1170, 240, 1160, 260, 1140, 250, 1130, 270)
+
+[node name="SkylineRLight1" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.95, 0.88, 0.4, 0.6)
+polygon = PackedVector2Array(1025, 250, 1033, 250, 1033, 258, 1025, 258)
+
+[node name="SkylineRLight2" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.95, 0.88, 0.4, 0.7)
+polygon = PackedVector2Array(1045, 230, 1053, 230, 1053, 238, 1045, 238)
+
+[node name="SkylineRLight3" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.95, 0.88, 0.4, 0.55)
+polygon = PackedVector2Array(1090, 270, 1098, 270, 1098, 278, 1090, 278)
+
+[node name="SkylineRLight4" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.95, 0.88, 0.4, 0.65)
+polygon = PackedVector2Array(1150, 280, 1158, 280, 1158, 288, 1150, 288)
+
+[node name="Desk" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.92, 0.92, 0.9, 1)
+polygon = PackedVector2Array(500, 420, 780, 420, 780, 460, 500, 460)
+
+[node name="DeskLeg1" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.7, 0.7, 0.68, 1)
+polygon = PackedVector2Array(510, 460, 520, 460, 520, 500, 510, 500)
+
+[node name="DeskLeg2" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.7, 0.7, 0.68, 1)
+polygon = PackedVector2Array(760, 460, 770, 460, 770, 500, 760, 500)
+
+[node name="DeskLamp" type="Polygon2D" parent="."]
+z_index = -4
+color = Color(0.2, 0.2, 0.22, 1)
+polygon = PackedVector2Array(640, 380, 660, 380, 660, 420, 640, 420)
+
+[node name="DeskLampShade" type="Polygon2D" parent="."]
+z_index = -4
+color = Color(0.25, 0.25, 0.28, 1)
+polygon = PackedVector2Array(628, 372, 672, 372, 665, 384, 635, 384)
+
+[node name="DeskLampGlow" type="Polygon2D" parent="."]
+z_index = -4
+color = Color(1, 0.92, 0.6, 0.15)
+polygon = PackedVector2Array(620, 384, 680, 384, 700, 420, 600, 420)
+
+[node name="Magazine1" type="Polygon2D" parent="."]
+z_index = -4
+color = Color(0.85, 0.15, 0.25, 1)
+polygon = PackedVector2Array(550, 408, 580, 408, 580, 420, 550, 420)
+
+[node name="Magazine2" type="Polygon2D" parent="."]
+z_index = -4
+color = Color(0.2, 0.2, 0.6, 1)
+polygon = PackedVector2Array(590, 410, 615, 410, 615, 420, 590, 420)
+
+[node name="CoffeeCup" type="Polygon2D" parent="."]
+z_index = -4
+color = Color(0.95, 0.95, 0.95, 1)
+polygon = PackedVector2Array(700, 410, 714, 410, 716, 420, 698, 420)
+
+[node name="PlantPot" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.65, 0.35, 0.2, 1)
+polygon = PackedVector2Array(440, 460, 470, 460, 474, 500, 436, 500)
+
+[node name="PlantLeaves" type="Polygon2D" parent="."]
+z_index = -4
+color = Color(0.2, 0.5, 0.25, 1)
+polygon = PackedVector2Array(445, 430, 455, 415, 465, 430, 475, 420, 480, 440, 470, 460, 440, 460, 435, 445)
+
+[node name="PosterL" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.85, 0.2, 0.3, 1)
+polygon = PackedVector2Array(380, 160, 460, 160, 460, 300, 380, 300)
+
+[node name="PosterLInner" type="Polygon2D" parent="."]
+z_index = -8
+color = Color(0.95, 0.85, 0.8, 1)
+polygon = PackedVector2Array(390, 170, 450, 170, 450, 290, 390, 290)
+
+[node name="PosterR" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.1, 0.1, 0.12, 1)
+polygon = PackedVector2Array(820, 160, 900, 160, 900, 300, 820, 300)
+
+[node name="PosterRInner" type="Polygon2D" parent="."]
+z_index = -8
+color = Color(0.6, 0.55, 0.7, 1)
+polygon = PackedVector2Array(830, 170, 890, 170, 890, 290, 830, 290)

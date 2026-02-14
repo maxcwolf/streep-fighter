@@ -1,0 +1,219 @@
+[gd_scene format=3 uid="uid://margaret01"]
+
+[ext_resource type="Script" uid="uid://doxy7c750jewh" path="res://Scripts/Fighters/MargaretThatcher.cs" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(44, 94)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt"]
+size = Vector2(40, 90)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_punch"]
+size = Vector2(34, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kick"]
+size = Vector2(30, 26)
+
+[node name="MargaretThatcher" type="CharacterBody2D"]
+script = ExtResource("1_script")
+
+[node name="Hair" type="Polygon2D" parent="."]
+z_index = 1
+color = Color(0.82, 0.72, 0.45, 1)
+polygon = PackedVector2Array(-18, -98, -20, -104, -19, -110, -16, -116, -10, -120, -4, -122, 0, -123, 4, -122, 10, -120, 16, -116, 19, -110, 20, -104, 18, -98, 20, -92, 19, -86, 17, -80, 14, -76, 12, -74, -12, -74, -14, -76, -17, -80, -19, -86, -20, -92)
+
+[node name="Bangs" type="Polygon2D" parent="Hair"]
+z_index = 2
+color = Color(0.82, 0.72, 0.45, 1)
+polygon = PackedVector2Array(-14, -100, -10, -104, -4, -106, 0, -107, 4, -106, 10, -104, 14, -100, 12, -97, 6, -96, 0, -96, -6, -96, -12, -97)
+
+[node name="Head" type="Polygon2D" parent="."]
+z_index = 2
+color = Color(0.93, 0.8, 0.7, 1)
+polygon = PackedVector2Array(-14, -92, -13, -96, -11, -100, -8, -103, -4, -104, 0, -105, 4, -104, 8, -103, 11, -100, 13, -96, 14, -92, 14, -88, 13, -84, 11, -80, 8, -77, 4, -75, 0, -74, -4, -75, -8, -77, -11, -80, -13, -84, -14, -88)
+
+[node name="EyeWhiteL" type="Polygon2D" parent="Head"]
+z_index = 1
+position = Vector2(-6, -90)
+color = Color(0.95, 0.95, 0.95, 1)
+polygon = PackedVector2Array(-5, -2, -3, -3, 3, -3, 5, -2, 5, 1, 3, 2, -3, 2, -5, 1)
+
+[node name="EyeL" type="Polygon2D" parent="Head/EyeWhiteL"]
+z_index = 1
+position = Vector2(1, 0)
+color = Color(0.35, 0.4, 0.55, 1)
+polygon = PackedVector2Array(-2, -2, 0, -2, 2, -1, 2, 1, 0, 2, -2, 1)
+
+[node name="PupilL" type="Polygon2D" parent="Head/EyeWhiteL"]
+z_index = 2
+position = Vector2(1, 0)
+color = Color(0.05, 0.03, 0.03, 1)
+polygon = PackedVector2Array(-1, -1, 1, -1, 1, 1, -1, 1)
+
+[node name="EyeWhiteR" type="Polygon2D" parent="Head"]
+z_index = 1
+position = Vector2(6, -90)
+color = Color(0.95, 0.95, 0.95, 1)
+polygon = PackedVector2Array(-5, -2, -3, -3, 3, -3, 5, -2, 5, 1, 3, 2, -3, 2, -5, 1)
+
+[node name="EyeR" type="Polygon2D" parent="Head/EyeWhiteR"]
+z_index = 1
+position = Vector2(-1, 0)
+color = Color(0.35, 0.4, 0.55, 1)
+polygon = PackedVector2Array(-2, -2, 0, -2, 2, -1, 2, 1, 0, 2, -2, 1)
+
+[node name="PupilR" type="Polygon2D" parent="Head/EyeWhiteR"]
+z_index = 2
+position = Vector2(-1, 0)
+color = Color(0.05, 0.03, 0.03, 1)
+polygon = PackedVector2Array(-1, -1, 1, -1, 1, 1, -1, 1)
+
+[node name="EyebrowL" type="Polygon2D" parent="Head"]
+z_index = 3
+position = Vector2(-6, -95)
+color = Color(0.65, 0.55, 0.35, 1)
+polygon = PackedVector2Array(-4, 1, -3, 0, 3, -1, 5, -1, 5, 0, 3, 1, -3, 2)
+
+[node name="EyebrowR" type="Polygon2D" parent="Head"]
+z_index = 3
+position = Vector2(6, -95)
+color = Color(0.65, 0.55, 0.35, 1)
+polygon = PackedVector2Array(-5, -1, -5, 0, -3, 1, 3, 2, 4, 1, 3, 0, -3, -1)
+
+[node name="Nose" type="Polygon2D" parent="Head"]
+z_index = 1
+position = Vector2(0, -83)
+color = Color(0.88, 0.75, 0.65, 1)
+polygon = PackedVector2Array(-2, 2, 0, -2, 2, 2)
+
+[node name="Mouth" type="Polygon2D" parent="Head"]
+z_index = 1
+position = Vector2(0, -79)
+color = Color(0.7, 0.3, 0.3, 1)
+polygon = PackedVector2Array(-4, 0, -2, -1, 0, -1, 2, -1, 4, 0, 2, 1, 0, 0, -2, 1)
+
+[node name="BodyPolygon" type="Polygon2D" parent="."]
+color = Color(0.2, 0.35, 0.55, 1)
+polygon = PackedVector2Array(8, -72, 14, -70, 22, -68, 28, -66, 32, -64, 30, -60, 28, -56, 26, -52, 22, -48, 18, -44, 15, -40, 14, -36, 15, -30, 18, -24, 20, -18, 18, -14, 14, -10, 14, -4, -14, -4, -14, -10, -18, -14, -20, -18, -18, -24, -15, -30, -14, -36, -15, -40, -18, -44, -22, -48, -26, -52, -28, -56, -30, -60, -32, -64, -28, -66, -22, -68, -14, -70, -8, -72)
+
+[node name="Collar" type="Polygon2D" parent="."]
+z_index = 1
+color = Color(0.92, 0.9, 0.85, 1)
+polygon = PackedVector2Array(-8, -72, -4, -68, 0, -66, 4, -68, 8, -72, 12, -70, 6, -64, 0, -62, -6, -64, -12, -70)
+
+[node name="PearlNecklace" type="Polygon2D" parent="."]
+z_index = 4
+color = Color(0.95, 0.92, 0.85, 1)
+polygon = PackedVector2Array(-11, -72, -8, -70, -5, -69, -2, -68, 0, -67, 2, -68, 5, -69, 8, -70, 11, -72, 9, -70, 6, -69, 3, -68, 0, -66, -3, -68, -6, -69, -9, -70)
+
+[node name="Brooch" type="Polygon2D" parent="."]
+z_index = 2
+color = Color(0.85, 0.7, 0.2, 1)
+polygon = PackedVector2Array(-4, -62, 0, -66, 4, -62, 0, -58)
+
+[node name="Handbag" type="Polygon2D" parent="."]
+z_index = -2
+color = Color(0.2, 0.15, 0.35, 1)
+polygon = PackedVector2Array(-32, -46, -24, -46, -22, -40, -22, -22, -24, -18, -34, -18, -36, -22, -36, -40, -34, -46)
+
+[node name="HandleStrap" type="Polygon2D" parent="."]
+z_index = -2
+color = Color(0.2, 0.15, 0.35, 1)
+polygon = PackedVector2Array(-34, -46, -32, -46, -30, -54, -28, -46, -26, -46, -28, -56, -30, -58, -32, -56)
+
+[node name="HandbagClasp" type="Polygon2D" parent="."]
+z_index = -1
+color = Color(0.85, 0.7, 0.2, 1)
+polygon = PackedVector2Array(-31, -46, -29, -48, -27, -46, -29, -44)
+
+[node name="ArmL" type="Polygon2D" parent="."]
+z_index = -1
+position = Vector2(-20, -58)
+color = Color(0.2, 0.35, 0.55, 1)
+polygon = PackedVector2Array(-5, -3, 5, -3, 6, 14, 5, 18, 4, 30, -4, 30, -5, 18, -6, 14)
+
+[node name="HandL" type="Polygon2D" parent="ArmL"]
+position = Vector2(0, 30)
+color = Color(0.93, 0.8, 0.7, 1)
+polygon = PackedVector2Array(-4, 0, 4, 0, 5, 3, 5, 6, 4, 9, 1, 10, -1, 10, -4, 9, -5, 6, -5, 3)
+
+[node name="ArmR" type="Polygon2D" parent="."]
+z_index = 1
+position = Vector2(20, -58)
+color = Color(0.2, 0.35, 0.55, 1)
+polygon = PackedVector2Array(-5, -3, 5, -3, 6, 14, 5, 18, 4, 30, -4, 30, -5, 18, -6, 14)
+
+[node name="HandR" type="Polygon2D" parent="ArmR"]
+position = Vector2(0, 30)
+color = Color(0.93, 0.8, 0.7, 1)
+polygon = PackedVector2Array(-4, 0, 4, 0, 5, 3, 5, 6, 4, 9, 1, 10, -1, 10, -4, 9, -5, 6, -5, 3)
+
+[node name="LegL" type="Polygon2D" parent="."]
+z_index = -1
+position = Vector2(-9, -4)
+color = Color(0.15, 0.28, 0.45, 1)
+polygon = PackedVector2Array(-6, -2, 6, -2, 6, 10, 5, 14, 4, 16, 4, 42, -4, 42, -4, 16, -5, 14, -6, 10)
+
+[node name="ShoeL" type="Polygon2D" parent="LegL"]
+position = Vector2(0, 42)
+color = Color(0.1, 0.08, 0.2, 1)
+polygon = PackedVector2Array(-4, 0, 4, 0, 5, 3, 3, 6, 0, 7, -3, 6, -5, 3)
+
+[node name="LegR" type="Polygon2D" parent="."]
+z_index = 1
+position = Vector2(9, -4)
+color = Color(0.15, 0.28, 0.45, 1)
+polygon = PackedVector2Array(-6, -2, 6, -2, 6, 10, 5, 14, 4, 16, 4, 42, -4, 42, -4, 16, -5, 14, -6, 10)
+
+[node name="ShoeR" type="Polygon2D" parent="LegR"]
+position = Vector2(0, 42)
+color = Color(0.1, 0.08, 0.2, 1)
+polygon = PackedVector2Array(-4, 0, 4, 0, 5, 3, 3, 6, 0, 7, -3, 6, -5, 3)
+
+[node name="NameLabel" type="Label" parent="."]
+offset_left = -50.0
+offset_top = -140.0
+offset_right = 50.0
+offset_bottom = -122.0
+theme_override_colors/font_color = Color(0.95, 0.78, 0.15, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 13
+text = "THATCHER"
+horizontal_alignment = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -47)
+shape = SubResource("RectangleShape2D_body")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+
+[node name="HurtboxShape" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -47)
+shape = SubResource("RectangleShape2D_hurt")
+
+[node name="PunchHitbox" type="Area2D" parent="."]
+position = Vector2(34, -62)
+
+[node name="PunchShape" type="CollisionShape2D" parent="PunchHitbox"]
+shape = SubResource("RectangleShape2D_punch")
+disabled = true
+
+[node name="KickHitbox" type="Area2D" parent="."]
+position = Vector2(28, -20)
+
+[node name="KickShape" type="CollisionShape2D" parent="KickHitbox"]
+shape = SubResource("RectangleShape2D_kick")
+disabled = true
+
+[node name="PunchEffect" type="Polygon2D" parent="."]
+visible = false
+position = Vector2(34, -62)
+color = Color(1, 0.95, 0.2, 0.9)
+polygon = PackedVector2Array(0, -14, 4, -5, 13, -4, 6, 2, 8, 11, 0, 6, -8, 11, -6, 2, -13, -4, -4, -5)
+
+[node name="KickEffect" type="Polygon2D" parent="."]
+visible = false
+position = Vector2(28, -20)
+color = Color(1, 0.6, 0.1, 0.9)
+polygon = PackedVector2Array(0, -16, 12, 0, 0, 16, -12, 0)

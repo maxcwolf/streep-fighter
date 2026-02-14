@@ -1,0 +1,270 @@
+[gd_scene format=3 uid="uid://dacuftanydq0r"]
+
+[ext_resource type="Shader" uid="uid://gtfmotxid4yv" path="res://Shaders/pixelate.gdshader" id="1"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1"]
+shader = ExtResource("1")
+shader_parameter/pixel_size = 4.0
+
+[node name="EnchantedForest" type="CanvasGroup" unique_id=217937856]
+material = SubResource("ShaderMaterial_1")
+
+[node name="NightSky" type="ColorRect" parent="." unique_id=330331056]
+z_index = -10
+offset_right = 1280.0
+offset_bottom = 500.0
+color = Color(0.04, 0.05, 0.12, 1)
+
+[node name="Floor" type="ColorRect" parent="." unique_id=1221748770]
+z_index = -9
+offset_top = 500.0
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(0.08, 0.12, 0.06, 1)
+
+[node name="FloorAccent" type="ColorRect" parent="." unique_id=1888723898]
+z_index = -8
+offset_top = 496.0
+offset_right = 1280.0
+offset_bottom = 504.0
+color = Color(0.15, 0.25, 0.1, 1)
+
+[node name="MossStripe1" type="Polygon2D" parent="." unique_id=369289990]
+z_index = -8
+color = Color(0.1, 0.18, 0.08, 1)
+polygon = PackedVector2Array(0, 540, 200, 540, 180, 560, 0, 555)
+
+[node name="MossStripe2" type="Polygon2D" parent="." unique_id=2013597024]
+z_index = -8
+color = Color(0.1, 0.18, 0.08, 1)
+polygon = PackedVector2Array(400, 530, 650, 540, 620, 560, 380, 550)
+
+[node name="MossStripe3" type="Polygon2D" parent="." unique_id=196269871]
+z_index = -8
+color = Color(0.1, 0.18, 0.08, 1)
+polygon = PackedVector2Array(900, 535, 1100, 530, 1120, 555, 880, 555)
+
+[node name="Moon" type="Polygon2D" parent="." unique_id=415003595]
+z_index = -9
+color = Color(0.85, 0.82, 0.7, 0.9)
+polygon = PackedVector2Array(960, 60, 975, 48, 995, 42, 1015, 42, 1035, 48, 1050, 60, 1056, 80, 1056, 100, 1050, 118, 1035, 130, 1015, 136, 995, 136, 975, 130, 960, 118, 954, 100, 954, 80)
+
+[node name="Star1" type="Polygon2D" parent="." unique_id=2045109678]
+z_index = -9
+color = Color(0.9, 0.88, 0.75, 0.7)
+polygon = PackedVector2Array(200, 40, 203, 37, 206, 40, 203, 43)
+
+[node name="Star2" type="Polygon2D" parent="." unique_id=792905897]
+z_index = -9
+color = Color(0.9, 0.88, 0.75, 0.5)
+polygon = PackedVector2Array(400, 80, 402, 78, 404, 80, 402, 82)
+
+[node name="Star3" type="Polygon2D" parent="." unique_id=462517621]
+z_index = -9
+color = Color(0.9, 0.88, 0.75, 0.6)
+polygon = PackedVector2Array(700, 30, 703, 27, 706, 30, 703, 33)
+
+[node name="Star4" type="Polygon2D" parent="." unique_id=329264709]
+z_index = -9
+color = Color(0.9, 0.88, 0.75, 0.4)
+polygon = PackedVector2Array(1150, 65, 1152, 63, 1154, 65, 1152, 67)
+
+[node name="Star5" type="Polygon2D" parent="." unique_id=117569861]
+z_index = -9
+color = Color(0.9, 0.88, 0.75, 0.55)
+polygon = PackedVector2Array(550, 55, 552, 53, 554, 55, 552, 57)
+
+[node name="Star6" type="Polygon2D" parent="." unique_id=481592443]
+z_index = -9
+color = Color(0.9, 0.88, 0.75, 0.45)
+polygon = PackedVector2Array(100, 90, 102, 88, 104, 90, 102, 92)
+
+[node name="Star7" type="Polygon2D" parent="." unique_id=1387087483]
+z_index = -9
+color = Color(0.9, 0.88, 0.75, 0.65)
+polygon = PackedVector2Array(320, 25, 323, 22, 326, 25, 323, 28)
+
+[node name="Star8" type="Polygon2D" parent="." unique_id=2060042901]
+z_index = -9
+color = Color(0.9, 0.88, 0.75, 0.35)
+polygon = PackedVector2Array(830, 50, 832, 48, 834, 50, 832, 52)
+
+[node name="Star9" type="Polygon2D" parent="." unique_id=850661073]
+z_index = -9
+color = Color(0.9, 0.88, 0.75, 0.5)
+polygon = PackedVector2Array(470, 110, 472, 108, 474, 110, 472, 112)
+
+[node name="Star10" type="Polygon2D" parent="." unique_id=1874472976]
+z_index = -9
+color = Color(0.9, 0.88, 0.75, 0.6)
+polygon = PackedVector2Array(750, 70, 752, 68, 754, 70, 752, 72)
+
+[node name="TreeL1Trunk" type="Polygon2D" parent="." unique_id=108246366]
+z_index = -7
+color = Color(0.12, 0.08, 0.06, 1)
+polygon = PackedVector2Array(40, 500, 80, 500, 85, 300, 90, 200, 85, 100, 75, 50, 60, 40, 45, 50, 35, 100, 30, 200, 35, 300)
+
+[node name="TreeL1BranchL" type="Polygon2D" parent="." unique_id=1785968954]
+z_index = -7
+color = Color(0.1, 0.07, 0.05, 1)
+polygon = PackedVector2Array(35, 200, 30, 180, 10, 140, -10, 120, -20, 115, -15, 125, 0, 155, 20, 190)
+
+[node name="TreeL1BranchR" type="Polygon2D" parent="." unique_id=643629247]
+z_index = -7
+color = Color(0.1, 0.07, 0.05, 1)
+polygon = PackedVector2Array(85, 180, 100, 150, 130, 120, 150, 110, 145, 120, 125, 145, 95, 185)
+
+[node name="TreeL1RootL" type="Polygon2D" parent="." unique_id=1012684460]
+z_index = -6
+color = Color(0.1, 0.07, 0.05, 1)
+polygon = PackedVector2Array(30, 490, 40, 490, 20, 510, 5, 520, 0, 518, 15, 505)
+
+[node name="TreeL1RootR" type="Polygon2D" parent="." unique_id=1389484339]
+z_index = -6
+color = Color(0.1, 0.07, 0.05, 1)
+polygon = PackedVector2Array(80, 490, 90, 490, 110, 510, 120, 518, 115, 520, 100, 508)
+
+[node name="TreeL2Trunk" type="Polygon2D" parent="." unique_id=287052500]
+z_index = -8
+color = Color(0.08, 0.06, 0.05, 1)
+polygon = PackedVector2Array(180, 500, 220, 500, 225, 350, 230, 250, 225, 150, 215, 80, 200, 60, 185, 80, 175, 150, 170, 250, 175, 350)
+
+[node name="TreeR1Trunk" type="Polygon2D" parent="." unique_id=1177208868]
+z_index = -7
+color = Color(0.12, 0.08, 0.06, 1)
+polygon = PackedVector2Array(1180, 500, 1220, 500, 1225, 280, 1230, 180, 1225, 100, 1215, 50, 1200, 35, 1185, 50, 1175, 100, 1170, 180, 1175, 280)
+
+[node name="TreeR1BranchL" type="Polygon2D" parent="." unique_id=2051419034]
+z_index = -7
+color = Color(0.1, 0.07, 0.05, 1)
+polygon = PackedVector2Array(1175, 190, 1155, 150, 1130, 120, 1110, 110, 1115, 120, 1140, 155, 1165, 195)
+
+[node name="TreeR1BranchR" type="Polygon2D" parent="." unique_id=1939996162]
+z_index = -7
+color = Color(0.1, 0.07, 0.05, 1)
+polygon = PackedVector2Array(1225, 170, 1245, 130, 1270, 100, 1290, 90, 1285, 105, 1260, 140, 1235, 180)
+
+[node name="TreeR1RootL" type="Polygon2D" parent="." unique_id=741054676]
+z_index = -6
+color = Color(0.1, 0.07, 0.05, 1)
+polygon = PackedVector2Array(1170, 490, 1180, 490, 1160, 510, 1150, 518, 1145, 516, 1155, 505)
+
+[node name="TreeR1RootR" type="Polygon2D" parent="." unique_id=1397334486]
+z_index = -6
+color = Color(0.1, 0.07, 0.05, 1)
+polygon = PackedVector2Array(1220, 490, 1230, 490, 1250, 510, 1260, 518, 1255, 520, 1240, 506)
+
+[node name="OwlSilhouette" type="Polygon2D" parent="." unique_id=2131889922]
+z_index = -6
+color = Color(0.08, 0.06, 0.04, 1)
+polygon = PackedVector2Array(130, 115, 135, 108, 140, 112, 148, 108, 153, 115, 155, 125, 152, 135, 142, 140, 140, 138, 132, 135, 128, 125)
+
+[node name="OwlEyeL" type="Polygon2D" parent="." unique_id=1970422739]
+z_index = -5
+color = Color(0.9, 0.75, 0.2, 0.8)
+polygon = PackedVector2Array(135, 118, 138, 118, 138, 122, 135, 122)
+
+[node name="OwlEyeR" type="Polygon2D" parent="." unique_id=1265271245]
+z_index = -5
+color = Color(0.9, 0.75, 0.2, 0.8)
+polygon = PackedVector2Array(145, 118, 148, 118, 148, 122, 145, 122)
+
+[node name="TreeR2Trunk" type="Polygon2D" parent="." unique_id=167294184]
+z_index = -8
+color = Color(0.08, 0.06, 0.05, 1)
+polygon = PackedVector2Array(1060, 500, 1100, 500, 1105, 350, 1108, 280, 1105, 200, 1095, 130, 1080, 110, 1065, 130, 1055, 200, 1052, 280, 1055, 350)
+
+[node name="Mushroom1Cap" type="Polygon2D" parent="." unique_id=741599830]
+z_index = -6
+color = Color(0.35, 0.65, 0.3, 0.8)
+polygon = PackedVector2Array(310, 460, 320, 450, 340, 445, 360, 450, 370, 460, 340, 470)
+
+[node name="Mushroom1Stem" type="Polygon2D" parent="." unique_id=369233839]
+z_index = -6
+color = Color(0.8, 0.78, 0.7, 0.7)
+polygon = PackedVector2Array(335, 465, 345, 465, 346, 500, 334, 500)
+
+[node name="Mushroom2Cap" type="Polygon2D" parent="." unique_id=1946106407]
+z_index = -6
+color = Color(0.5, 0.2, 0.55, 0.8)
+polygon = PackedVector2Array(870, 468, 878, 460, 892, 457, 906, 460, 914, 468, 892, 475)
+
+[node name="Mushroom2Stem" type="Polygon2D" parent="." unique_id=1863493779]
+z_index = -6
+color = Color(0.8, 0.78, 0.7, 0.7)
+polygon = PackedVector2Array(888, 472, 896, 472, 897, 500, 887, 500)
+
+[node name="Mushroom3Cap" type="Polygon2D" parent="." unique_id=503005475]
+z_index = -6
+color = Color(0.3, 0.55, 0.65, 0.7)
+polygon = PackedVector2Array(560, 472, 566, 466, 576, 464, 586, 466, 592, 472, 576, 478)
+
+[node name="Mushroom3Stem" type="Polygon2D" parent="." unique_id=626090753]
+z_index = -6
+color = Color(0.75, 0.72, 0.65, 0.6)
+polygon = PackedVector2Array(573, 476, 579, 476, 580, 500, 572, 500)
+
+[node name="Flower1" type="Polygon2D" parent="." unique_id=931509926]
+z_index = -6
+color = Color(0.7, 0.3, 0.5, 0.7)
+polygon = PackedVector2Array(440, 488, 445, 482, 452, 480, 459, 482, 464, 488, 452, 492)
+
+[node name="Flower1Stem" type="Polygon2D" parent="." unique_id=1844541480]
+z_index = -7
+color = Color(0.15, 0.35, 0.12, 0.8)
+polygon = PackedVector2Array(451, 490, 453, 490, 453, 504, 451, 504)
+
+[node name="Flower2" type="Polygon2D" parent="." unique_id=1597352223]
+z_index = -6
+color = Color(0.8, 0.7, 0.2, 0.65)
+polygon = PackedVector2Array(720, 490, 724, 485, 730, 483, 736, 485, 740, 490, 730, 494)
+
+[node name="Flower2Stem" type="Polygon2D" parent="." unique_id=436030649]
+z_index = -7
+color = Color(0.15, 0.35, 0.12, 0.8)
+polygon = PackedVector2Array(729, 492, 731, 492, 731, 506, 729, 506)
+
+[node name="Bush1" type="Polygon2D" parent="." unique_id=1283205327]
+z_index = -7
+color = Color(0.06, 0.14, 0.05, 0.8)
+polygon = PackedVector2Array(480, 500, 500, 480, 520, 475, 540, 480, 555, 500)
+
+[node name="Bush2" type="Polygon2D" parent="." unique_id=417652220]
+z_index = -7
+color = Color(0.06, 0.14, 0.05, 0.75)
+polygon = PackedVector2Array(780, 500, 800, 485, 815, 482, 830, 485, 840, 500)
+
+[node name="Firefly1" type="Polygon2D" parent="." unique_id=1132819014]
+z_index = -4
+color = Color(0.6, 0.9, 0.3, 0.6)
+polygon = PackedVector2Array(350, 420, 353, 418, 356, 420, 353, 422)
+
+[node name="Firefly2" type="Polygon2D" parent="." unique_id=795524228]
+z_index = -4
+color = Color(0.6, 0.9, 0.3, 0.5)
+polygon = PackedVector2Array(620, 400, 623, 398, 626, 400, 623, 402)
+
+[node name="Firefly3" type="Polygon2D" parent="." unique_id=2119496081]
+z_index = -4
+color = Color(0.6, 0.9, 0.3, 0.55)
+polygon = PackedVector2Array(780, 430, 783, 428, 786, 430, 783, 432)
+
+[node name="Firefly4" type="Polygon2D" parent="." unique_id=210552853]
+z_index = -4
+color = Color(0.6, 0.9, 0.3, 0.45)
+polygon = PackedVector2Array(250, 380, 253, 378, 256, 380, 253, 382)
+
+[node name="FogL" type="Polygon2D" parent="." unique_id=1364125094]
+z_index = -5
+color = Color(0.4, 0.45, 0.5, 0.12)
+polygon = PackedVector2Array(0, 400, 400, 420, 350, 480, 0, 460)
+
+[node name="FogR" type="Polygon2D" parent="." unique_id=1991953332]
+z_index = -5
+color = Color(0.4, 0.45, 0.5, 0.1)
+polygon = PackedVector2Array(880, 410, 1280, 390, 1280, 460, 920, 470)
+
+[node name="FogCenter" type="Polygon2D" parent="." unique_id=774017047]
+z_index = -5
+color = Color(0.4, 0.45, 0.5, 0.08)
+polygon = PackedVector2Array(300, 440, 700, 430, 750, 470, 280, 480)

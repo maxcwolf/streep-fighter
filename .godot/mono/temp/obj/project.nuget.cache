@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "dgSpecHash": "wDjOglcG5Qw=",
+  "success": true,
+  "projectFilePath": "/Users/maxwolf/workspace/streep-fighter/StreepFighter.csproj",
+  "expectedPackageFiles": [
+    "/Users/maxwolf/.nuget/packages/godot.sourcegenerators/4.6.0/godot.sourcegenerators.4.6.0.nupkg.sha512",
+    "/Users/maxwolf/.nuget/packages/godotsharp/4.6.0/godotsharp.4.6.0.nupkg.sha512",
+    "/Users/maxwolf/.nuget/packages/godotsharpeditor/4.6.0/godotsharpeditor.4.6.0.nupkg.sha512",
+    "/Users/maxwolf/.nuget/packages/microsoft.netcore.app.ref/8.0.23/microsoft.netcore.app.ref.8.0.23.nupkg.sha512",
+    "/Users/maxwolf/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.23/microsoft.aspnetcore.app.ref.8.0.23.nupkg.sha512"
+  ],
+  "logs": []
+}

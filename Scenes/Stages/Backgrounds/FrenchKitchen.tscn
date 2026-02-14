@@ -1,0 +1,300 @@
+[gd_scene load_steps=3 format=3 uid="uid://bg_kitchen01"]
+
+[ext_resource type="Shader" path="res://Shaders/pixelate.gdshader" id="1"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1"]
+shader = ExtResource("1")
+shader_parameter/pixel_size = 4.0
+
+[node name="FrenchKitchen" type="CanvasGroup"]
+material = SubResource("ShaderMaterial_1")
+
+[node name="BackWall" type="ColorRect" parent="."]
+z_index = -10
+offset_right = 1280.0
+offset_bottom = 500.0
+color = Color(0.92, 0.85, 0.72, 1)
+
+[node name="Floor" type="ColorRect" parent="."]
+z_index = -9
+offset_top = 500.0
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(0.55, 0.35, 0.2, 1)
+
+[node name="FloorAccent" type="ColorRect" parent="."]
+z_index = -8
+offset_top = 496.0
+offset_right = 1280.0
+offset_bottom = 504.0
+color = Color(0.72, 0.55, 0.3, 1)
+
+[node name="FloorTileD1" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.9, 0.85, 0.75, 1)
+polygon = PackedVector2Array(0, 520, 80, 520, 80, 600, 0, 600)
+
+[node name="FloorTileD2" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.9, 0.85, 0.75, 1)
+polygon = PackedVector2Array(160, 520, 240, 520, 240, 600, 160, 600)
+
+[node name="FloorTileD3" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.9, 0.85, 0.75, 1)
+polygon = PackedVector2Array(320, 520, 400, 520, 400, 600, 320, 600)
+
+[node name="FloorTileD4" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.9, 0.85, 0.75, 1)
+polygon = PackedVector2Array(480, 520, 560, 520, 560, 600, 480, 600)
+
+[node name="FloorTileD5" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.9, 0.85, 0.75, 1)
+polygon = PackedVector2Array(640, 520, 720, 520, 720, 600, 640, 600)
+
+[node name="FloorTileD6" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.9, 0.85, 0.75, 1)
+polygon = PackedVector2Array(800, 520, 880, 520, 880, 600, 800, 600)
+
+[node name="FloorTileD7" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.9, 0.85, 0.75, 1)
+polygon = PackedVector2Array(960, 520, 1040, 520, 1040, 600, 960, 600)
+
+[node name="FloorTileD8" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.9, 0.85, 0.75, 1)
+polygon = PackedVector2Array(1120, 520, 1200, 520, 1200, 600, 1120, 600)
+
+[node name="BrickRow1" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.72, 0.45, 0.28, 1)
+polygon = PackedVector2Array(0, 300, 1280, 300, 1280, 500, 0, 500)
+
+[node name="BrickLine1" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.62, 0.38, 0.22, 1)
+polygon = PackedVector2Array(0, 340, 1280, 340, 1280, 344, 0, 344)
+
+[node name="BrickLine2" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.62, 0.38, 0.22, 1)
+polygon = PackedVector2Array(0, 380, 1280, 380, 1280, 384, 0, 384)
+
+[node name="BrickLine3" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.62, 0.38, 0.22, 1)
+polygon = PackedVector2Array(0, 420, 1280, 420, 1280, 424, 0, 424)
+
+[node name="BrickLine4" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.62, 0.38, 0.22, 1)
+polygon = PackedVector2Array(0, 460, 1280, 460, 1280, 464, 0, 464)
+
+[node name="BrickVert1" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.62, 0.38, 0.22, 1)
+polygon = PackedVector2Array(80, 300, 84, 300, 84, 340, 80, 340)
+
+[node name="BrickVert2" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.62, 0.38, 0.22, 1)
+polygon = PackedVector2Array(200, 300, 204, 300, 204, 340, 200, 340)
+
+[node name="BrickVert3" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.62, 0.38, 0.22, 1)
+polygon = PackedVector2Array(140, 344, 144, 344, 144, 380, 140, 380)
+
+[node name="BrickVert4" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.62, 0.38, 0.22, 1)
+polygon = PackedVector2Array(260, 344, 264, 344, 264, 380, 260, 380)
+
+[node name="BrickVert5" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.62, 0.38, 0.22, 1)
+polygon = PackedVector2Array(80, 384, 84, 384, 84, 420, 80, 420)
+
+[node name="BrickVert6" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.62, 0.38, 0.22, 1)
+polygon = PackedVector2Array(200, 384, 204, 384, 204, 420, 200, 420)
+
+[node name="BrickVert7" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.62, 0.38, 0.22, 1)
+polygon = PackedVector2Array(320, 300, 324, 300, 324, 340, 320, 340)
+
+[node name="BrickVert8" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.62, 0.38, 0.22, 1)
+polygon = PackedVector2Array(380, 344, 384, 344, 384, 380, 380, 380)
+
+[node name="ShelfL" type="Polygon2D" parent="."]
+z_index = -8
+color = Color(0.45, 0.3, 0.18, 1)
+polygon = PackedVector2Array(60, 180, 320, 180, 320, 192, 60, 192)
+
+[node name="ShelfR" type="Polygon2D" parent="."]
+z_index = -8
+color = Color(0.45, 0.3, 0.18, 1)
+polygon = PackedVector2Array(960, 180, 1220, 180, 1220, 192, 960, 192)
+
+[node name="Pot1" type="Polygon2D" parent="."]
+z_index = -7
+color = Color(0.8, 0.55, 0.25, 1)
+polygon = PackedVector2Array(100, 150, 140, 150, 144, 180, 96, 180)
+
+[node name="Pot1Handle" type="Polygon2D" parent="."]
+z_index = -7
+color = Color(0.7, 0.48, 0.2, 1)
+polygon = PackedVector2Array(115, 142, 125, 142, 125, 150, 115, 150)
+
+[node name="Pot2" type="Polygon2D" parent="."]
+z_index = -7
+color = Color(0.8, 0.55, 0.25, 1)
+polygon = PackedVector2Array(180, 155, 220, 155, 224, 180, 176, 180)
+
+[node name="Pot3" type="Polygon2D" parent="."]
+z_index = -7
+color = Color(0.75, 0.5, 0.22, 1)
+polygon = PackedVector2Array(250, 160, 280, 160, 284, 180, 246, 180)
+
+[node name="Pan1" type="Polygon2D" parent="."]
+z_index = -7
+color = Color(0.3, 0.28, 0.26, 1)
+polygon = PackedVector2Array(1000, 160, 1050, 160, 1054, 180, 996, 180)
+
+[node name="Pan1Handle" type="Polygon2D" parent="."]
+z_index = -7
+color = Color(0.35, 0.3, 0.25, 1)
+polygon = PackedVector2Array(1050, 165, 1090, 165, 1090, 172, 1050, 172)
+
+[node name="Bowl1" type="Polygon2D" parent="."]
+z_index = -7
+color = Color(0.9, 0.88, 0.82, 1)
+polygon = PackedVector2Array(1100, 162, 1140, 162, 1144, 180, 1096, 180)
+
+[node name="HangingLadle" type="Polygon2D" parent="."]
+z_index = -7
+color = Color(0.55, 0.55, 0.58, 1)
+polygon = PackedVector2Array(348, 100, 352, 100, 352, 160, 356, 168, 356, 176, 344, 176, 344, 168, 348, 160)
+
+[node name="HangingSpatula" type="Polygon2D" parent="."]
+z_index = -7
+color = Color(0.5, 0.42, 0.3, 1)
+polygon = PackedVector2Array(388, 100, 392, 100, 392, 140, 398, 140, 398, 170, 382, 170, 382, 140, 388, 140)
+
+[node name="Stove" type="Polygon2D" parent="."]
+z_index = -6
+color = Color(0.25, 0.25, 0.28, 1)
+polygon = PackedVector2Array(500, 340, 780, 340, 780, 500, 500, 500)
+
+[node name="StoveTop" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.35, 0.35, 0.38, 1)
+polygon = PackedVector2Array(500, 340, 780, 340, 780, 360, 500, 360)
+
+[node name="Burner1" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.2, 0.2, 0.22, 1)
+polygon = PackedVector2Array(530, 365, 570, 365, 570, 385, 530, 385)
+
+[node name="Burner2" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.2, 0.2, 0.22, 1)
+polygon = PackedVector2Array(710, 365, 750, 365, 750, 385, 710, 385)
+
+[node name="SteamWisp1" type="Polygon2D" parent="."]
+z_index = -4
+color = Color(0.95, 0.95, 0.95, 0.12)
+polygon = PackedVector2Array(540, 340, 548, 320, 555, 310, 560, 320, 555, 335, 548, 340)
+
+[node name="SteamWisp2" type="Polygon2D" parent="."]
+z_index = -4
+color = Color(0.95, 0.95, 0.95, 0.1)
+polygon = PackedVector2Array(720, 340, 728, 315, 735, 305, 740, 318, 735, 332, 728, 340)
+
+[node name="OvenDoor" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.2, 0.2, 0.22, 1)
+polygon = PackedVector2Array(560, 400, 720, 400, 720, 490, 560, 490)
+
+[node name="OvenHandle" type="Polygon2D" parent="."]
+z_index = -4
+color = Color(0.7, 0.7, 0.72, 1)
+polygon = PackedVector2Array(600, 410, 680, 410, 680, 416, 600, 416)
+
+[node name="CuttingBoard" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.6, 0.42, 0.22, 1)
+polygon = PackedVector2Array(810, 470, 900, 470, 900, 500, 810, 500)
+
+[node name="CuttingBoardTop" type="Polygon2D" parent="."]
+z_index = -4
+color = Color(0.65, 0.48, 0.28, 1)
+polygon = PackedVector2Array(815, 466, 895, 466, 895, 474, 815, 474)
+
+[node name="WallClock" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.35, 0.22, 0.12, 1)
+polygon = PackedVector2Array(640, 110, 650, 100, 664, 96, 678, 100, 688, 110, 692, 124, 688, 138, 678, 148, 664, 152, 650, 148, 640, 138, 636, 124)
+
+[node name="WallClockFace" type="Polygon2D" parent="."]
+z_index = -8
+color = Color(0.92, 0.9, 0.85, 1)
+polygon = PackedVector2Array(646, 112, 654, 104, 664, 100, 674, 104, 682, 112, 686, 124, 682, 136, 674, 144, 664, 148, 654, 144, 646, 136, 642, 124)
+
+[node name="WallClockHand1" type="Polygon2D" parent="."]
+z_index = -7
+color = Color(0.15, 0.12, 0.1, 1)
+polygon = PackedVector2Array(663, 124, 665, 124, 665, 108, 663, 108)
+
+[node name="WallClockHand2" type="Polygon2D" parent="."]
+z_index = -7
+color = Color(0.15, 0.12, 0.1, 1)
+polygon = PackedVector2Array(664, 123, 664, 125, 676, 125, 676, 123)
+
+[node name="HangingGarlic" type="Polygon2D" parent="."]
+z_index = -7
+color = Color(0.95, 0.92, 0.85, 1)
+polygon = PackedVector2Array(420, 100, 430, 100, 435, 120, 440, 140, 435, 155, 425, 160, 415, 155, 410, 140, 415, 120)
+
+[node name="GarlicString" type="Polygon2D" parent="."]
+z_index = -8
+color = Color(0.5, 0.4, 0.25, 1)
+polygon = PackedVector2Array(424, 0, 426, 0, 426, 105, 424, 105)
+
+[node name="HerbBundle" type="Polygon2D" parent="."]
+z_index = -7
+color = Color(0.3, 0.55, 0.25, 1)
+polygon = PackedVector2Array(860, 80, 870, 80, 880, 120, 875, 150, 870, 160, 860, 160, 855, 150, 850, 120)
+
+[node name="HerbString" type="Polygon2D" parent="."]
+z_index = -8
+color = Color(0.5, 0.4, 0.25, 1)
+polygon = PackedVector2Array(864, 0, 866, 0, 866, 85, 864, 85)
+
+[node name="WallShelfCenter" type="Polygon2D" parent="."]
+z_index = -8
+color = Color(0.45, 0.3, 0.18, 1)
+polygon = PackedVector2Array(540, 240, 740, 240, 740, 252, 540, 252)
+
+[node name="Plate1" type="Polygon2D" parent="."]
+z_index = -7
+color = Color(0.95, 0.93, 0.88, 1)
+polygon = PackedVector2Array(560, 220, 590, 220, 594, 240, 556, 240)
+
+[node name="Plate2" type="Polygon2D" parent="."]
+z_index = -7
+color = Color(0.92, 0.9, 0.85, 1)
+polygon = PackedVector2Array(620, 224, 645, 224, 648, 240, 617, 240)
+
+[node name="WineBottle" type="Polygon2D" parent="."]
+z_index = -7
+color = Color(0.3, 0.15, 0.18, 1)
+polygon = PackedVector2Array(695, 200, 705, 200, 706, 210, 710, 218, 710, 240, 690, 240, 690, 218, 694, 210)

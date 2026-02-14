@@ -1,0 +1,88 @@
+[gd_scene load_steps=13 format=3 uid="uid://stage01"]
+
+[ext_resource type="Script" path="res://Scripts/Managers/GameManager.cs" id="1_gm"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/FightHUD.tscn" id="2_hud"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/VictoryScreen.tscn" id="3_victory"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/PauseMenu.tscn" id="4_pause"]
+[ext_resource type="PackedScene" path="res://Scenes/Stages/Backgrounds/RunwayOffice.tscn" id="5_bg0"]
+[ext_resource type="PackedScene" path="res://Scenes/Stages/Backgrounds/FrenchKitchen.tscn" id="6_bg1"]
+[ext_resource type="PackedScene" path="res://Scenes/Stages/Backgrounds/Parliament.tscn" id="7_bg2"]
+[ext_resource type="PackedScene" path="res://Scenes/Stages/Backgrounds/EnchantedForest.tscn" id="8_bg3"]
+[ext_resource type="PackedScene" path="res://Scenes/Stages/Backgrounds/GreekVilla.tscn" id="9_bg4"]
+[ext_resource type="PackedScene" path="res://Scenes/Stages/Backgrounds/ChurchInterior.tscn" id="10_bg5"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
+size = Vector2(1280, 40)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(40, 720)
+
+[node name="FightStage" type="Node2D"]
+
+[node name="Background" type="ColorRect" parent="."]
+z_index = -10
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(0.06, 0.04, 0.1, 1)
+
+[node name="FloorLine" type="ColorRect" parent="."]
+z_index = -10
+offset_top = 500.0
+offset_right = 1280.0
+offset_bottom = 720.0
+color = Color(0.14, 0.1, 0.06, 1)
+
+[node name="FloorAccent" type="ColorRect" parent="."]
+z_index = -10
+offset_top = 496.0
+offset_right = 1280.0
+offset_bottom = 504.0
+color = Color(0.7, 0.55, 0.2, 1)
+
+[node name="BG0" parent="." instance=ExtResource("5_bg0")]
+visible = false
+
+[node name="BG1" parent="." instance=ExtResource("6_bg1")]
+visible = false
+
+[node name="BG2" parent="." instance=ExtResource("7_bg2")]
+visible = false
+
+[node name="BG3" parent="." instance=ExtResource("8_bg3")]
+visible = false
+
+[node name="BG4" parent="." instance=ExtResource("9_bg4")]
+visible = false
+
+[node name="BG5" parent="." instance=ExtResource("10_bg5")]
+visible = false
+
+[node name="Floor" type="StaticBody2D" parent="."]
+position = Vector2(640, 520)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="LeftWall" type="StaticBody2D" parent="."]
+position = Vector2(-20, 360)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="RightWall" type="StaticBody2D" parent="."]
+position = Vector2(1300, 360)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RightWall"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="HUDLayer" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="HUD" parent="HUDLayer" instance=ExtResource("2_hud")]
+
+[node name="VictoryScreen" parent="HUDLayer" instance=ExtResource("3_victory")]
+
+[node name="PauseMenu" parent="HUDLayer" instance=ExtResource("4_pause")]
+
+[node name="GameManager" type="Node" parent="."]
+script = ExtResource("1_gm")

@@ -1,0 +1,10 @@
+res://Scripts/Fighters/Fighter.cs
+res://Scripts/Fighters/TheWitch.cs
+res://Scripts/Fighters/Projectile.cs
+res://Scripts/Fighters/DonnaSheridan.cs
+res://Scripts/Fighters/SisterAloysius.cs
+res://Scripts/Fighters/MirandaPriestly.cs
+res://Scripts/Fighters/MargaretThatcher.cs
+res://Scripts/Fighters/JuliaChild.cs
+res://Scripts/UI/TitleScreen.cs
+res://Scripts/Managers/AudioManager.cs
