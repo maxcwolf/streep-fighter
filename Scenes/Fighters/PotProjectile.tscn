@@ -8,9 +8,107 @@ radius = 12.0
 [node name="PotProjectile" type="Area2D"]
 script = ExtResource("1_script")
 
+;========================================================================
+; STEAM PUFFS — soft rising vapor behind the pot (cel-shaded comic).
+;========================================================================
+
+[node name="SteamL" type="Polygon2D" parent="."]
+z_index = -1
+color = Color(0.96, 0.95, 0.93, 0.7)
+polygon = PackedVector2Array(-7, -16, -5, -22, -8, -27, -5, -31, -2, -28, -3, -23, -1, -19, -4, -16)
+
+[node name="SteamLInk" type="Line2D" parent="SteamL"]
+points = PackedVector2Array(-7, -16, -5, -22, -8, -27, -5, -31, -2, -28, -3, -23, -1, -19, -4, -16)
+closed = true
+width = 2.0
+default_color = Color(0.16, 0.13, 0.2, 0.55)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="SteamR" type="Polygon2D" parent="."]
+z_index = -1
+color = Color(0.96, 0.95, 0.93, 0.7)
+polygon = PackedVector2Array(7, -16, 5, -23, 9, -28, 6, -33, 2, -30, 3, -24, 1, -20, 4, -16)
+
+[node name="SteamRInk" type="Line2D" parent="SteamR"]
+points = PackedVector2Array(7, -16, 5, -23, 9, -28, 6, -33, 2, -30, 3, -24, 1, -20, 4, -16)
+closed = true
+width = 2.0
+default_color = Color(0.16, 0.13, 0.2, 0.55)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+;========================================================================
+; COPPER POT — fill body (PotPolygon, kept name). Cel-shaded copper.
+;========================================================================
+
 [node name="PotPolygon" type="Polygon2D" parent="."]
-color = Color(0.5, 0.35, 0.2, 1)
+color = Color(0.78, 0.45, 0.22, 1)
 polygon = PackedVector2Array(-12, -8, -10, -14, -6, -16, 6, -16, 10, -14, 12, -8, 12, 4, 10, 8, -10, 8, -12, 4)
+
+[node name="PotShadow" type="Polygon2D" parent="PotPolygon"]
+color = Color(0.577, 0.333, 0.163, 1)
+polygon = PackedVector2Array(0, -16, 6, -16, 10, -14, 12, -8, 12, 4, 10, 8, 0, 8)
+
+[node name="PotHi" type="Polygon2D" parent="PotPolygon"]
+color = Color(0.95, 0.68, 0.42, 1)
+polygon = PackedVector2Array(-10, -14, -6, -16, -4, -16, -8, -13, -10, -9, -10, -2)
+
+[node name="PotRim" type="Polygon2D" parent="PotPolygon"]
+color = Color(0.88, 0.58, 0.32, 1)
+polygon = PackedVector2Array(-12, -16, 12, -16, 12, -11, -12, -11)
+
+[node name="PotRimInk" type="Line2D" parent="PotPolygon/PotRim"]
+points = PackedVector2Array(-12, -16, 12, -16, 12, -11, -12, -11)
+closed = true
+width = 1.5
+default_color = Color(0.32, 0.18, 0.09, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="HandleL" type="Polygon2D" parent="PotPolygon"]
+color = Color(0.45, 0.28, 0.15, 1)
+polygon = PackedVector2Array(-12, -10, -18, -10, -19, -6, -16, -6, -13, -8)
+
+[node name="HandleLInk" type="Line2D" parent="PotPolygon/HandleL"]
+points = PackedVector2Array(-12, -10, -18, -10, -19, -6, -16, -6, -13, -8)
+closed = true
+width = 2.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="HandleR" type="Polygon2D" parent="PotPolygon"]
+color = Color(0.45, 0.28, 0.15, 1)
+polygon = PackedVector2Array(12, -10, 18, -10, 19, -6, 16, -6, 13, -8)
+
+[node name="HandleRInk" type="Line2D" parent="PotPolygon/HandleR"]
+points = PackedVector2Array(12, -10, 18, -10, 19, -6, 16, -6, 13, -8)
+closed = true
+width = 2.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="PotInk" type="Line2D" parent="PotPolygon"]
+points = PackedVector2Array(-12, -8, -10, -14, -6, -16, 6, -16, 10, -14, 12, -8, 12, 4, 10, 8, -10, 8, -12, 4)
+closed = true
+width = 3.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_pot")

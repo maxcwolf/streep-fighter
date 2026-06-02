@@ -130,6 +130,7 @@ public partial class GameManager : Node
         _roundTimer = 90f;
         _roundActive = false;
         _matchOver = false;
+        Juice.Reset(); // clear any leftover hit-stop / shake from the prior round
         _p1Fighter.ResetForRound(_p1Spawn);
         _p2Fighter.ResetForRound(_p2Spawn);
 
@@ -154,6 +155,11 @@ public partial class GameManager : Node
 
     public override void _PhysicsProcess(double delta)
     {
+        // Tick down hit-stop exactly once per physics frame, BEFORE any
+        // early-return so the freeze counts down even between rounds / pause.
+        if (Juice.HitStopFrames > 0)
+            Juice.HitStopFrames--;
+
         if (!_roundActive || _matchOver) return;
 
         _roundTimer -= (float)delta;

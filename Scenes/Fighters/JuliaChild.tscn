@@ -17,170 +17,547 @@ size = Vector2(28, 24)
 [node name="JuliaChild" type="CharacterBody2D"]
 script = ExtResource("1_script")
 
-[node name="Hair" type="Polygon2D" parent="."]
-z_index = 1
-color = Color(0.5, 0.28, 0.15, 1)
-polygon = PackedVector2Array(-24, -96, -22, -102, -18, -108, -12, -112, -6, -114, 0, -115, 6, -114, 12, -112, 18, -108, 22, -102, 24, -96, 26, -90, 26, -84, 24, -78, 20, -74, 16, -72, -16, -72, -20, -74, -24, -78, -26, -84, -26, -90)
+;========================================================================
+; BACK-SIDE LIMBS (z behind body). Authored ~30% darker than front.
+; ArmL > ForearmL > HandL  (shoulder > elbow > wrist) — blue blouse sleeve
+; LegL > ShinL  > FootL    (hip > knee > ankle) — dark stocking + shoe
+;========================================================================
 
-[node name="Bangs" type="Polygon2D" parent="Hair"]
-z_index = 2
-color = Color(0.5, 0.28, 0.15, 1)
-polygon = PackedVector2Array(-14, -108, -10, -106, -6, -107, -2, -105, 2, -105, 6, -107, 10, -106, 14, -108, 12, -104, 8, -102, 4, -103, 0, -102, -4, -103, -8, -102, -12, -104)
+[node name="ArmL" type="Polygon2D" parent="."]
+z_index = -2
+position = Vector2(-16, -58)
+color = Color(0.245, 0.385, 0.455, 1)
+polygon = PackedVector2Array(-4, -3, 4, -3, 4, 9, 3, 17, -3, 17, -4, 9)
 
-[node name="HairPuffL" type="Polygon2D" parent="Hair"]
-z_index = 1
-color = Color(0.5, 0.28, 0.15, 1)
-polygon = PackedVector2Array(-24, -96, -27, -92, -28, -86, -27, -80, -24, -78, -22, -82, -24, -88, -24, -94)
+[node name="ArmLShadow" type="Polygon2D" parent="ArmL"]
+color = Color(0.181, 0.285, 0.337, 1)
+polygon = PackedVector2Array(0, -3, 4, -3, 4, 9, 3, 17, 0, 17)
 
-[node name="HairPuffR" type="Polygon2D" parent="Hair"]
-z_index = 1
-color = Color(0.5, 0.28, 0.15, 1)
-polygon = PackedVector2Array(24, -96, 27, -92, 28, -86, 27, -80, 24, -78, 22, -82, 24, -88, 24, -94)
+[node name="ArmLInk" type="Line2D" parent="ArmL"]
+points = PackedVector2Array(-4, -3, 4, -3, 4, 9, 3, 17, -3, 17, -4, 9)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
 
-[node name="Head" type="Polygon2D" parent="."]
-z_index = 2
-color = Color(0.94, 0.82, 0.72, 1)
-polygon = PackedVector2Array(-14, -93, -13, -98, -10, -102, -6, -104, 0, -105, 6, -104, 10, -102, 13, -98, 14, -93, 15, -88, 14, -82, 12, -78, 8, -75, 4, -73, -4, -73, -8, -75, -12, -78, -14, -82, -15, -88)
+[node name="ForearmL" type="Polygon2D" parent="ArmL"]
+position = Vector2(0, 17)
+color = Color(0.245, 0.385, 0.455, 1)
+polygon = PackedVector2Array(-3, -2, 3, -2, 3, 9, 2, 15, -2, 15, -3, 9)
 
-[node name="EyeWhiteL" type="Polygon2D" parent="Head"]
-z_index = 1
-position = Vector2(-5, -90)
-color = Color(0.95, 0.95, 0.95, 1)
-polygon = PackedVector2Array(-5, -2, -3, -4, 3, -4, 5, -2, 5, 1, 3, 3, -3, 3, -5, 1)
+[node name="ForearmLShadow" type="Polygon2D" parent="ArmL/ForearmL"]
+color = Color(0.181, 0.285, 0.337, 1)
+polygon = PackedVector2Array(0, -2, 3, -2, 3, 9, 2, 15, 0, 15)
 
-[node name="EyeL" type="Polygon2D" parent="Head/EyeWhiteL"]
-z_index = 1
-position = Vector2(1, 0)
-color = Color(0.35, 0.2, 0.1, 1)
-polygon = PackedVector2Array(-2, -2, 0, -2, 2, -1, 2, 1, 0, 2, -2, 1)
+[node name="ForearmLCuff" type="Polygon2D" parent="ArmL/ForearmL"]
+color = Color(0.658, 0.574, 0.504, 1)
+polygon = PackedVector2Array(-3, 11, 3, 11, 2, 15, -2, 15)
 
-[node name="PupilL" type="Polygon2D" parent="Head/EyeWhiteL"]
-z_index = 2
-position = Vector2(1, 0)
-color = Color(0.05, 0.03, 0.03, 1)
-polygon = PackedVector2Array(-1, -1, 1, -1, 1, 1, -1, 1)
+[node name="ForearmLInk" type="Line2D" parent="ArmL/ForearmL"]
+points = PackedVector2Array(-3, -2, 3, -2, 3, 9, 2, 15, -2, 15, -3, 9)
+closed = true
+width = 3.5
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
 
-[node name="EyeWhiteR" type="Polygon2D" parent="Head"]
-z_index = 1
-position = Vector2(5, -90)
-color = Color(0.95, 0.95, 0.95, 1)
-polygon = PackedVector2Array(-5, -2, -3, -4, 3, -4, 5, -2, 5, 1, 3, 3, -3, 3, -5, 1)
+[node name="HandL" type="Polygon2D" parent="ArmL/ForearmL"]
+position = Vector2(0, 15)
+color = Color(0.658, 0.574, 0.504, 1)
+polygon = PackedVector2Array(-4, 0, 4, 0, 6, 2, 6, 5, 5, 8, 3, 10, 1, 10, -1, 10, -3, 10, -5, 8, -6, 5, -6, 2)
 
-[node name="EyeR" type="Polygon2D" parent="Head/EyeWhiteR"]
-z_index = 1
-position = Vector2(-1, 0)
-color = Color(0.35, 0.2, 0.1, 1)
-polygon = PackedVector2Array(-2, -2, 0, -2, 2, -1, 2, 1, 0, 2, -2, 1)
+[node name="HandLInk" type="Line2D" parent="ArmL/ForearmL/HandL"]
+points = PackedVector2Array(-4, 0, 4, 0, 6, 2, 6, 5, 5, 8, 3, 10, 1, 10, -1, 10, -3, 10, -5, 8, -6, 5, -6, 2)
+closed = true
+width = 2.5
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
 
-[node name="PupilR" type="Polygon2D" parent="Head/EyeWhiteR"]
-z_index = 2
-position = Vector2(-1, 0)
-color = Color(0.05, 0.03, 0.03, 1)
-polygon = PackedVector2Array(-1, -1, 1, -1, 1, 1, -1, 1)
+[node name="LegL" type="Polygon2D" parent="."]
+z_index = -2
+position = Vector2(-8, -4)
+color = Color(0.21, 0.14, 0.084, 1)
+polygon = PackedVector2Array(-4, -2, 4, -2, 4, 12, 3, 20, -3, 20, -4, 12)
 
-[node name="EyebrowL" type="Polygon2D" parent="Head"]
-z_index = 3
-position = Vector2(-5, -96)
-color = Color(0.45, 0.25, 0.12, 1)
-polygon = PackedVector2Array(-4, 2, -3, 0, 0, -1, 3, -1, 4, 0, 3, 1, 0, 1, -3, 2)
+[node name="LegLInk" type="Line2D" parent="LegL"]
+points = PackedVector2Array(-4, -2, 4, -2, 4, 12, 3, 20, -3, 20, -4, 12)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
 
-[node name="EyebrowR" type="Polygon2D" parent="Head"]
-z_index = 3
-position = Vector2(5, -96)
-color = Color(0.45, 0.25, 0.12, 1)
-polygon = PackedVector2Array(-4, 0, -3, -1, 0, -1, 3, 0, 4, 2, 3, 2, 0, 1, -3, 1)
+[node name="ShinL" type="Polygon2D" parent="LegL"]
+position = Vector2(0, 20)
+color = Color(0.21, 0.14, 0.084, 1)
+polygon = PackedVector2Array(-3, -2, 3, -2, 3, 14, 2, 22, -2, 22, -3, 14)
 
-[node name="Nose" type="Polygon2D" parent="Head"]
-z_index = 1
-position = Vector2(0, -83)
-color = Color(0.9, 0.78, 0.68, 1)
-polygon = PackedVector2Array(-2, 2, 0, -2, 2, 2)
+[node name="ShinLShadow" type="Polygon2D" parent="LegL/ShinL"]
+color = Color(0.155, 0.103, 0.062, 1)
+polygon = PackedVector2Array(0, -2, 3, -2, 3, 14, 2, 22, 0, 22)
 
-[node name="Teeth" type="Polygon2D" parent="Head"]
-z_index = 1
-position = Vector2(0, -78)
-color = Color(0.98, 0.96, 0.94, 1)
-polygon = PackedVector2Array(-6, -1, 6, -1, 6, 1, -6, 1)
+[node name="ShinLInk" type="Line2D" parent="LegL/ShinL"]
+points = PackedVector2Array(-3, -2, 3, -2, 3, 14, 2, 22, -2, 22, -3, 14)
+closed = true
+width = 3.5
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
 
-[node name="Mouth" type="Polygon2D" parent="Head"]
-z_index = 1
-position = Vector2(0, -78)
-color = Color(0.8, 0.4, 0.35, 1)
-polygon = PackedVector2Array(-8, 0, -6, -2, -3, -3, 0, -3, 3, -3, 6, -2, 8, 0, 6, 2, 3, 3, 0, 3, -3, 3, -6, 2)
+[node name="FootL" type="Polygon2D" parent="LegL/ShinL"]
+position = Vector2(0, 22)
+color = Color(0.165, 0.099, 0.053, 1)
+polygon = PackedVector2Array(-4, 0, 3, 0, 6, 2, 8, 5, 8, 8, -4, 8, -5, 5, -5, 2)
 
-[node name="BodyPolygon" type="Polygon2D" parent="."]
-color = Color(0.35, 0.55, 0.65, 1)
-polygon = PackedVector2Array(6, -69, 14, -67, 22, -64, 25, -60, 26, -56, 25, -52, 24, -48, 26, -42, 28, -36, 30, -28, 28, -20, 27, -12, 26, -4, -26, -4, -27, -12, -28, -20, -30, -28, -28, -36, -26, -42, -24, -48, -25, -52, -26, -56, -25, -60, -22, -64, -14, -67, -6, -69)
+[node name="FootLInk" type="Line2D" parent="LegL/ShinL/FootL"]
+points = PackedVector2Array(-4, 0, 3, 0, 6, 2, 8, 5, 8, 8, -4, 8, -5, 5, -5, 2)
+closed = true
+width = 3.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+;========================================================================
+; APRON (swayable cloth, behind body front). White chef apron skirt.
+;========================================================================
 
 [node name="Apron" type="Polygon2D" parent="."]
 z_index = 1
 color = Color(0.96, 0.94, 0.9, 1)
 polygon = PackedVector2Array(-4, -66, 4, -66, 8, -64, 16, -60, 18, -56, 18, -48, 20, -38, 22, -28, 21, -18, 20, -10, 20, -4, -20, -4, -20, -10, -21, -18, -22, -28, -20, -38, -18, -48, -18, -56, -16, -60, -8, -64)
 
-[node name="ApronStrings" type="Polygon2D" parent="."]
-z_index = 2
+[node name="ApronShadow" type="Polygon2D" parent="Apron"]
+color = Color(0.71, 0.696, 0.666, 1)
+polygon = PackedVector2Array(0, -66, 4, -66, 8, -64, 16, -60, 18, -56, 18, -48, 20, -38, 22, -28, 21, -18, 20, -10, 20, -4, 0, -4)
+
+[node name="ApronPocket" type="Polygon2D" parent="Apron"]
+color = Color(0.9, 0.875, 0.835, 1)
+polygon = PackedVector2Array(-9, -30, 9, -30, 9, -17, -9, -17)
+
+[node name="ApronPocketInk" type="Line2D" parent="Apron/ApronPocket"]
+points = PackedVector2Array(-9, -30, 9, -30, 9, -17, -9, -17)
+closed = true
+width = 2.0
+default_color = Color(0.16, 0.13, 0.2, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="ApronInk" type="Line2D" parent="Apron"]
+points = PackedVector2Array(-4, -66, 4, -66, 8, -64, 16, -60, 18, -56, 18, -48, 20, -38, 22, -28, 21, -18, 20, -10, 20, -4, -20, -4, -20, -10, -21, -18, -22, -28, -20, -38, -18, -48, -18, -56, -16, -60, -8, -64)
+closed = true
+width = 5.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+;========================================================================
+; TORSO — blue blouse front (BodyPolygon). REQUIRED node.
+;========================================================================
+
+[node name="BodyPolygon" type="Polygon2D" parent="."]
+color = Color(0.35, 0.55, 0.65, 1)
+polygon = PackedVector2Array(6, -69, 14, -67, 22, -64, 25, -60, 26, -56, 25, -52, 24, -48, 26, -42, 28, -36, 30, -28, 28, -20, 27, -12, 26, -4, -26, -4, -27, -12, -28, -20, -30, -28, -28, -36, -26, -42, -24, -48, -25, -52, -26, -56, -25, -60, -22, -64, -14, -67, -6, -69)
+
+[node name="BodyShadow" type="Polygon2D" parent="BodyPolygon"]
+color = Color(0.259, 0.407, 0.481, 1)
+polygon = PackedVector2Array(0, -69, 14, -67, 22, -64, 25, -60, 26, -56, 25, -52, 24, -48, 26, -42, 28, -36, 30, -28, 28, -20, 27, -12, 26, -4, 0, -4)
+
+[node name="CollarL" type="Polygon2D" parent="BodyPolygon"]
+color = Color(0.42, 0.62, 0.72, 1)
+polygon = PackedVector2Array(-6, -69, -2, -66, -10, -58, -14, -62, -12, -66)
+
+[node name="CollarR" type="Polygon2D" parent="BodyPolygon"]
+color = Color(0.46, 0.66, 0.76, 1)
+polygon = PackedVector2Array(6, -69, 2, -66, 10, -58, 14, -62, 12, -66)
+
+[node name="Placket" type="Polygon2D" parent="BodyPolygon"]
+color = Color(0.42, 0.62, 0.72, 1)
+polygon = PackedVector2Array(-2, -66, 2, -66, 2, -8, -2, -8)
+
+[node name="Button1" type="Polygon2D" parent="BodyPolygon"]
 color = Color(0.96, 0.94, 0.9, 1)
-polygon = PackedVector2Array(-20, -44, -18, -44, -14, -42, -10, -44, -10, -42, -14, -40, -18, -42, -20, -42, 20, -44, 18, -44, 14, -42, 10, -44, 10, -42, 14, -40, 18, -42, 20, -42)
+polygon = PackedVector2Array(-1.4, -56, 1.4, -56, 1.4, -53.5, -1.4, -53.5)
 
-[node name="ApronPocket" type="Polygon2D" parent="."]
-z_index = 2
-color = Color(0.92, 0.9, 0.86, 1)
-polygon = PackedVector2Array(-8, -30, 8, -30, 8, -18, -8, -18)
+[node name="Button2" type="Polygon2D" parent="BodyPolygon"]
+color = Color(0.96, 0.94, 0.9, 1)
+polygon = PackedVector2Array(-1.4, -46, 1.4, -46, 1.4, -43.5, -1.4, -43.5)
 
-[node name="WoodenSpoon" type="Polygon2D" parent="."]
-z_index = 3
-position = Vector2(4, -28)
-color = Color(0.6, 0.4, 0.2, 1)
-polygon = PackedVector2Array(-1, -14, 1, -14, 1, 4, 3, 6, 3, 10, 1, 12, -1, 12, -3, 10, -3, 6, -1, 4)
+[node name="BodyInk" type="Line2D" parent="BodyPolygon"]
+points = PackedVector2Array(6, -69, 14, -67, 22, -64, 25, -60, 26, -56, 25, -52, 24, -48, 26, -42, 28, -36, 30, -28, 28, -20, 27, -12, 26, -4, -26, -4, -27, -12, -28, -20, -30, -28, -28, -36, -26, -42, -24, -48, -25, -52, -26, -56, -25, -60, -22, -64, -14, -67, -6, -69)
+closed = true
+width = 5.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+;========================================================================
+; PEARL NECKLACE — strand of warm pearls (kept name).
+;========================================================================
 
 [node name="PearlNecklace" type="Polygon2D" parent="."]
 z_index = 4
 color = Color(0.95, 0.92, 0.88, 1)
-polygon = PackedVector2Array(-10, -70, -7, -69, -4, -68, -2, -67, 0, -66, 2, -67, 4, -68, 7, -69, 10, -70, 8, -68, 5, -67, 2, -66, 0, -65, -2, -66, -5, -67, -8, -68)
+polygon = PackedVector2Array(-11, -70, -8, -68, -5, -67, -2, -66, 0, -65, 2, -66, 5, -67, 8, -68, 11, -70, 8, -67, 5, -65, 2, -64, 0, -63, -2, -64, -5, -65, -8, -67)
 
-[node name="ArmL" type="Polygon2D" parent="."]
-z_index = -1
-position = Vector2(-16, -58)
-color = Color(0.35, 0.55, 0.65, 1)
-polygon = PackedVector2Array(-3, -2, 3, -2, 3, 10, 2, 19, 2, 35, -2, 35, -2, 19, -3, 10)
+[node name="PearlNecklaceHi" type="Polygon2D" parent="PearlNecklace"]
+color = Color(1.0, 0.985, 0.96, 1)
+polygon = PackedVector2Array(-9, -69, -6, -67.5, -6, -66.5, -9, -68)
 
-[node name="HandL" type="Polygon2D" parent="ArmL"]
-position = Vector2(0, 35)
+[node name="PearlNecklaceInk" type="Line2D" parent="PearlNecklace"]
+points = PackedVector2Array(-11, -70, -8, -68, -5, -67, -2, -66, 0, -65, 2, -66, 5, -67, 8, -68, 11, -70, 8, -67, 5, -65, 2, -64, 0, -63, -2, -64, -5, -65, -8, -67)
+closed = true
+width = 2.0
+default_color = Color(0.16, 0.13, 0.2, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+;========================================================================
+; HEAD — skin, with EyeWhiteL/R > PupilL/R (animated; exact nesting).
+; Tall jolly face with huge warm grin.
+;========================================================================
+
+[node name="Head" type="Polygon2D" parent="."]
+z_index = 2
 color = Color(0.94, 0.82, 0.72, 1)
-polygon = PackedVector2Array(-4, 0, 4, 0, 6, 2, 6, 5, 5, 8, 3, 10, 1, 10, -1, 10, -3, 10, -5, 8, -6, 5, -6, 2)
+polygon = PackedVector2Array(-14, -93, -13, -98, -10, -102, -6, -104, 0, -105, 6, -104, 10, -102, 13, -98, 14, -93, 16, -87, 15, -81, 13, -78, 10, -75, 6, -73, 0, -72, -6, -73, -10, -75, -13, -78, -15, -81, -16, -87)
+
+[node name="HeadShadow" type="Polygon2D" parent="Head"]
+color = Color(0.86, 0.66, 0.55, 1)
+polygon = PackedVector2Array(6, -104, 10, -102, 13, -98, 14, -93, 16, -87, 15, -81, 13, -78, 10, -75, 6, -73, 0, -72, 0, -104)
+
+[node name="CheekL" type="Polygon2D" parent="Head"]
+color = Color(0.96, 0.74, 0.66, 1)
+polygon = PackedVector2Array(-13, -82, -9, -83, -7, -80, -9, -77, -13, -78)
+
+[node name="CheekR" type="Polygon2D" parent="Head"]
+color = Color(0.96, 0.74, 0.66, 1)
+polygon = PackedVector2Array(13, -82, 9, -83, 7, -80, 9, -77, 13, -78)
+
+[node name="HeadInk" type="Line2D" parent="Head"]
+points = PackedVector2Array(-14, -93, -13, -98, -10, -102, -6, -104, 0, -105, 6, -104, 10, -102, 13, -98, 14, -93, 16, -87, 15, -81, 13, -78, 10, -75, 6, -73, 0, -72, -6, -73, -10, -75, -13, -78, -15, -81, -16, -87)
+closed = true
+width = 3.5
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="EyeWhiteL" type="Polygon2D" parent="Head"]
+z_index = 1
+position = Vector2(-5, -90)
+color = Color(0.96, 0.95, 0.95, 1)
+polygon = PackedVector2Array(-5, -2, -3, -4, 3, -4, 5, -2, 5, 1, 3, 3, -3, 3, -5, 1)
+
+[node name="PupilL" type="Polygon2D" parent="Head/EyeWhiteL"]
+z_index = 2
+position = Vector2(1, 0)
+color = Color(0.27, 0.16, 0.09, 1)
+polygon = PackedVector2Array(-2, -2, 0, -2, 2, -1, 2, 1, 0, 2, -2, 1)
+
+[node name="PupilLHi" type="Polygon2D" parent="Head/EyeWhiteL/PupilL"]
+position = Vector2(-0.6, -0.6)
+color = Color(0.85, 0.85, 0.9, 1)
+polygon = PackedVector2Array(-0.7, -0.7, 0.4, -0.7, 0.4, 0.4, -0.7, 0.4)
+
+[node name="EyeWhiteR" type="Polygon2D" parent="Head"]
+z_index = 1
+position = Vector2(5, -90)
+color = Color(0.96, 0.95, 0.95, 1)
+polygon = PackedVector2Array(-5, -2, -3, -4, 3, -4, 5, -2, 5, 1, 3, 3, -3, 3, -5, 1)
+
+[node name="PupilR" type="Polygon2D" parent="Head/EyeWhiteR"]
+z_index = 2
+position = Vector2(-1, 0)
+color = Color(0.27, 0.16, 0.09, 1)
+polygon = PackedVector2Array(-2, -2, 0, -2, 2, -1, 2, 1, 0, 2, -2, 1)
+
+[node name="PupilRHi" type="Polygon2D" parent="Head/EyeWhiteR/PupilR"]
+position = Vector2(-0.6, -0.6)
+color = Color(0.85, 0.85, 0.9, 1)
+polygon = PackedVector2Array(-0.7, -0.7, 0.4, -0.7, 0.4, 0.4, -0.7, 0.4)
+
+[node name="EyebrowL" type="Polygon2D" parent="Head"]
+z_index = 3
+position = Vector2(-5, -96)
+color = Color(0.42, 0.23, 0.11, 1)
+polygon = PackedVector2Array(-5, 1, -4, -1, 0, -2, 4, -1, 5, 1, 4, 1, 0, 0, -4, 1)
+
+[node name="EyebrowR" type="Polygon2D" parent="Head"]
+z_index = 3
+position = Vector2(5, -96)
+color = Color(0.42, 0.23, 0.11, 1)
+polygon = PackedVector2Array(5, 1, 4, -1, 0, -2, -4, -1, -5, 1, -4, 1, 0, 0, 4, 1)
+
+[node name="Nose" type="Polygon2D" parent="Head"]
+z_index = 1
+position = Vector2(0, -82)
+color = Color(0.9, 0.7, 0.6, 1)
+polygon = PackedVector2Array(-2, 3, -1, -2, 1, -2, 2, 3, 0, 4)
+
+[node name="NoseInk" type="Line2D" parent="Head/Nose"]
+points = PackedVector2Array(-2, 3, 0, 4, 2, 3)
+width = 1.5
+default_color = Color(0.16, 0.13, 0.2, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+;========================================================================
+; HUGE WARM GRIN — wide smile with teeth (the signature Julia cheer).
+;========================================================================
+
+[node name="Mouth" type="Polygon2D" parent="Head"]
+z_index = 1
+position = Vector2(0, -78)
+color = Color(0.62, 0.22, 0.24, 1)
+polygon = PackedVector2Array(-9, -2, -6, -3, -3, -3, 0, -3, 3, -3, 6, -3, 9, -2, 7, 2, 4, 5, 0, 6, -4, 5, -7, 2)
+
+[node name="Teeth" type="Polygon2D" parent="Head/Mouth"]
+z_index = 1
+color = Color(0.99, 0.97, 0.95, 1)
+polygon = PackedVector2Array(-7, -1, -4, -2, 0, -2, 4, -2, 7, -1, 6, 1, 3, 2, 0, 2, -3, 2, -6, 1)
+
+[node name="MouthInk" type="Line2D" parent="Head/Mouth"]
+points = PackedVector2Array(-9, -2, -6, -3, -3, -3, 0, -3, 3, -3, 6, -3, 9, -2, 7, 2, 4, 5, 0, 6, -4, 5, -7, 2)
+closed = true
+width = 2.5
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+;========================================================================
+; HAIR — brown curls (swayable; behind head). Puffy bouffant.
+;========================================================================
+
+[node name="Hair" type="Polygon2D" parent="."]
+z_index = 1
+color = Color(0.5, 0.28, 0.15, 1)
+polygon = PackedVector2Array(-16, -94, -19, -99, -22, -106, -18, -111, -12, -113, -6, -114, 0, -115, 6, -114, 12, -113, 18, -111, 22, -106, 19, -99, 16, -94, 16, -87, 14, -80, 11, -76, 11, -84, 8, -89, 4, -91, -4, -91, -8, -89, -11, -84, -11, -76, -14, -80, -16, -87)
+
+[node name="HairShadow" type="Polygon2D" parent="Hair"]
+color = Color(0.37, 0.207, 0.111, 1)
+polygon = PackedVector2Array(6, -114, 12, -113, 18, -111, 22, -106, 19, -99, 16, -94, 16, -87, 14, -80, 11, -76, 11, -84, 8, -89, 4, -91, 4, -114)
+
+[node name="HairHi" type="Polygon2D" parent="Hair"]
+color = Color(0.64, 0.42, 0.26, 1)
+polygon = PackedVector2Array(-18, -111, -12, -113, -6, -114, -6, -110, -12, -108, -17, -103, -19, -99)
+
+[node name="CurlL" type="Polygon2D" parent="Hair"]
+color = Color(0.5, 0.28, 0.15, 1)
+polygon = PackedVector2Array(-16, -94, -22, -91, -25, -85, -23, -79, -19, -77, -18, -82, -20, -87, -18, -91)
+
+[node name="CurlLInk" type="Line2D" parent="Hair/CurlL"]
+points = PackedVector2Array(-16, -94, -22, -91, -25, -85, -23, -79, -19, -77, -18, -82, -20, -87, -18, -91)
+closed = true
+width = 2.5
+default_color = Color(0.16, 0.13, 0.2, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="CurlR" type="Polygon2D" parent="Hair"]
+color = Color(0.5, 0.28, 0.15, 1)
+polygon = PackedVector2Array(16, -94, 22, -91, 25, -85, 23, -79, 19, -77, 18, -82, 20, -87, 18, -91)
+
+[node name="CurlRInk" type="Line2D" parent="Hair/CurlR"]
+points = PackedVector2Array(16, -94, 22, -91, 25, -85, 23, -79, 19, -77, 18, -82, 20, -87, 18, -91)
+closed = true
+width = 2.5
+default_color = Color(0.16, 0.13, 0.2, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="Bangs" type="Polygon2D" parent="Hair"]
+z_index = 1
+color = Color(0.5, 0.28, 0.15, 1)
+polygon = PackedVector2Array(-14, -97, -10, -103, -3, -105, 4, -105, 11, -103, 14, -97, 10, -100, 6, -98, 2, -101, -2, -98, -6, -101, -10, -98)
+
+[node name="BangsInk" type="Line2D" parent="Hair/Bangs"]
+points = PackedVector2Array(-14, -97, -10, -103, -3, -105, 4, -105, 11, -103, 14, -97, 10, -100, 6, -98, 2, -101, -2, -98, -6, -101, -10, -98)
+closed = true
+width = 2.5
+default_color = Color(0.16, 0.13, 0.2, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="HairInk" type="Line2D" parent="Hair"]
+points = PackedVector2Array(-16, -94, -19, -99, -22, -106, -18, -111, -12, -113, -6, -114, 0, -115, 6, -114, 12, -113, 18, -111, 22, -106, 19, -99, 16, -94, 16, -87, 14, -80, 11, -76, 11, -84, 8, -89, 4, -91, -4, -91, -8, -89, -11, -84, -11, -76, -14, -80, -16, -87)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+;========================================================================
+; FRONT-SIDE LIMBS (z in front of body).
+; ArmR > ForearmR > HandR  (shoulder > elbow > wrist) — holds wooden spoon
+; LegR > ShinR  > FootR    (hip > knee > ankle)
+;========================================================================
 
 [node name="ArmR" type="Polygon2D" parent="."]
 z_index = 1
 position = Vector2(16, -58)
 color = Color(0.35, 0.55, 0.65, 1)
-polygon = PackedVector2Array(-3, -2, 3, -2, 3, 10, 2, 19, 2, 32, -2, 32, -2, 19, -3, 10)
+polygon = PackedVector2Array(-4, -3, 4, -3, 4, 9, 3, 17, -3, 17, -4, 9)
 
-[node name="HandR" type="Polygon2D" parent="ArmR"]
-position = Vector2(0, 32)
+[node name="ArmRShadow" type="Polygon2D" parent="ArmR"]
+color = Color(0.259, 0.407, 0.481, 1)
+polygon = PackedVector2Array(0, -3, 4, -3, 4, 9, 3, 17, 0, 17)
+
+[node name="ArmRInk" type="Line2D" parent="ArmR"]
+points = PackedVector2Array(-4, -3, 4, -3, 4, 9, 3, 17, -3, 17, -4, 9)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="ForearmR" type="Polygon2D" parent="ArmR"]
+position = Vector2(0, 17)
+color = Color(0.35, 0.55, 0.65, 1)
+polygon = PackedVector2Array(-3, -2, 3, -2, 3, 9, 2, 15, -2, 15, -3, 9)
+
+[node name="ForearmRShadow" type="Polygon2D" parent="ArmR/ForearmR"]
+color = Color(0.259, 0.407, 0.481, 1)
+polygon = PackedVector2Array(0, -2, 3, -2, 3, 9, 2, 15, 0, 15)
+
+[node name="ForearmRCuff" type="Polygon2D" parent="ArmR/ForearmR"]
+color = Color(0.94, 0.82, 0.72, 1)
+polygon = PackedVector2Array(-3, 11, 3, 11, 2, 15, -2, 15)
+
+[node name="ForearmRInk" type="Line2D" parent="ArmR/ForearmR"]
+points = PackedVector2Array(-3, -2, 3, -2, 3, 9, 2, 15, -2, 15, -3, 9)
+closed = true
+width = 3.5
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="HandR" type="Polygon2D" parent="ArmR/ForearmR"]
+position = Vector2(0, 15)
 color = Color(0.94, 0.82, 0.72, 1)
 polygon = PackedVector2Array(-4, 0, 4, 0, 6, 2, 6, 5, 5, 8, 3, 10, 1, 10, -1, 10, -3, 10, -5, 8, -6, 5, -6, 2)
 
-[node name="LegL" type="Polygon2D" parent="."]
-z_index = -1
-position = Vector2(-8, -4)
-color = Color(0.3, 0.2, 0.12, 1)
-polygon = PackedVector2Array(-4, -2, 4, -2, 4, 18, 3, 22, 3, 42, -3, 42, -3, 22, -4, 18)
+[node name="WoodenSpoon" type="Polygon2D" parent="ArmR/ForearmR/HandR"]
+z_index = 1
+position = Vector2(0, 4)
+color = Color(0.6, 0.4, 0.2, 1)
+polygon = PackedVector2Array(-2, -18, 2, -18, 2, 2, 4, 4, 4, 9, 2, 12, -2, 12, -4, 9, -4, 4, -2, 2)
 
-[node name="ShoeL" type="Polygon2D" parent="LegL"]
-position = Vector2(0, 42)
-color = Color(0.25, 0.15, 0.08, 1)
-polygon = PackedVector2Array(-4, 0, 4, 0, 5, 3, 4, 6, -4, 6, -5, 3)
+[node name="WoodenSpoonHi" type="Polygon2D" parent="ArmR/ForearmR/HandR/WoodenSpoon"]
+color = Color(0.74, 0.54, 0.32, 1)
+polygon = PackedVector2Array(-1, -17, 0, -17, 0, 1, -1, 1)
+
+[node name="WoodenSpoonInk" type="Line2D" parent="ArmR/ForearmR/HandR/WoodenSpoon"]
+points = PackedVector2Array(-2, -18, 2, -18, 2, 2, 4, 4, 4, 9, 2, 12, -2, 12, -4, 9, -4, 4, -2, 2)
+closed = true
+width = 2.5
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="HandRInk" type="Line2D" parent="ArmR/ForearmR/HandR"]
+points = PackedVector2Array(-4, 0, 4, 0, 6, 2, 6, 5, 5, 8, 3, 10, 1, 10, -1, 10, -3, 10, -5, 8, -6, 5, -6, 2)
+closed = true
+width = 2.5
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
 
 [node name="LegR" type="Polygon2D" parent="."]
 z_index = 1
 position = Vector2(8, -4)
 color = Color(0.3, 0.2, 0.12, 1)
-polygon = PackedVector2Array(-4, -2, 4, -2, 4, 18, 3, 22, 3, 42, -3, 42, -3, 22, -4, 18)
+polygon = PackedVector2Array(-4, -2, 4, -2, 4, 12, 3, 20, -3, 20, -4, 12)
 
-[node name="ShoeR" type="Polygon2D" parent="LegR"]
-position = Vector2(0, 42)
+[node name="LegRInk" type="Line2D" parent="LegR"]
+points = PackedVector2Array(-4, -2, 4, -2, 4, 12, 3, 20, -3, 20, -4, 12)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="ShinR" type="Polygon2D" parent="LegR"]
+position = Vector2(0, 20)
+color = Color(0.3, 0.2, 0.12, 1)
+polygon = PackedVector2Array(-3, -2, 3, -2, 3, 14, 2, 22, -2, 22, -3, 14)
+
+[node name="ShinRShadow" type="Polygon2D" parent="LegR/ShinR"]
+color = Color(0.222, 0.148, 0.089, 1)
+polygon = PackedVector2Array(0, -2, 3, -2, 3, 14, 2, 22, 0, 22)
+
+[node name="ShinRInk" type="Line2D" parent="LegR/ShinR"]
+points = PackedVector2Array(-3, -2, 3, -2, 3, 14, 2, 22, -2, 22, -3, 14)
+closed = true
+width = 3.5
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="FootR" type="Polygon2D" parent="LegR/ShinR"]
+position = Vector2(0, 22)
 color = Color(0.25, 0.15, 0.08, 1)
-polygon = PackedVector2Array(-4, 0, 4, 0, 5, 3, 4, 6, -4, 6, -5, 3)
+polygon = PackedVector2Array(-4, 0, 3, 0, 6, 2, 8, 5, 8, 8, -4, 8, -5, 5, -5, 2)
+
+[node name="FootRInk" type="Line2D" parent="LegR/ShinR/FootR"]
+points = PackedVector2Array(-4, 0, 3, 0, 6, 2, 8, 5, 8, 8, -4, 8, -5, 5, -5, 2)
+closed = true
+width = 3.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+;========================================================================
+; LABEL + COLLISION (sizes / positions / disabled flags UNCHANGED).
+;========================================================================
 
 [node name="NameLabel" type="Label" parent="."]
 offset_left = -41.0
@@ -218,14 +595,48 @@ position = Vector2(25, -20)
 shape = SubResource("RectangleShape2D_kick")
 disabled = true
 
+;========================================================================
+; COMIC IMPACT FX (visible=false; toggled by C#). Pop-art bursts.
+;========================================================================
+
 [node name="PunchEffect" type="Polygon2D" parent="."]
 visible = false
+z_index = 6
 position = Vector2(30, -60)
-color = Color(1, 0.95, 0.2, 0.9)
-polygon = PackedVector2Array(0, -14, 4, -5, 13, -4, 6, 2, 8, 11, 0, 6, -8, 11, -6, 2, -13, -4, -4, -5)
+color = Color(1.0, 0.95, 0.45, 0.95)
+polygon = PackedVector2Array(0, -16, 4, -6, 15, -5, 7, 2, 10, 13, 0, 7, -10, 13, -7, 2, -15, -5, -4, -6)
+
+[node name="PunchEffectInk" type="Line2D" parent="PunchEffect"]
+points = PackedVector2Array(0, -16, 4, -6, 15, -5, 7, 2, 10, 13, 0, 7, -10, 13, -7, 2, -15, -5, -4, -6)
+closed = true
+width = 3.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="PunchEffectCore" type="Polygon2D" parent="PunchEffect"]
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(0, -7, 5, 0, 0, 6, -5, 0)
 
 [node name="KickEffect" type="Polygon2D" parent="."]
 visible = false
+z_index = 6
 position = Vector2(25, -20)
-color = Color(1, 0.6, 0.1, 0.9)
-polygon = PackedVector2Array(0, -16, 12, 0, 0, 16, -12, 0)
+color = Color(1.0, 0.6, 0.12, 0.95)
+polygon = PackedVector2Array(0, -18, 6, -6, 18, -4, 8, 3, 11, 16, 0, 8, -11, 16, -8, 3, -18, -4, -6, -6)
+
+[node name="KickEffectInk" type="Line2D" parent="KickEffect"]
+points = PackedVector2Array(0, -18, 6, -6, 18, -4, 8, 3, 11, 16, 0, 8, -11, 16, -8, 3, -18, -4, -6, -6)
+closed = true
+width = 3.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="KickEffectCore" type="Polygon2D" parent="KickEffect"]
+color = Color(0.8, 0.1, 0.13, 1)
+polygon = PackedVector2Array(0, -8, 6, 0, 0, 7, -6, 0)

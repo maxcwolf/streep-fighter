@@ -1,6 +1,7 @@
-[gd_scene load_steps=13 format=3 uid="uid://stage01"]
+[gd_scene load_steps=14 format=3 uid="uid://stage01"]
 
 [ext_resource type="Script" path="res://Scripts/Managers/GameManager.cs" id="1_gm"]
+[ext_resource type="Script" path="res://Scripts/Effects/CameraShake.cs" id="11_cam"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/FightHUD.tscn" id="2_hud"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/VictoryScreen.tscn" id="3_victory"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/PauseMenu.tscn" id="4_pause"]
@@ -83,6 +84,11 @@ layer = 10
 [node name="VictoryScreen" parent="HUDLayer" instance=ExtResource("3_victory")]
 
 [node name="PauseMenu" parent="HUDLayer" instance=ExtResource("4_pause")]
+
+[node name="Camera" type="Camera2D" parent="."]
+position = Vector2(640, 360)
+enabled = true
+script = ExtResource("11_cam")
 
 [node name="GameManager" type="Node" parent="."]
 script = ExtResource("1_gm")

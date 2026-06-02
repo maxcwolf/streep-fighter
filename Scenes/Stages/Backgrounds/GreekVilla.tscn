@@ -1,281 +1,793 @@
-[gd_scene format=3 uid="uid://dqn6pc0y4iq2y"]
+[gd_scene load_steps=3 format=3 uid="uid://dqn6pc0y4iq2y"]
 
-[ext_resource type="Shader" uid="uid://gtfmotxid4yv" path="res://Shaders/pixelate.gdshader" id="1"]
+; GreekVilla — Mamma Mia! / Kalokairi. Cel-shaded comic rebuild.
+; Light source: upper-left (warm golden sun low on the horizon).
+; Depth bands: backdrop -20..-15, mid -14..-8, near/floor -7..-4. Fighters live at z 0.
+; Pixelate shader REMOVED. Sunset sky carries a Ben-Day halftone accent.
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_1"]
+[ext_resource type="Shader" uid="uid://gtfmotxid4yv" path="res://Shaders/halftone.gdshader" id="1"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_halftone"]
 shader = ExtResource("1")
-shader_parameter/pixel_size = 4.0
+shader_parameter/dot_size = 11.0
+shader_parameter/angle = 0.45
+shader_parameter/tint = Color(0.99, 0.62, 0.32, 0.55)
+shader_parameter/bg = Color(0.99, 0.82, 0.45, 0.0)
+shader_parameter/softness = 0.45
+shader_parameter/density = 0.55
 
-[node name="GreekVilla" type="CanvasGroup" unique_id=932212797]
-material = SubResource("ShaderMaterial_1")
+[node name="GreekVilla" type="CanvasGroup"]
 
-[node name="Sky" type="ColorRect" parent="." unique_id=1939972335]
-z_index = -10
+;========================================================================
+; BACKDROP BAND  (z -20 .. -15)  — sky gradient, halftone, sun, sea, hills
+;========================================================================
+
+[node name="SkyTop" type="ColorRect" parent="."]
+z_index = -20
 offset_right = 1280.0
-offset_bottom = 250.0
-color = Color(0.95, 0.6, 0.35, 1)
+offset_bottom = 200.0
+color = Color(0.36, 0.62, 0.86, 1)
 
-[node name="SkyGradient" type="ColorRect" parent="." unique_id=1380626967]
-z_index = -10
-offset_top = 250.0
+[node name="SkyMid" type="ColorRect" parent="."]
+z_index = -20
+offset_top = 160.0
 offset_right = 1280.0
-offset_bottom = 350.0
-color = Color(0.85, 0.5, 0.35, 1)
+offset_bottom = 320.0
+color = Color(0.99, 0.74, 0.5, 1)
 
-[node name="CloudL" type="Polygon2D" parent="." unique_id=1346410274]
-z_index = -9
-color = Color(0.98, 0.75, 0.5, 0.4)
-polygon = PackedVector2Array(100, 80, 130, 68, 165, 64, 200, 68, 220, 78, 225, 90, 218, 98, 195, 102, 160, 104, 125, 100, 100, 92)
+[node name="SkyLow" type="ColorRect" parent="."]
+z_index = -20
+offset_top = 300.0
+offset_right = 1280.0
+offset_bottom = 392.0
+color = Color(1.0, 0.85, 0.5, 1)
 
-[node name="CloudR" type="Polygon2D" parent="." unique_id=433936698]
-z_index = -9
-color = Color(0.98, 0.75, 0.5, 0.35)
-polygon = PackedVector2Array(900, 110, 925, 100, 955, 96, 985, 100, 1005, 108, 1010, 118, 1003, 125, 980, 128, 950, 130, 920, 126, 900, 120)
+; Ben-Day halftone wash over the sunset — instant comic. Screen-anchored dots.
+[node name="SkyHalftone" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_halftone")
+z_index = -19
+offset_right = 1280.0
+offset_bottom = 392.0
+color = Color(1, 1, 1, 1)
 
-[node name="CloudC" type="Polygon2D" parent="." unique_id=1326236439]
-z_index = -9
-color = Color(0.98, 0.78, 0.55, 0.3)
-polygon = PackedVector2Array(500, 50, 520, 42, 545, 38, 570, 42, 585, 50, 590, 58, 583, 65, 560, 68, 535, 70, 515, 66, 500, 60)
+; Big warm sun glow + disc, low and to the left of center (upper-left light feel)
+[node name="SunGlow" type="Polygon2D" parent="."]
+z_index = -18
+color = Color(1.0, 0.93, 0.62, 0.5)
+polygon = PackedVector2Array(360, 250, 540, 100, 720, 80, 880, 130, 960, 250, 940, 360, 760, 410, 560, 410, 400, 350)
 
-[node name="Sea" type="ColorRect" parent="." unique_id=2080146330]
-z_index = -10
-offset_top = 350.0
+[node name="Sun" type="Polygon2D" parent="."]
+z_index = -17
+color = Color(1.0, 0.92, 0.5, 1)
+polygon = PackedVector2Array(560, 280, 575, 200, 615, 150, 680, 132, 745, 150, 785, 200, 800, 280, 785, 350, 745, 392, 680, 392, 615, 392, 575, 350)
+
+[node name="SunCore" type="Polygon2D" parent="."]
+z_index = -16
+color = Color(1.0, 0.98, 0.82, 1)
+polygon = PackedVector2Array(610, 270, 625, 205, 680, 178, 735, 205, 750, 270, 735, 335, 680, 360, 625, 335)
+
+[node name="SunInk" type="Line2D" parent="."]
+z_index = -16
+points = PackedVector2Array(560, 280, 575, 200, 615, 150, 680, 132, 745, 150, 785, 200, 800, 280, 785, 350, 745, 392, 615, 392, 575, 350)
+closed = true
+width = 4.0
+default_color = Color(0.86, 0.4, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+; Distant island headlands on the horizon
+[node name="HeadlandL" type="Polygon2D" parent="."]
+z_index = -16
+color = Color(0.42, 0.5, 0.66, 1)
+polygon = PackedVector2Array(0, 392, 0, 350, 70, 332, 150, 344, 230, 330, 320, 350, 360, 392)
+
+[node name="HeadlandLShadow" type="Polygon2D" parent="."]
+z_index = -16
+color = Color(0.31, 0.37, 0.49, 1)
+polygon = PackedVector2Array(150, 344, 230, 330, 320, 350, 360, 392, 200, 392)
+
+[node name="HeadlandLInk" type="Line2D" parent="."]
+z_index = -15
+points = PackedVector2Array(0, 350, 70, 332, 150, 344, 230, 330, 320, 350, 360, 392)
+width = 3.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="HeadlandR" type="Polygon2D" parent="."]
+z_index = -16
+color = Color(0.45, 0.52, 0.68, 1)
+polygon = PackedVector2Array(980, 392, 1010, 352, 1090, 336, 1180, 348, 1280, 338, 1280, 392)
+
+[node name="HeadlandRShadow" type="Polygon2D" parent="."]
+z_index = -16
+color = Color(0.33, 0.38, 0.5, 1)
+polygon = PackedVector2Array(1090, 336, 1180, 348, 1280, 338, 1280, 392, 1120, 392)
+
+[node name="HeadlandRInk" type="Line2D" parent="."]
+z_index = -15
+points = PackedVector2Array(980, 392, 1010, 352, 1090, 336, 1180, 348, 1280, 338)
+width = 3.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+; Aegean sea band
+[node name="Sea" type="ColorRect" parent="."]
+z_index = -16
+offset_top = 380.0
 offset_right = 1280.0
 offset_bottom = 500.0
-color = Color(0.15, 0.55, 0.7, 1)
+color = Color(0.13, 0.52, 0.72, 1)
 
-[node name="Floor" type="ColorRect" parent="." unique_id=643315957]
+[node name="SeaShadow" type="ColorRect" parent="."]
+z_index = -16
+offset_top = 460.0
+offset_right = 1280.0
+offset_bottom = 500.0
+color = Color(0.1, 0.39, 0.55, 1)
+
+; Glittering sun-path on the water, straight down from the sun
+[node name="SunPath" type="Polygon2D" parent="."]
+z_index = -15
+color = Color(1.0, 0.9, 0.6, 0.55)
+polygon = PackedVector2Array(640, 380, 720, 380, 770, 500, 590, 500)
+
+[node name="SeaWave1" type="Line2D" parent="."]
+z_index = -15
+points = PackedVector2Array(0, 398, 90, 392, 180, 400, 270, 391, 360, 399, 450, 390, 540, 399, 630, 391, 720, 398, 810, 390, 900, 399, 990, 391, 1080, 399, 1170, 391, 1280, 398)
+width = 5.0
+default_color = Color(0.6, 0.85, 0.95, 0.85)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="SeaWave2" type="Line2D" parent="."]
+z_index = -15
+points = PackedVector2Array(0, 428, 100, 421, 200, 430, 300, 420, 400, 430, 500, 421, 600, 430, 700, 420, 800, 430, 900, 421, 1000, 430, 1100, 420, 1200, 430, 1280, 425)
+width = 5.0
+default_color = Color(0.46, 0.74, 0.86, 0.8)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="SeaWave3" type="Line2D" parent="."]
+z_index = -15
+points = PackedVector2Array(0, 466, 110, 460, 220, 468, 330, 459, 440, 468, 550, 459, 660, 468, 770, 459, 880, 468, 990, 459, 1100, 468, 1210, 459, 1280, 464)
+width = 5.0
+default_color = Color(0.3, 0.6, 0.74, 0.8)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+; A little white sailboat far out on the water (kept off-center, to the left)
+[node name="BoatHull" type="Polygon2D" parent="."]
+z_index = -15
+color = Color(0.95, 0.94, 0.9, 1)
+polygon = PackedVector2Array(300, 432, 360, 432, 352, 448, 308, 448)
+
+[node name="BoatHullInk" type="Line2D" parent="."]
+z_index = -15
+points = PackedVector2Array(300, 432, 360, 432, 352, 448, 308, 448)
+closed = true
+width = 2.5
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+antialiased = true
+
+[node name="BoatSail" type="Polygon2D" parent="."]
+z_index = -15
+color = Color(1.0, 0.98, 0.95, 1)
+polygon = PackedVector2Array(330, 404, 348, 430, 330, 430)
+
+[node name="BoatSailInk" type="Line2D" parent="."]
+z_index = -15
+points = PackedVector2Array(330, 404, 348, 430, 330, 430)
+closed = true
+width = 2.5
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+antialiased = true
+
+;========================================================================
+; MID BAND  (z -14 .. -8)  — Cycladic buildings, blue dome, plants (edges)
+;========================================================================
+
+; --- Blue-domed church far back center-left, kept high so center stays open ---
+[node name="DomeBase" type="Polygon2D" parent="."]
+z_index = -14
+color = Color(0.95, 0.95, 0.93, 1)
+polygon = PackedVector2Array(150, 392, 270, 392, 270, 300, 150, 300)
+
+[node name="DomeBaseShadow" type="Polygon2D" parent="."]
+z_index = -13
+color = Color(0.7, 0.7, 0.69, 1)
+polygon = PackedVector2Array(230, 392, 270, 392, 270, 300, 230, 300)
+
+[node name="DomeBaseInk" type="Line2D" parent="."]
+z_index = -12
+points = PackedVector2Array(150, 392, 150, 300, 270, 300, 270, 392)
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="Dome" type="Polygon2D" parent="."]
+z_index = -13
+color = Color(0.16, 0.46, 0.78, 1)
+polygon = PackedVector2Array(150, 300, 162, 262, 188, 238, 210, 232, 232, 238, 258, 262, 270, 300)
+
+[node name="DomeShadow" type="Polygon2D" parent="."]
+z_index = -13
+color = Color(0.12, 0.34, 0.58, 1)
+polygon = PackedVector2Array(210, 232, 232, 238, 258, 262, 270, 300, 210, 300)
+
+[node name="DomeHi" type="Polygon2D" parent="."]
+z_index = -13
+color = Color(0.45, 0.68, 0.92, 1)
+polygon = PackedVector2Array(162, 262, 188, 238, 196, 244, 176, 268, 156, 290)
+
+[node name="DomeInk" type="Line2D" parent="."]
+z_index = -12
+points = PackedVector2Array(150, 300, 162, 262, 188, 238, 210, 232, 232, 238, 258, 262, 270, 300)
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="DomeCross" type="Polygon2D" parent="."]
+z_index = -13
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(207, 212, 213, 212, 213, 224, 222, 224, 222, 229, 213, 229, 213, 232, 207, 232, 207, 229, 198, 229, 198, 224, 207, 224)
+
+[node name="DomeCrossInk" type="Line2D" parent="."]
+z_index = -12
+points = PackedVector2Array(207, 212, 213, 212, 213, 224, 222, 224, 222, 229, 213, 229, 213, 232, 207, 232, 207, 229, 198, 229, 198, 224, 207, 224)
+closed = true
+width = 2.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+antialiased = true
+
+; --- LEFT white villa block ---
+[node name="VillaL" type="Polygon2D" parent="."]
+z_index = -12
+color = Color(0.97, 0.96, 0.93, 1)
+polygon = PackedVector2Array(0, 500, 0, 250, 240, 250, 240, 500)
+
+[node name="VillaLShadow" type="Polygon2D" parent="."]
+z_index = -11
+color = Color(0.72, 0.71, 0.69, 1)
+polygon = PackedVector2Array(200, 250, 240, 250, 240, 500, 200, 500)
+
+[node name="VillaLRoofShadow" type="Polygon2D" parent="."]
+z_index = -11
+color = Color(0.84, 0.83, 0.8, 1)
+polygon = PackedVector2Array(0, 250, 240, 250, 240, 272, 0, 272)
+
+[node name="VillaLInk" type="Line2D" parent="."]
 z_index = -9
+points = PackedVector2Array(0, 250, 240, 250, 240, 500)
+width = 5.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+; Left villa upper window (blue shutters)
+[node name="VillaLWin" type="Polygon2D" parent="."]
+z_index = -11
+color = Color(0.22, 0.46, 0.66, 1)
+polygon = PackedVector2Array(70, 310, 130, 310, 130, 380, 70, 380)
+
+[node name="VillaLWinShadow" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.16, 0.34, 0.49, 1)
+polygon = PackedVector2Array(106, 310, 130, 310, 130, 380, 106, 380)
+
+[node name="VillaLWinInk" type="Line2D" parent="."]
+z_index = -10
+points = PackedVector2Array(70, 310, 130, 310, 130, 380, 70, 380)
+closed = true
+width = 3.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+antialiased = true
+
+[node name="VillaLWinBar" type="Line2D" parent="."]
+z_index = -10
+points = PackedVector2Array(100, 310, 100, 380, 70, 345, 130, 345)
+width = 2.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+antialiased = true
+
+; Left villa door (deep blue, arched)
+[node name="VillaLDoor" type="Polygon2D" parent="."]
+z_index = -11
+color = Color(0.18, 0.4, 0.62, 1)
+polygon = PackedVector2Array(150, 500, 150, 430, 162, 412, 188, 412, 200, 430, 200, 500)
+
+[node name="VillaLDoorShadow" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.13, 0.3, 0.46, 1)
+polygon = PackedVector2Array(178, 412, 188, 412, 200, 430, 200, 500, 178, 500)
+
+[node name="VillaLDoorInk" type="Line2D" parent="."]
+z_index = -10
+points = PackedVector2Array(150, 500, 150, 430, 162, 412, 188, 412, 200, 430, 200, 500)
+width = 3.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+; --- RIGHT white villa block (two storeys, stepped) ---
+[node name="VillaR" type="Polygon2D" parent="."]
+z_index = -12
+color = Color(0.98, 0.97, 0.94, 1)
+polygon = PackedVector2Array(1040, 500, 1040, 230, 1180, 230, 1180, 320, 1280, 320, 1280, 500)
+
+[node name="VillaRShadow" type="Polygon2D" parent="."]
+z_index = -11
+color = Color(0.73, 0.72, 0.7, 1)
+polygon = PackedVector2Array(1140, 230, 1180, 230, 1180, 320, 1280, 320, 1280, 500, 1140, 500)
+
+[node name="VillaRRoofShadow" type="Polygon2D" parent="."]
+z_index = -11
+color = Color(0.85, 0.84, 0.81, 1)
+polygon = PackedVector2Array(1040, 230, 1180, 230, 1180, 250, 1040, 250)
+
+[node name="VillaRInk" type="Line2D" parent="."]
+z_index = -9
+points = PackedVector2Array(1040, 500, 1040, 230, 1180, 230, 1180, 320, 1280, 320)
+width = 5.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+; Right villa windows
+[node name="VillaRWin1" type="Polygon2D" parent="."]
+z_index = -11
+color = Color(0.22, 0.46, 0.66, 1)
+polygon = PackedVector2Array(1070, 300, 1120, 300, 1120, 364, 1070, 364)
+
+[node name="VillaRWin1Shadow" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.16, 0.34, 0.49, 1)
+polygon = PackedVector2Array(1100, 300, 1120, 300, 1120, 364, 1100, 364)
+
+[node name="VillaRWin1Ink" type="Line2D" parent="."]
+z_index = -10
+points = PackedVector2Array(1070, 300, 1120, 300, 1120, 364, 1070, 364)
+closed = true
+width = 3.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+antialiased = true
+
+[node name="VillaRWin2" type="Polygon2D" parent="."]
+z_index = -11
+color = Color(0.22, 0.46, 0.66, 1)
+polygon = PackedVector2Array(1200, 360, 1250, 360, 1250, 424, 1200, 424)
+
+[node name="VillaRWin2Shadow" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.16, 0.34, 0.49, 1)
+polygon = PackedVector2Array(1230, 360, 1250, 360, 1250, 424, 1230, 424)
+
+[node name="VillaRWin2Ink" type="Line2D" parent="."]
+z_index = -10
+points = PackedVector2Array(1200, 360, 1250, 360, 1250, 424, 1200, 424)
+closed = true
+width = 3.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+antialiased = true
+
+; Right villa door
+[node name="VillaRDoor" type="Polygon2D" parent="."]
+z_index = -11
+color = Color(0.18, 0.4, 0.62, 1)
+polygon = PackedVector2Array(1090, 500, 1090, 432, 1102, 414, 1128, 414, 1140, 432, 1140, 500)
+
+[node name="VillaRDoorShadow" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.13, 0.3, 0.46, 1)
+polygon = PackedVector2Array(1118, 414, 1128, 414, 1140, 432, 1140, 500, 1118, 500)
+
+[node name="VillaRDoorInk" type="Line2D" parent="."]
+z_index = -10
+points = PackedVector2Array(1090, 500, 1090, 432, 1102, 414, 1128, 414, 1140, 432, 1140, 500)
+width = 3.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+; --- Bougainvillea cascading off the LEFT villa roof ---
+[node name="BougieLLeaves" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.22, 0.5, 0.24, 1)
+polygon = PackedVector2Array(20, 250, 70, 240, 110, 256, 120, 300, 96, 350, 60, 360, 28, 330, 18, 290)
+
+[node name="BougieL" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.86, 0.16, 0.46, 1)
+polygon = PackedVector2Array(10, 248, 56, 234, 96, 246, 116, 286, 100, 332, 64, 358, 30, 346, 8, 300, 4, 270)
+
+[node name="BougieLShadow" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.64, 0.12, 0.34, 1)
+polygon = PackedVector2Array(96, 246, 116, 286, 100, 332, 64, 358, 60, 320, 80, 286)
+
+[node name="BougieLHi" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.97, 0.45, 0.66, 1)
+polygon = PackedVector2Array(10, 248, 56, 234, 70, 250, 40, 262, 14, 280)
+
+[node name="BougieLInk" type="Line2D" parent="."]
+z_index = -8
+points = PackedVector2Array(10, 248, 56, 234, 96, 246, 116, 286, 100, 332, 64, 358, 30, 346, 8, 300, 4, 270)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+; --- Bougainvillea cascading off the RIGHT villa ---
+[node name="BougieRLeaves" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.22, 0.5, 0.24, 1)
+polygon = PackedVector2Array(1170, 235, 1220, 226, 1262, 244, 1270, 290, 1248, 340, 1212, 352, 1180, 322, 1168, 280)
+
+[node name="BougieR" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.86, 0.16, 0.46, 1)
+polygon = PackedVector2Array(1180, 232, 1226, 220, 1266, 234, 1276, 280, 1262, 326, 1224, 350, 1190, 338, 1172, 290, 1170, 258)
+
+[node name="BougieRShadow" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.64, 0.12, 0.34, 1)
+polygon = PackedVector2Array(1266, 234, 1276, 280, 1262, 326, 1224, 350, 1224, 308, 1244, 270)
+
+[node name="BougieRHi" type="Polygon2D" parent="."]
+z_index = -9
+color = Color(0.97, 0.45, 0.66, 1)
+polygon = PackedVector2Array(1180, 232, 1226, 220, 1240, 236, 1206, 248, 1184, 264)
+
+[node name="BougieRInk" type="Line2D" parent="."]
+z_index = -8
+points = PackedVector2Array(1180, 232, 1226, 220, 1266, 234, 1276, 280, 1262, 326, 1224, 350, 1190, 338, 1172, 290, 1170, 258)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+;========================================================================
+; TAVERNA STRING LIGHTS  (z -8)  — strung high across the top, edges-in
+;========================================================================
+
+[node name="StringWire" type="Line2D" parent="."]
+z_index = -8
+points = PackedVector2Array(0, 120, 160, 168, 360, 196, 640, 206, 920, 196, 1120, 168, 1280, 120)
+width = 3.0
+default_color = Color(0.12, 0.1, 0.08, 1)
+joint_mode = 2
+antialiased = true
+
+[node name="Bulb0" type="Polygon2D" parent="."]
+z_index = -8
+position = Vector2(110, 156)
+color = Color(1.0, 0.92, 0.45, 1)
+polygon = PackedVector2Array(-7, 0, -5, -6, 0, -8, 5, -6, 7, 0, 5, 7, 0, 9, -5, 7)
+
+[node name="Bulb1" type="Polygon2D" parent="."]
+z_index = -8
+position = Vector2(280, 188)
+color = Color(0.96, 0.5, 0.3, 1)
+polygon = PackedVector2Array(-7, 0, -5, -6, 0, -8, 5, -6, 7, 0, 5, 7, 0, 9, -5, 7)
+
+[node name="Bulb2" type="Polygon2D" parent="."]
+z_index = -8
+position = Vector2(470, 202)
+color = Color(0.45, 0.78, 0.95, 1)
+polygon = PackedVector2Array(-7, 0, -5, -6, 0, -8, 5, -6, 7, 0, 5, 7, 0, 9, -5, 7)
+
+[node name="Bulb3" type="Polygon2D" parent="."]
+z_index = -8
+position = Vector2(640, 207)
+color = Color(1.0, 0.92, 0.45, 1)
+polygon = PackedVector2Array(-7, 0, -5, -6, 0, -8, 5, -6, 7, 0, 5, 7, 0, 9, -5, 7)
+
+[node name="Bulb4" type="Polygon2D" parent="."]
+z_index = -8
+position = Vector2(810, 202)
+color = Color(0.96, 0.5, 0.3, 1)
+polygon = PackedVector2Array(-7, 0, -5, -6, 0, -8, 5, -6, 7, 0, 5, 7, 0, 9, -5, 7)
+
+[node name="Bulb5" type="Polygon2D" parent="."]
+z_index = -8
+position = Vector2(1000, 188)
+color = Color(0.45, 0.78, 0.95, 1)
+polygon = PackedVector2Array(-7, 0, -5, -6, 0, -8, 5, -6, 7, 0, 5, 7, 0, 9, -5, 7)
+
+[node name="Bulb6" type="Polygon2D" parent="."]
+z_index = -8
+position = Vector2(1170, 156)
+color = Color(1.0, 0.92, 0.45, 1)
+polygon = PackedVector2Array(-7, 0, -5, -6, 0, -8, 5, -6, 7, 0, 5, 7, 0, 9, -5, 7)
+
+;========================================================================
+; NEAR / FLOOR BAND  (z -7 .. -4)  — terrace, marble flagstones, pots
+;========================================================================
+
+; Terrace stone floor (surface reads at y=500)
+[node name="Floor" type="ColorRect" parent="."]
+z_index = -7
 offset_top = 500.0
 offset_right = 1280.0
 offset_bottom = 720.0
-color = Color(0.88, 0.82, 0.72, 1)
+color = Color(0.93, 0.88, 0.78, 1)
 
-[node name="FloorAccent" type="ColorRect" parent="." unique_id=1056710926]
-z_index = -8
+; Warm directional cast across the boards from the upper-left sun
+[node name="FloorSunWarmth" type="Polygon2D" parent="."]
+z_index = -7
+color = Color(1.0, 0.86, 0.5, 0.28)
+polygon = PackedVector2Array(0, 500, 560, 500, 360, 720, 0, 720)
+
+; Cool ambient shadow on the lower-right of the floor (light is upper-left)
+[node name="FloorShadow" type="Polygon2D" parent="."]
+z_index = -7
+color = Color(0.7, 0.66, 0.58, 1)
+polygon = PackedVector2Array(820, 500, 1280, 500, 1280, 720, 980, 720)
+
+; Bright leading edge of the terrace where it meets the sea wall
+[node name="FloorEdge" type="ColorRect" parent="."]
+z_index = -6
 offset_top = 496.0
 offset_right = 1280.0
-offset_bottom = 504.0
-color = Color(0.95, 0.78, 0.15, 1)
+offset_bottom = 502.0
+color = Color(0.99, 0.78, 0.32, 1)
 
-[node name="FloorTile1" type="Polygon2D" parent="." unique_id=1130136340]
-z_index = -8
-color = Color(0.82, 0.76, 0.66, 1)
-polygon = PackedVector2Array(0, 520, 100, 520, 100, 620, 0, 620)
-
-[node name="FloorTile2" type="Polygon2D" parent="." unique_id=143701372]
-z_index = -8
-color = Color(0.82, 0.76, 0.66, 1)
-polygon = PackedVector2Array(200, 520, 300, 520, 300, 620, 200, 620)
-
-[node name="FloorTile3" type="Polygon2D" parent="." unique_id=229983645]
-z_index = -8
-color = Color(0.82, 0.76, 0.66, 1)
-polygon = PackedVector2Array(400, 520, 500, 520, 500, 620, 400, 620)
-
-[node name="FloorTile4" type="Polygon2D" parent="." unique_id=1050310073]
-z_index = -8
-color = Color(0.82, 0.76, 0.66, 1)
-polygon = PackedVector2Array(600, 520, 700, 520, 700, 620, 600, 620)
-
-[node name="FloorTile5" type="Polygon2D" parent="." unique_id=538709432]
-z_index = -8
-color = Color(0.82, 0.76, 0.66, 1)
-polygon = PackedVector2Array(800, 520, 900, 520, 900, 620, 800, 620)
-
-[node name="FloorTile6" type="Polygon2D" parent="." unique_id=1799334949]
-z_index = -8
-color = Color(0.82, 0.76, 0.66, 1)
-polygon = PackedVector2Array(1000, 520, 1100, 520, 1100, 620, 1000, 620)
-
-[node name="FloorTile7" type="Polygon2D" parent="." unique_id=1088917993]
-z_index = -8
-color = Color(0.82, 0.76, 0.66, 1)
-polygon = PackedVector2Array(1200, 520, 1280, 520, 1280, 620, 1200, 620)
-
-[node name="Sun" type="Polygon2D" parent="." unique_id=610012715]
-z_index = -9
-color = Color(1, 0.85, 0.4, 0.9)
-polygon = PackedVector2Array(620, 100, 636, 85, 660, 78, 684, 85, 700, 100, 706, 124, 700, 148, 684, 163, 660, 170, 636, 163, 620, 148, 614, 124)
-
-[node name="SeaWave1" type="Polygon2D" parent="." unique_id=1422169683]
-z_index = -9
-color = Color(0.12, 0.48, 0.62, 1)
-polygon = PackedVector2Array(0, 380, 80, 375, 160, 382, 240, 374, 320, 380, 400, 373, 480, 381, 560, 374, 640, 379, 720, 372, 800, 380, 880, 373, 960, 381, 1040, 374, 1120, 380, 1200, 373, 1280, 380, 1280, 395, 0, 395)
-
-[node name="SeaWave2" type="Polygon2D" parent="." unique_id=990553402]
-z_index = -9
-color = Color(0.18, 0.52, 0.66, 1)
-polygon = PackedVector2Array(0, 410, 100, 405, 200, 412, 300, 404, 400, 410, 500, 403, 600, 411, 700, 404, 800, 410, 900, 403, 1000, 411, 1100, 404, 1200, 410, 1280, 406, 1280, 420, 0, 420)
-
-[node name="Boat" type="Polygon2D" parent="." unique_id=1583082989]
-z_index = -8
-color = Color(0.45, 0.3, 0.18, 1)
-polygon = PackedVector2Array(380, 440, 420, 440, 430, 460, 370, 460)
-
-[node name="BoatMast" type="Polygon2D" parent="." unique_id=1835990375]
-z_index = -8
-color = Color(0.4, 0.28, 0.15, 1)
-polygon = PackedVector2Array(399, 410, 401, 410, 401, 440, 399, 440)
-
-[node name="BoatSail" type="Polygon2D" parent="." unique_id=1653968261]
-z_index = -8
-color = Color(0.95, 0.92, 0.88, 0.8)
-polygon = PackedVector2Array(401, 415, 418, 430, 401, 438)
-
-[node name="BuildingL" type="Polygon2D" parent="." unique_id=591431795]
-z_index = -8
-color = Color(0.95, 0.94, 0.92, 1)
-polygon = PackedVector2Array(40, 500, 240, 500, 240, 200, 40, 200)
-
-[node name="BuildingLDoor" type="Polygon2D" parent="." unique_id=706519299]
-z_index = -7
-color = Color(0.3, 0.5, 0.7, 1)
-polygon = PackedVector2Array(110, 500, 170, 500, 170, 400, 140, 390, 110, 400)
-
-[node name="BuildingLDoorStep" type="Polygon2D" parent="." unique_id=1494741788]
-z_index = -6
-color = Color(0.85, 0.82, 0.78, 1)
-polygon = PackedVector2Array(105, 498, 175, 498, 175, 508, 105, 508)
-
-[node name="BuildingLWindow1" type="Polygon2D" parent="." unique_id=1965230929]
-z_index = -7
-color = Color(0.3, 0.5, 0.7, 1)
-polygon = PackedVector2Array(70, 280, 120, 280, 120, 340, 70, 340)
-
-[node name="BuildingLShutterL1" type="Polygon2D" parent="." unique_id=1607075537]
-z_index = -6
-color = Color(0.2, 0.4, 0.6, 1)
-polygon = PackedVector2Array(60, 278, 72, 278, 72, 342, 60, 342)
-
-[node name="BuildingLShutterR1" type="Polygon2D" parent="." unique_id=726480845]
-z_index = -6
-color = Color(0.2, 0.4, 0.6, 1)
-polygon = PackedVector2Array(118, 278, 130, 278, 130, 342, 118, 342)
-
-[node name="BuildingLWindow2" type="Polygon2D" parent="." unique_id=1614881272]
-z_index = -7
-color = Color(0.3, 0.5, 0.7, 1)
-polygon = PackedVector2Array(160, 280, 210, 280, 210, 340, 160, 340)
-
-[node name="BuildingLShutterL2" type="Polygon2D" parent="." unique_id=1368820377]
-z_index = -6
-color = Color(0.2, 0.4, 0.6, 1)
-polygon = PackedVector2Array(150, 278, 162, 278, 162, 342, 150, 342)
-
-[node name="BuildingLShutterR2" type="Polygon2D" parent="." unique_id=858636318]
-z_index = -6
-color = Color(0.2, 0.4, 0.6, 1)
-polygon = PackedVector2Array(208, 278, 220, 278, 220, 342, 208, 342)
-
-[node name="PottedPlantL" type="Polygon2D" parent="." unique_id=257352179]
-z_index = -6
-color = Color(0.65, 0.35, 0.2, 1)
-polygon = PackedVector2Array(55, 478, 75, 478, 78, 500, 52, 500)
-
-[node name="PottedPlantLLeaves" type="Polygon2D" parent="." unique_id=432668815]
+[node name="FloorEdgeInk" type="Line2D" parent="."]
 z_index = -5
-color = Color(0.2, 0.48, 0.22, 1)
-polygon = PackedVector2Array(55, 455, 65, 445, 75, 455, 80, 465, 72, 478, 58, 478, 50, 465)
+points = PackedVector2Array(0, 502, 1280, 502)
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+antialiased = true
 
-[node name="BuildingR" type="Polygon2D" parent="." unique_id=748493174]
-z_index = -8
-color = Color(0.96, 0.95, 0.93, 1)
-polygon = PackedVector2Array(1040, 500, 1240, 500, 1240, 220, 1040, 220)
-
-[node name="BuildingRDoor" type="Polygon2D" parent="." unique_id=554754829]
-z_index = -7
-color = Color(0.3, 0.5, 0.7, 1)
-polygon = PackedVector2Array(1110, 500, 1170, 500, 1170, 410, 1140, 400, 1110, 410)
-
-[node name="BuildingRDoorStep" type="Polygon2D" parent="." unique_id=2123273929]
+; Marble flagstone grout lines — receding perspective grid
+[node name="FloorGrout1" type="Line2D" parent="."]
 z_index = -6
-color = Color(0.85, 0.82, 0.78, 1)
-polygon = PackedVector2Array(1105, 498, 1175, 498, 1175, 508, 1105, 508)
+points = PackedVector2Array(0, 548, 1280, 548)
+width = 2.5
+default_color = Color(0.78, 0.72, 0.62, 1)
+antialiased = true
 
-[node name="BuildingRWindow1" type="Polygon2D" parent="." unique_id=1151286395]
-z_index = -7
-color = Color(0.3, 0.5, 0.7, 1)
-polygon = PackedVector2Array(1070, 290, 1120, 290, 1120, 350, 1070, 350)
-
-[node name="BuildingRShutterL1" type="Polygon2D" parent="." unique_id=905011974]
+[node name="FloorGrout2" type="Line2D" parent="."]
 z_index = -6
-color = Color(0.2, 0.4, 0.6, 1)
-polygon = PackedVector2Array(1060, 288, 1072, 288, 1072, 352, 1060, 352)
+points = PackedVector2Array(0, 612, 1280, 612)
+width = 3.0
+default_color = Color(0.76, 0.7, 0.6, 1)
+antialiased = true
 
-[node name="BuildingRShutterR1" type="Polygon2D" parent="." unique_id=703981811]
+[node name="FloorGrout3" type="Line2D" parent="."]
 z_index = -6
-color = Color(0.2, 0.4, 0.6, 1)
-polygon = PackedVector2Array(1118, 288, 1130, 288, 1130, 352, 1118, 352)
+points = PackedVector2Array(0, 686, 1280, 686)
+width = 3.5
+default_color = Color(0.74, 0.68, 0.58, 1)
+antialiased = true
 
-[node name="BuildingRWindow2" type="Polygon2D" parent="." unique_id=1614275743]
-z_index = -7
-color = Color(0.3, 0.5, 0.7, 1)
-polygon = PackedVector2Array(1160, 290, 1210, 290, 1210, 350, 1160, 350)
-
-[node name="BuildingRShutterL2" type="Polygon2D" parent="." unique_id=936154472]
+[node name="FloorVertA" type="Line2D" parent="."]
 z_index = -6
-color = Color(0.2, 0.4, 0.6, 1)
-polygon = PackedVector2Array(1150, 288, 1162, 288, 1162, 352, 1150, 352)
+points = PackedVector2Array(540, 502, 460, 720)
+width = 2.5
+default_color = Color(0.78, 0.72, 0.62, 1)
+antialiased = true
 
-[node name="BuildingRShutterR2" type="Polygon2D" parent="." unique_id=1766274805]
+[node name="FloorVertB" type="Line2D" parent="."]
 z_index = -6
-color = Color(0.2, 0.4, 0.6, 1)
-polygon = PackedVector2Array(1208, 288, 1220, 288, 1220, 352, 1208, 352)
+points = PackedVector2Array(740, 502, 820, 720)
+width = 2.5
+default_color = Color(0.78, 0.72, 0.62, 1)
+antialiased = true
 
-[node name="PottedPlantR" type="Polygon2D" parent="." unique_id=643485632]
+[node name="FloorVertC" type="Line2D" parent="."]
 z_index = -6
-color = Color(0.65, 0.35, 0.2, 1)
-polygon = PackedVector2Array(1205, 478, 1225, 478, 1228, 500, 1202, 500)
+points = PackedVector2Array(300, 502, 140, 720)
+width = 2.5
+default_color = Color(0.78, 0.72, 0.62, 1)
+antialiased = true
 
-[node name="PottedPlantRLeaves" type="Polygon2D" parent="." unique_id=1962579147]
+[node name="FloorVertD" type="Line2D" parent="."]
+z_index = -6
+points = PackedVector2Array(980, 502, 1140, 720)
+width = 2.5
+default_color = Color(0.78, 0.72, 0.62, 1)
+antialiased = true
+
+; --- Foreground terracotta pot with olive shrub, far LEFT edge ---
+[node name="PotL" type="Polygon2D" parent="."]
 z_index = -5
-color = Color(0.2, 0.48, 0.22, 1)
-polygon = PackedVector2Array(1205, 455, 1215, 445, 1225, 455, 1230, 465, 1222, 478, 1208, 478, 1200, 465)
+color = Color(0.78, 0.4, 0.24, 1)
+polygon = PackedVector2Array(28, 470, 92, 470, 84, 540, 36, 540)
 
-[node name="CatSilhouette" type="Polygon2D" parent="." unique_id=1724513637]
-z_index = -6
-position = Vector2(-1, -1)
-color = Color(0.15, 0.12, 0.1, 1)
-polygon = PackedVector2Array(948, 489, 952, 483, 958, 475, 960, 480, 966, 476, 970, 480, 975, 484, 978, 488, 980, 500, 948, 500)
+[node name="PotLShadow" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.58, 0.3, 0.18, 1)
+polygon = PackedVector2Array(64, 470, 92, 470, 84, 540, 64, 540)
 
-[node name="CatTail" type="Polygon2D" parent="." unique_id=2023526841]
-z_index = -6
-position = Vector2(-6, 3)
-color = Color(0.15, 0.12, 0.1, 1)
-polygon = PackedVector2Array(978, 488, 985, 480, 992, 476, 993, 481, 990, 484, 982, 492)
+[node name="PotLHi" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.9, 0.55, 0.36, 1)
+polygon = PackedVector2Array(28, 470, 44, 470, 40, 540, 36, 540)
 
-[node name="ChurchDome" type="Polygon2D" parent="." unique_id=488594935]
-z_index = -9
-color = Color(0.3, 0.5, 0.7, 1)
-polygon = PackedVector2Array(500, 350, 520, 310, 550, 280, 590, 265, 630, 265, 670, 280, 700, 310, 720, 350, 720, 380, 500, 380)
+[node name="PotLRim" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.7, 0.34, 0.2, 1)
+polygon = PackedVector2Array(24, 462, 96, 462, 92, 474, 28, 474)
 
-[node name="ChurchBase" type="Polygon2D" parent="." unique_id=1051359756]
-z_index = -9
-color = Color(0.92, 0.9, 0.88, 1)
-polygon = PackedVector2Array(480, 380, 740, 380, 740, 500, 480, 500)
+[node name="PotLInk" type="Line2D" parent="."]
+z_index = -4
+points = PackedVector2Array(24, 462, 96, 462, 92, 474, 84, 540, 36, 540, 28, 474)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
 
-[node name="ChurchCross" type="Polygon2D" parent="." unique_id=1289068625]
+[node name="ShrubL" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.3, 0.52, 0.3, 1)
+polygon = PackedVector2Array(60, 462, 30, 442, 38, 410, 62, 392, 90, 404, 100, 436, 90, 462)
+
+[node name="ShrubLShadow" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.22, 0.38, 0.22, 1)
+polygon = PackedVector2Array(62, 392, 90, 404, 100, 436, 90, 462, 64, 452, 64, 420)
+
+[node name="ShrubLHi" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.46, 0.66, 0.4, 1)
+polygon = PackedVector2Array(38, 410, 62, 392, 70, 404, 50, 420, 34, 438)
+
+[node name="ShrubLInk" type="Line2D" parent="."]
+z_index = -4
+points = PackedVector2Array(60, 462, 30, 442, 38, 410, 62, 392, 90, 404, 100, 436, 90, 462)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+; --- Foreground terracotta pot with olive shrub, far RIGHT edge ---
+[node name="PotR" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.78, 0.4, 0.24, 1)
+polygon = PackedVector2Array(1188, 470, 1252, 470, 1244, 540, 1196, 540)
+
+[node name="PotRShadow" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.58, 0.3, 0.18, 1)
+polygon = PackedVector2Array(1224, 470, 1252, 470, 1244, 540, 1224, 540)
+
+[node name="PotRHi" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.9, 0.55, 0.36, 1)
+polygon = PackedVector2Array(1188, 470, 1204, 470, 1200, 540, 1196, 540)
+
+[node name="PotRRim" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.7, 0.34, 0.2, 1)
+polygon = PackedVector2Array(1184, 462, 1256, 462, 1252, 474, 1188, 474)
+
+[node name="PotRInk" type="Line2D" parent="."]
+z_index = -4
+points = PackedVector2Array(1184, 462, 1256, 462, 1252, 474, 1244, 540, 1196, 540, 1188, 474)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="ShrubR" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.3, 0.52, 0.3, 1)
+polygon = PackedVector2Array(1220, 462, 1190, 442, 1198, 410, 1222, 392, 1250, 404, 1260, 436, 1250, 462)
+
+[node name="ShrubRShadow" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.22, 0.38, 0.22, 1)
+polygon = PackedVector2Array(1222, 392, 1250, 404, 1260, 436, 1250, 462, 1224, 452, 1224, 420)
+
+[node name="ShrubRHi" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.46, 0.66, 0.4, 1)
+polygon = PackedVector2Array(1198, 410, 1222, 392, 1230, 404, 1210, 420, 1194, 438)
+
+[node name="ShrubRInk" type="Line2D" parent="."]
+z_index = -4
+points = PackedVector2Array(1220, 462, 1190, 442, 1198, 410, 1222, 392, 1250, 404, 1260, 436, 1250, 462)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+;========================================================================
+; FILM ICON — campy "Mamma Mia!" taverna sign, hung high on the LEFT villa
+;========================================================================
+
+[node name="SignBoard" type="Polygon2D" parent="."]
 z_index = -8
-color = Color(0.95, 0.95, 0.93, 1)
-polygon = PackedVector2Array(608, 245, 612, 245, 612, 255, 618, 255, 618, 259, 612, 259, 612, 270, 608, 270, 608, 259, 602, 259, 602, 255, 608, 255)
+color = Color(0.97, 0.93, 0.82, 1)
+polygon = PackedVector2Array(290, 300, 470, 300, 470, 356, 290, 356)
 
-[node name="BougainvilleaL" type="Polygon2D" parent="." unique_id=246244346]
-z_index = -6
-color = Color(0.85, 0.25, 0.5, 0.85)
-polygon = PackedVector2Array(230, 200, 260, 180, 280, 200, 290, 230, 285, 270, 270, 300, 250, 310, 240, 290, 235, 260, 230, 230)
+[node name="SignBoardShadow" type="Polygon2D" parent="."]
+z_index = -8
+color = Color(0.72, 0.69, 0.61, 1)
+polygon = PackedVector2Array(290, 340, 470, 340, 470, 356, 290, 356)
 
-[node name="BougainvilleaLLeaves" type="Polygon2D" parent="." unique_id=917448241]
-z_index = -7
-color = Color(0.25, 0.5, 0.2, 0.8)
-polygon = PackedVector2Array(240, 300, 260, 310, 270, 330, 260, 350, 245, 340, 235, 320)
+[node name="SignBoardInk" type="Line2D" parent="."]
+z_index = -8
+points = PackedVector2Array(290, 300, 470, 300, 470, 356, 290, 356)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
 
-[node name="BougainvilleaR" type="Polygon2D" parent="." unique_id=1663928485]
-z_index = -6
-color = Color(0.85, 0.25, 0.5, 0.85)
-polygon = PackedVector2Array(1020, 210, 1050, 190, 1060, 210, 1065, 240, 1055, 270, 1040, 300, 1025, 305, 1020, 280, 1015, 250)
+[node name="SignStripe" type="ColorRect" parent="."]
+z_index = -8
+offset_left = 290.0
+offset_top = 326.0
+offset_right = 470.0
+offset_bottom = 332.0
+color = Color(0.16, 0.46, 0.78, 1)
 
-[node name="BougainvilleaRLeaves" type="Polygon2D" parent="." unique_id=313114283]
-z_index = -7
-color = Color(0.25, 0.5, 0.2, 0.8)
-polygon = PackedVector2Array(1030, 300, 1045, 305, 1050, 330, 1040, 350, 1025, 340, 1020, 320)
+[node name="SignText" type="Label" parent="."]
+z_index = -8
+offset_left = 290.0
+offset_top = 302.0
+offset_right = 470.0
+offset_bottom = 326.0
+theme_override_colors/font_color = Color(0.8, 0.1, 0.13, 1)
+theme_override_colors/font_outline_color = Color(0.09, 0.07, 0.12, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 18
+text = "TAVERNA"
+horizontal_alignment = 1
+vertical_alignment = 1

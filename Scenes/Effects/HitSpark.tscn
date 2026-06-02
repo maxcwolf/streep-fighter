@@ -1,0 +1,45 @@
+[gd_scene load_steps=5 format=3 uid="uid://hitspark01"]
+
+[ext_resource type="Script" path="res://Scripts/Effects/HitSpark.cs" id="1_script"]
+[ext_resource type="FontFile" uid="uid://c1javcc2jw1ix" path="res://Assets/Fonts/StreetFighter.ttf" id="2_font"]
+
+[node name="HitSpark" type="Node2D"]
+z_index = 200
+z_as_relative = false
+script = ExtResource("1_script")
+
+[node name="Burst" type="Polygon2D" parent="."]
+z_index = 200
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(0, -52, 9, -22, 30, -38, 22, -14, 50, -16, 28, 0, 50, 16, 22, 14, 30, 38, 9, 22, 0, 52, -9, 22, -30, 38, -22, 14, -50, 16, -28, 0, -50, -16, -22, -14, -30, -38, -9, -22)
+
+[node name="BurstHi" type="Polygon2D" parent="Burst"]
+z_index = 201
+color = Color(1, 0.92, 0.45, 1)
+polygon = PackedVector2Array(0, -30, 6, -13, 18, -22, 13, -8, 30, -9, 17, 0, 9, 8, 0, 18, -9, 8, -17, 0, -30, -9, -18, -22, -13, -8)
+
+[node name="BurstInk" type="Line2D" parent="Burst"]
+z_index = 202
+points = PackedVector2Array(0, -52, 9, -22, 30, -38, 22, -14, 50, -16, 28, 0, 50, 16, 22, 14, 30, 38, 9, 22, 0, 52, -9, 22, -30, 38, -22, 14, -50, 16, -28, 0, -50, -16, -22, -14, -30, -38, -9, -22)
+closed = true
+width = 5.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="Word" type="Label" parent="."]
+z_index = 203
+offset_left = -90.0
+offset_top = -26.0
+offset_right = 90.0
+offset_bottom = 26.0
+theme_override_colors/font_color = Color(0.8, 0.1, 0.13, 1)
+theme_override_colors/font_outline_color = Color(0.09, 0.07, 0.12, 1)
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 34
+text = "POW!"
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -1,38 +1,60 @@
-[gd_scene load_steps=5 format=3 uid="uid://victory01"]
+[gd_scene load_steps=13 format=3 uid="uid://victory01"]
 
 [ext_resource type="Script" path="res://Scripts/UI/VictoryScreen.cs" id="1_script"]
+[ext_resource type="FontFile" uid="uid://c1javcc2jw1ix" path="res://Assets/Fonts/StreetFighter.ttf" id="2_font"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.06, 0.04, 0.1, 0.92)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rail"]
+bg_color = Color(0.96, 0.79, 0.18, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rail_deep"]
+bg_color = Color(0.62, 0.46, 0.08, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bulb"]
+bg_color = Color(0.96, 0.79, 0.18, 0.9)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
-bg_color = Color(0.65, 0.08, 0.08, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.95, 0.78, 0.15, 1)
+bg_color = Color(0.97, 0.93, 0.82, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.62, 0.46, 0.08, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 3
+shadow_offset = Vector2(2, 3)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
-bg_color = Color(0.8, 0.1, 0.1, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1, 0.88, 0.3, 1)
+bg_color = Color(0.96, 0.79, 0.18, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.92, 0.45, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+shadow_color = Color(0.96, 0.79, 0.18, 0.55)
+shadow_size = 8
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
-bg_color = Color(0.5, 0.05, 0.05, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.95, 0.78, 0.15, 1)
+bg_color = Color(0.8, 0.1, 0.13, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.96, 0.79, 0.18, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
@@ -48,28 +70,191 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="Panel" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color(0.15, 0.02, 0.02, 0.85)
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
 
-[node name="GoldBorderTop" type="ColorRect" parent="."]
+[node name="Sunburst" type="Polygon2D" parent="."]
+position = Vector2(640, 250)
+color = Color(0.62, 0.46, 0.08, 0.28)
+polygon = PackedVector2Array(0, 0, -700, -200, -700, -120, 0, 0, -700, -40, -700, 40, 0, 0, -700, 120, -700, 200, 0, 0, -300, 420, -180, 420, 0, 0, 180, 420, 300, 420, 0, 0, 700, 200, 700, 120, 0, 0, 700, 40, 700, -40, 0, 0, 700, -120, 700, -200)
+
+[node name="Spotlight" type="Polygon2D" parent="."]
+position = Vector2(640, 250)
+color = Color(0.96, 0.79, 0.18, 0.14)
+polygon = PackedVector2Array(0, 0, -150, 470, 150, 470)
+
+[node name="GoldBorderTop" type="Panel" parent="."]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_top = 120.0
-offset_bottom = 124.0
-color = Color(0.95, 0.78, 0.15, 1)
+offset_top = 64.0
+offset_bottom = 68.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_rail")
 
-[node name="GoldBorderBottom" type="ColorRect" parent="."]
+[node name="GoldBorderTopDeep" type="Panel" parent="."]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_top = 520.0
-offset_bottom = 524.0
-color = Color(0.95, 0.78, 0.15, 1)
+offset_top = 68.0
+offset_bottom = 71.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_rail_deep")
+
+[node name="GoldBorderBottom" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -68.0
+offset_bottom = -64.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_rail")
+
+[node name="GoldBorderBottomDeep" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -71.0
+offset_bottom = -68.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_rail_deep")
+
+[node name="MarqueeTop" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 40.0
+offset_top = 48.0
+offset_right = -40.0
+offset_bottom = 60.0
+mouse_filter = 2
+theme_override_constants/separation = 38
+alignment = 1
+
+[node name="B0" type="Panel" parent="MarqueeTop"]
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bulb")
+
+[node name="B1" type="Panel" parent="MarqueeTop"]
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bulb")
+
+[node name="B2" type="Panel" parent="MarqueeTop"]
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bulb")
+
+[node name="B3" type="Panel" parent="MarqueeTop"]
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bulb")
+
+[node name="B4" type="Panel" parent="MarqueeTop"]
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bulb")
+
+[node name="B5" type="Panel" parent="MarqueeTop"]
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bulb")
+
+[node name="B6" type="Panel" parent="MarqueeTop"]
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bulb")
+
+[node name="B7" type="Panel" parent="MarqueeTop"]
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bulb")
+
+[node name="B8" type="Panel" parent="MarqueeTop"]
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bulb")
+
+[node name="Statuette" type="Node2D" parent="."]
+position = Vector2(640, 232)
+
+[node name="BaseShadow" type="Polygon2D" parent="Statuette"]
+position = Vector2(2, 0)
+color = Color(0.34, 0.03, 0.05, 0.55)
+polygon = PackedVector2Array(-46, 96, 46, 96, 40, 116, -40, 116)
+
+[node name="Base" type="Polygon2D" parent="Statuette"]
+color = Color(0.62, 0.46, 0.08, 1)
+polygon = PackedVector2Array(-42, 78, 42, 78, 38, 116, -38, 116)
+
+[node name="BaseHi" type="Polygon2D" parent="Statuette"]
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(-42, 78, -10, 78, -16, 116, -38, 116)
+
+[node name="BaseInk" type="Line2D" parent="Statuette"]
+points = PackedVector2Array(-42, 78, 42, 78, 38, 116, -38, 116)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Body" type="Polygon2D" parent="Statuette"]
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(-16, -40, 16, -40, 13, 10, 22, 40, 22, 78, -22, 78, -22, 40, -13, 10)
+
+[node name="BodyShadow" type="Polygon2D" parent="Statuette"]
+color = Color(0.71, 0.58, 0.13, 1)
+polygon = PackedVector2Array(2, -40, 16, -40, 13, 10, 22, 40, 22, 78, 2, 78, 2, 40, 4, 10)
+
+[node name="BodyHi" type="Polygon2D" parent="Statuette"]
+color = Color(1, 0.92, 0.45, 1)
+polygon = PackedVector2Array(-16, -40, -6, -40, -6, 8, -13, 10)
+
+[node name="BodyInk" type="Line2D" parent="Statuette"]
+points = PackedVector2Array(-16, -40, 16, -40, 13, 10, 22, 40, 22, 78, -22, 78, -22, 40, -13, 10)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Head" type="Polygon2D" parent="Statuette"]
+position = Vector2(0, -58)
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(-13, -2, -8, -16, 8, -16, 13, -2, 8, 14, -8, 14)
+
+[node name="HeadShadow" type="Polygon2D" parent="Statuette"]
+position = Vector2(0, -58)
+color = Color(0.71, 0.58, 0.13, 1)
+polygon = PackedVector2Array(2, -16, 8, -16, 13, -2, 8, 14, 2, 14)
+
+[node name="HeadHi" type="Polygon2D" parent="Statuette"]
+position = Vector2(0, -58)
+color = Color(1, 0.92, 0.45, 1)
+polygon = PackedVector2Array(-13, -2, -8, -16, -3, -16, -6, 12, -8, 14)
+
+[node name="HeadInk" type="Line2D" parent="Statuette"]
+position = Vector2(0, -58)
+points = PackedVector2Array(-13, -2, -8, -16, 8, -16, 13, -2, 8, 14, -8, 14)
+closed = true
+width = 3.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Glint" type="Polygon2D" parent="Statuette"]
+position = Vector2(-9, -64)
+color = Color(1, 1, 1, 0.85)
+polygon = PackedVector2Array(0, -5, 1.4, -1.4, 5, 0, 1.4, 1.4, 0, 5, -1.4, 1.4, -5, 0, -1.4, -1.4)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -78,56 +263,85 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = -140.0
-offset_right = 200.0
-offset_bottom = 140.0
+offset_left = -260.0
+offset_top = -20.0
+offset_right = 260.0
+offset_bottom = 280.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 15
+theme_override_constants/separation = 14
+
+[node name="EnvelopeLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.79, 0.18, 0.9)
+theme_override_colors/font_outline_color = Color(0.09, 0.07, 0.12, 0.9)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 18
+text = "AND THE ENVELOPE, PLEASE..."
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="WinnerLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.95, 0.78, 0.15, 1)
-theme_override_colors/font_outline_color = Color(0.85, 0.1, 0.1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
-theme_override_constants/outline_size = 6
-theme_override_constants/shadow_offset_x = 3
-theme_override_constants/shadow_offset_y = 3
-theme_override_font_sizes/font_size = 64
+theme_override_colors/font_color = Color(0.96, 0.79, 0.18, 1)
+theme_override_colors/font_outline_color = Color(0.09, 0.07, 0.12, 1)
+theme_override_colors/font_shadow_color = Color(0.45, 0.05, 0.08, 0.95)
+theme_override_constants/outline_size = 9
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_font_sizes/font_size = 72
 text = "WINNER!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="CharacterLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.95, 0.85, 1)
+theme_override_colors/font_color = Color(0.97, 0.93, 0.82, 1)
+theme_override_colors/font_outline_color = Color(0.45, 0.05, 0.08, 1)
+theme_override_colors/font_shadow_color = Color(0.09, 0.07, 0.12, 0.85)
+theme_override_constants/outline_size = 5
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 28
 text = ""
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Spacer" type="Control" parent="VBoxContainer"]
 layout_mode = 2
-custom_minimum_size = Vector2(0, 20)
+custom_minimum_size = Vector2(0, 14)
 
 [node name="PlayAgainButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
-custom_minimum_size = Vector2(250, 45)
-theme_override_colors/font_color = Color(1, 0.95, 0.85, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(280, 50)
+theme_override_colors/font_color = Color(0.45, 0.05, 0.08, 1)
+theme_override_colors/font_hover_color = Color(0.09, 0.07, 0.12, 1)
+theme_override_colors/font_pressed_color = Color(0.97, 0.93, 0.82, 1)
+theme_override_colors/font_outline_color = Color(0.97, 0.93, 0.82, 0.5)
+theme_override_constants/outline_size = 1
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn_hover")
 text = "PLAY AGAIN"
 
 [node name="MenuButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
-custom_minimum_size = Vector2(250, 45)
-theme_override_colors/font_color = Color(1, 0.95, 0.85, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(280, 50)
+theme_override_colors/font_color = Color(0.45, 0.05, 0.08, 1)
+theme_override_colors/font_hover_color = Color(0.09, 0.07, 0.12, 1)
+theme_override_colors/font_pressed_color = Color(0.97, 0.93, 0.82, 1)
+theme_override_colors/font_outline_color = Color(0.97, 0.93, 0.82, 0.5)
+theme_override_constants/outline_size = 1
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn_hover")
 text = "MAIN MENU"

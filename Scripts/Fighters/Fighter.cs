@@ -46,6 +46,18 @@ public partial class Fighter : CharacterBody2D
 
     // Animation
     private float _animTime;
+    // Body squash/stretch follow-through spring (settles overshoot after states)
+    private Vector2 _bodyScaleVel = Vector2.Zero;
+    private Vector2 _bodyScaleSmoothed = Vector2.One;
+    // Limb lag — arms trail the torso by a couple frames for follow-through.
+    private float _armRRotLag, _armLRotLag, _legRRotLag, _legLRotLag;
+    private float _foreRRotLag, _foreLRotLag, _shinRRotLag, _shinLRotLag;
+    // Landing squash impulse (decays); set when we touch the ground from a jump.
+    private float _landSquash;
+    private float _prevFallSpeed;
+    // Idle micro-flourish timing.
+    private float _flourishTimer;
+    private float _flourish; // 0..1 active flourish amount
 
     // Node references
     private Color _originalColor;
@@ -55,9 +67,20 @@ public partial class Fighter : CharacterBody2D
     private Vector2 _bodyBasePosition;
     private Polygon2D _armR, _armL, _legR, _legL;
     private Vector2 _armRBase, _armLBase, _legRBase, _legLBase;
+    // Articulated second segments (optional — graceful single-segment fallback).
+    private Node2D _forearmR, _forearmL, _shinR, _shinL;
+    private float _forearmRBaseRot, _forearmLBaseRot, _shinRBaseRot, _shinLBaseRot;
     private Polygon2D _head, _hair;
     private Vector2 _headBase, _hairBase;
+    private float _headBaseRot, _hairBaseRot;
     private Color _headOrigColor, _hairOrigColor;
+    // Secondary-motion cloth nodes (swayed by velocity lag + spring overshoot).
+    private static readonly string[] ClothNames =
+        { "Hair", "Cape", "Veil", "Coat", "Skirt", "Scarf", "Apron" };
+    private Node2D[] _clothNodes;
+    private float[] _clothBaseRot;
+    private float[] _clothSway;     // current sway angle
+    private float[] _clothSwayVel;  // angular velocity for spring
     // South Park face nodes
     private Polygon2D _eyeWhiteL, _eyeWhiteR;
     private Polygon2D _pupilL, _pupilR;
@@ -103,10 +126,34 @@ public partial class Fighter : CharacterBody2D
         if (_legR != null) { _legRBase = _legR.Position; _legROrigColor = _legR.Color; }
         if (_legL != null) { _legLBase = _legL.Position; _legLOrigColor = _legL.Color; }
 
+        // Articulated second segments (forearms / shins). Optional — the rig
+        // animates fine single-segment if these are absent.
+        _forearmR = _armR?.GetNodeOrNull<Node2D>("ForearmR");
+        _forearmL = _armL?.GetNodeOrNull<Node2D>("ForearmL");
+        _shinR = _legR?.GetNodeOrNull<Node2D>("ShinR");
+        _shinL = _legL?.GetNodeOrNull<Node2D>("ShinL");
+        if (_forearmR != null) _forearmRBaseRot = _forearmR.Rotation;
+        if (_forearmL != null) _forearmLBaseRot = _forearmL.Rotation;
+        if (_shinR != null) _shinRBaseRot = _shinR.Rotation;
+        if (_shinL != null) _shinLBaseRot = _shinL.Rotation;
+
         _head = GetNodeOrNull<Polygon2D>("Head");
         _hair = GetNodeOrNull<Polygon2D>("Hair");
-        if (_head != null) { _headBase = _head.Position; _headOrigColor = _head.Color; }
-        if (_hair != null) { _hairBase = _hair.Position; _hairOrigColor = _hair.Color; }
+        if (_head != null) { _headBase = _head.Position; _headOrigColor = _head.Color; _headBaseRot = _head.Rotation; }
+        if (_hair != null) { _hairBase = _hair.Position; _hairOrigColor = _hair.Color; _hairBaseRot = _hair.Rotation; }
+
+        // Gather secondary-motion cloth nodes (direct children matching exact names).
+        var cloth = new System.Collections.Generic.List<Node2D>();
+        var clothRot = new System.Collections.Generic.List<float>();
+        foreach (string n in ClothNames)
+        {
+            var node = GetNodeOrNull<Node2D>(n);
+            if (node != null) { cloth.Add(node); clothRot.Add(node.Rotation); }
+        }
+        _clothNodes = cloth.ToArray();
+        _clothBaseRot = clothRot.ToArray();
+        _clothSway = new float[_clothNodes.Length];
+        _clothSwayVel = new float[_clothNodes.Length];
 
         // South Park face nodes (backward compatible)
         if (_head != null)
@@ -153,8 +200,13 @@ public partial class Fighter : CharacterBody2D
 
     public override void _PhysicsProcess(double delta)
     {
+        // HIT-STOP: while frozen, do not advance movement, state timers, the
+        // anim clock or transitions. Rendering keeps running in _Process so the
+        // impact freeze-frame stays fully drawn.
+        if (Juice.HitStopFrames > 0)
+            return;
+
         float dt = (float)delta;
-        _animTime += dt;
 
         if (_invincibilityTimer > 0)
             _invincibilityTimer -= dt;
@@ -194,6 +246,9 @@ public partial class Fighter : CharacterBody2D
                 break;
         }
 
+        // Track fall speed so landing can squash proportionally to impact.
+        _prevFallSpeed = Velocity.Y;
+
         // Apply gravity if airborne
         if (Position.Y < GroundY)
         {
@@ -210,10 +265,12 @@ public partial class Fighter : CharacterBody2D
             vel.Y = 0;
             Velocity = vel;
 
-            // Land from jump
+            // Land from jump — kick off a wide landing squash (recovers via spring).
             if (CurrentState == FighterState.Jump)
             {
                 AudioManager.Instance?.PlaySFX("land");
+                _landSquash = Mathf.Clamp(_prevFallSpeed / 600f, 0.4f, 1f);
+                SpawnLandingDust();
                 ChangeState(FighterState.Idle);
             }
         }
@@ -223,11 +280,39 @@ public partial class Fighter : CharacterBody2D
         var clampedPos = Position;
         clampedPos.X = Mathf.Clamp(clampedPos.X, LeftWall, RightWall);
         Position = clampedPos;
+    }
 
-        // Blink timer
-        _blinkTimer -= dt;
-        if (_blinkTimer <= 0)
-            _blinkTimer = BlinkInterval + (float)GD.RandRange(-0.5, 1.0);
+    public override void _Process(double delta)
+    {
+        float dt = (float)delta;
+
+        // Freeze the anim clock during hit-stop (rendering still runs so the
+        // current freeze-frame pose holds), but always re-render.
+        if (Juice.HitStopFrames <= 0)
+        {
+            _animTime += dt;
+
+            // Blink scheduler (visual only — safe in _Process).
+            _blinkTimer -= dt;
+            if (_blinkTimer <= 0)
+                _blinkTimer = BlinkInterval + (float)GD.RandRange(-0.5, 1.0);
+
+            // Landing-squash impulse decay.
+            if (_landSquash > 0f)
+                _landSquash = Mathf.MoveToward(_landSquash, 0f, dt * 3.2f);
+
+            // Idle micro-flourish scheduler (occasional little weight shift).
+            _flourishTimer -= dt;
+            if (_flourishTimer <= 0f && CurrentState == FighterState.Idle)
+            {
+                _flourishTimer = (float)GD.RandRange(3.5, 7.0);
+                _flourish = 1f;
+            }
+            if (_flourish > 0f)
+                _flourish = Mathf.MoveToward(_flourish, 0f, dt * 0.7f);
+
+            UpdateSecondaryMotion(dt);
+        }
 
         UpdateVisuals();
     }
@@ -530,7 +615,11 @@ public partial class Fighter : CharacterBody2D
         CurrentHealth = Mathf.Max(0, CurrentHealth - amount);
         EmitSignal(SignalName.HealthChanged, CurrentHealth, Stats.MaxHealth);
 
-        if (CurrentHealth <= 0)
+        bool isKo = CurrentHealth <= 0;
+        // JUICE: hit-stop + screen shake + comic burst for every connect.
+        ApplyHitJuice(attacker, isKo, blocked);
+
+        if (isKo)
         {
             AudioManager.Instance?.PlaySFX("ko");
             ChangeState(FighterState.KO);
@@ -557,6 +646,88 @@ public partial class Fighter : CharacterBody2D
         }
     }
 
+    /// <summary>
+    /// Pure presentation: freeze frame, camera trauma, and the pop-art burst.
+    /// Touches NO gameplay numbers / state / velocity. Weight is inferred from
+    /// the attacker's current action so kicks/specials hit harder than jabs.
+    /// </summary>
+    private void ApplyHitJuice(Fighter attacker, bool isKo, bool blocked)
+    {
+        int stopFrames;
+        float trauma;
+
+        if (isKo)
+        {
+            stopFrames = Juice.StopSpecial;
+            trauma = Juice.TraumaKO;
+        }
+        else if (attacker != null && attacker.CurrentState == FighterState.Special)
+        {
+            stopFrames = Juice.StopSpecial;
+            trauma = Juice.TraumaHeavy;
+        }
+        else if (attacker != null && attacker.CurrentState == FighterState.Kick)
+        {
+            stopFrames = Juice.StopHeavy;
+            trauma = Juice.TraumaMedium;
+        }
+        else
+        {
+            stopFrames = Juice.StopLight;
+            trauma = Juice.TraumaLight;
+        }
+
+        // Blocked hits land softer — still a punchy little freeze, less shake.
+        if (blocked && !isKo)
+        {
+            stopFrames = Mathf.Max(2, stopFrames - 2);
+            trauma *= 0.5f;
+        }
+
+        Juice.HitStop(stopFrames);
+        Juice.AddTrauma(trauma);
+
+        // Comic burst at the impact point (chest-height, between the fighters).
+        if (!blocked || isKo)
+        {
+            Vector2 impact = GlobalPosition + new Vector2(0f, -50f);
+            if (attacker != null)
+                impact = attacker.GlobalPosition.Lerp(GlobalPosition, 0.62f) + new Vector2(0f, -50f);
+            bool heavy = isKo || stopFrames >= Juice.StopHeavy;
+            HitSpark.Spawn(GetParent(), impact, heavy);
+        }
+    }
+
+    private void SpawnLandingDust()
+    {
+        // Optional polish: a quick cel-shaded dust puff at the feet that grows
+        // wide and fades, then frees itself. Self-contained (no extra script).
+        var layer = GetParent();
+        if (layer == null) return;
+
+        var puff = new Polygon2D
+        {
+            Position = GlobalPosition + new Vector2(0f, 44f),
+            ZIndex = 5,
+            Color = new Color(0.86f, 0.82f, 0.7f, 0.85f),
+            // Low, wide comic dust cloud (a flattened lumpy shape).
+            Polygon = new Vector2[]
+            {
+                new(-18, 0), new(-12, -7), new(-4, -4), new(2, -9),
+                new(10, -5), new(18, -8), new(20, 0), new(12, 4),
+                new(0, 5), new(-10, 4)
+            }
+        };
+        layer.AddChild(puff);
+        puff.Scale = new Vector2(0.6f, 0.5f);
+
+        var tw = puff.CreateTween();
+        tw.SetParallel(true);
+        tw.TweenProperty(puff, "scale", new Vector2(1.5f, 0.9f), 0.28).SetEase(Tween.EaseType.Out);
+        tw.TweenProperty(puff, "modulate:a", 0f, 0.28).SetEase(Tween.EaseType.In);
+        tw.Chain().TweenCallback(Callable.From(puff.QueueFree));
+    }
+
     public void ResetForRound(Vector2 spawnPos)
     {
         CurrentHealth = Stats.MaxHealth;
@@ -566,6 +737,17 @@ public partial class Fighter : CharacterBody2D
         _invincibilityTimer = 0;
         CurrentState = FighterState.Idle; // bypass KO guard in ChangeState
         ChangeState(FighterState.Idle);
+
+        // Reset animation/secondary-motion state to a clean rest pose.
+        _bodyScaleSmoothed = Vector2.One;
+        _bodyScaleVel = Vector2.Zero;
+        _landSquash = 0f;
+        _flourish = 0f;
+        _armRRotLag = _armLRotLag = _legRRotLag = _legLRotLag = 0f;
+        _foreRRotLag = _foreLRotLag = _shinRRotLag = _shinLRotLag = 0f;
+        if (_clothSway != null)
+            for (int i = 0; i < _clothSway.Length; i++) { _clothSway[i] = 0f; _clothSwayVel[i] = 0f; }
+
         EmitSignal(SignalName.HealthChanged, CurrentHealth, Stats.MaxHealth);
     }
 
@@ -609,143 +791,256 @@ public partial class Fighter : CharacterBody2D
         }
     }
 
+    // Smoothstep helper (3t^2 - 2t^3) for non-linear anticipation/follow-through.
+    private static float SmoothStep(float t)
+    {
+        t = Mathf.Clamp(t, 0f, 1f);
+        return t * t * (3f - 2f * t);
+    }
+
     private void UpdateVisuals()
     {
+        if (BodyPolygon == null) return;
+
         float alpha = 1f;
         if (_invincibilityTimer > 0)
             alpha = 0.5f + 0.5f * Mathf.Sin(_invincibilityTimer * 20f);
 
-        float scaleX = FacingRight ? 1 : -1;
-        float scaleY = 1f;
+        float facing = FacingRight ? 1f : -1f;
+        float dir = facing;
+
+        // Target body squash/stretch (1,1 = neutral), rotation, and offset.
+        float tgtSx = 1f;
+        float tgtSy = 1f;
         float rotation = 0f;
         Vector2 bodyOffset = _bodyBasePosition;
 
         bool showPunch = false;
         bool showKick = false;
-
-        float progress = _stateTimer / Mathf.Max(_stateTimer + 0.001f, 1f);
+        bool springScale = true; // most states ease the scale via the spring
 
         switch (CurrentState)
         {
+            case FighterState.Idle:
+            {
+                // Breathing: gentle vertical bob + a soft anti-phase squash so
+                // the torso "settles" with the breath. Subtle weight shift via
+                // a slow lean, plus an occasional micro-flourish.
+                float breath = Mathf.Sin(_animTime * 2.5f);
+                bodyOffset.Y += breath * 1.6f;
+                tgtSy = 1f - breath * 0.025f;
+                tgtSx = 1f + breath * 0.02f;
+                float shift = Mathf.Sin(_animTime * 1.1f) * 0.6f;
+                bodyOffset.X += shift;
+                rotation = Mathf.Sin(_animTime * 1.1f) * 0.012f;
+                if (_flourish > 0f)
+                {
+                    float f = SmoothStep(_flourish);
+                    bodyOffset.Y -= f * 2.5f;
+                    rotation += dir * f * 0.04f;
+                }
+                break;
+            }
+            case FighterState.WalkForward:
+            case FighterState.WalkBackward:
+            {
+                // Contact/passing bob: torso bobs twice per stride and leans
+                // slightly into the travel direction.
+                float bob = Mathf.Abs(Mathf.Sin(_animTime * 8f));
+                bodyOffset.Y += -bob * 2.2f;
+                bool forward = CurrentState == FighterState.WalkForward;
+                float lean = forward ? 1f : -1f;
+                rotation = dir * lean * 0.05f;
+                tgtSy = 1f - bob * 0.03f;
+                tgtSx = 1f + bob * 0.02f;
+                break;
+            }
             case FighterState.Punch:
             {
-                float dur = PunchDuration;
-                progress = Mathf.Clamp(_stateTimer / dur, 0f, 1f);
-                if (progress < 0.4f)
+                float p = Mathf.Clamp(_stateTimer / PunchDuration, 0f, 1f);
+                springScale = false;
+                if (p < 0.4f)
                 {
-                    float t = progress / 0.4f;
-                    scaleX *= 1f + 0.15f * t;
+                    // Anticipation: coil back slightly (thin + lean away).
+                    float t = SmoothStep(p / 0.4f);
+                    tgtSx = 1f - 0.05f * t;
+                    tgtSy = 1f + 0.04f * t;
+                    rotation = -dir * 0.06f * t;
                 }
-                else if (progress < 0.7f)
+                else if (p < 0.7f)
                 {
-                    scaleX *= 1.15f;
+                    // Strike: stretch toward the hit.
+                    tgtSx = 1.16f;
+                    tgtSy = 0.92f;
+                    rotation = dir * 0.05f;
                     showPunch = true;
                 }
                 else
                 {
-                    float t = (progress - 0.7f) / 0.3f;
-                    scaleX *= 1.15f - 0.15f * t;
+                    // Follow-through overshoot then settle.
+                    float t = SmoothStep((p - 0.7f) / 0.3f);
+                    tgtSx = Mathf.Lerp(1.16f, 1f, t);
+                    tgtSy = Mathf.Lerp(0.92f, 1f, t);
+                    rotation = dir * 0.05f * (1f - t);
                 }
                 break;
             }
             case FighterState.Kick:
             {
-                float dur = KickDuration;
-                progress = Mathf.Clamp(_stateTimer / dur, 0f, 1f);
-                float dir = FacingRight ? 1f : -1f;
-                if (progress < 0.4f)
+                float p = Mathf.Clamp(_stateTimer / KickDuration, 0f, 1f);
+                springScale = false;
+                if (p < 0.4f)
                 {
-                    float t = progress / 0.4f;
-                    rotation = -dir * 0.15f * t;
-                    bodyOffset.Y = _bodyBasePosition.Y - 4f * t;
+                    float t = SmoothStep(p / 0.4f);
+                    rotation = -dir * 0.16f * t;
+                    bodyOffset.Y = _bodyBasePosition.Y - 5f * t;
+                    tgtSy = 1f + 0.05f * t;
+                    tgtSx = 1f - 0.04f * t;
                 }
-                else if (progress < 0.7f)
+                else if (p < 0.7f)
                 {
-                    float t = (progress - 0.4f) / 0.3f;
-                    rotation = dir * 0.2f * t;
+                    float t = SmoothStep((p - 0.4f) / 0.3f);
+                    rotation = dir * 0.22f * t;
+                    bodyOffset.Y = _bodyBasePosition.Y - 5f * (1f - t);
+                    tgtSx = 1.12f;
+                    tgtSy = 0.94f;
                     showKick = true;
                 }
                 else
                 {
-                    float t = (progress - 0.7f) / 0.3f;
-                    rotation = dir * 0.2f * (1f - t);
+                    float t = SmoothStep((p - 0.7f) / 0.3f);
+                    rotation = dir * 0.22f * (1f - t);
+                    tgtSx = Mathf.Lerp(1.12f, 1f, t);
+                    tgtSy = Mathf.Lerp(0.94f, 1f, t);
                 }
                 break;
             }
             case FighterState.Block:
             {
-                scaleX *= 0.92f;
-                scaleY = 0.95f;
+                tgtSx = 0.9f;
+                tgtSy = 0.95f;
+                rotation = -dir * 0.04f;
                 break;
             }
             case FighterState.Hurt:
             {
-                progress = Mathf.Clamp(_stateTimer / HurtDuration, 0f, 1f);
-                float decay = 1f - progress;
+                float p = Mathf.Clamp(_stateTimer / HurtDuration, 0f, 1f);
+                float decay = 1f - p;
                 float shake = Mathf.Sin(_stateTimer * 40f) * 4f * decay;
                 bodyOffset.X = _bodyBasePosition.X + shake;
-                float dir = FacingRight ? 1f : -1f;
-                rotation = -dir * 0.12f * decay;
+                rotation = -dir * 0.14f * decay;
+                // Impact squash that recovers via spring.
+                tgtSx = 1f + 0.12f * decay;
+                tgtSy = 1f - 0.1f * decay;
+                springScale = false;
                 break;
             }
             case FighterState.Special:
             {
-                progress = Mathf.Clamp(_stateTimer / SpecialDuration, 0f, 1f);
-                float scalePulse = 1f + 0.05f * Mathf.Sin(_stateTimer * 20f);
-                scaleX *= scalePulse;
-                scaleY = scalePulse;
+                float scalePulse = 0.06f * Mathf.Sin(_stateTimer * 20f);
+                tgtSx = 1.05f + scalePulse;
+                tgtSy = 1.05f + scalePulse;
+                springScale = false;
                 break;
             }
             case FighterState.Crouch:
             {
-                scaleY = 0.8f;
+                tgtSy = 0.82f;
+                tgtSx = 1.1f;
                 bodyOffset.Y = _bodyBasePosition.Y + 10f;
+                break;
+            }
+            case FighterState.Jump:
+            {
+                // Takeoff stretches tall + thin; airborne keeps a light stretch.
+                bool rising = Velocity.Y < 0;
+                tgtSx = rising ? 0.86f : 0.94f;
+                tgtSy = rising ? 1.16f : 1.06f;
+                springScale = false;
                 break;
             }
             case FighterState.KO:
             {
-                float dir = FacingRight ? 1f : -1f;
-                rotation = dir * 0.4f;
+                // Campy topple: fall over with a rotation and a wide ground squash.
+                float t = SmoothStep(Mathf.Clamp(_stateTimer / 0.55f, 0f, 1f));
+                rotation = dir * (0.05f + t * (Mathf.Pi * 0.5f - 0.05f));
+                bodyOffset.Y = _bodyBasePosition.Y + t * 18f;
+                tgtSx = 1f + 0.18f * t;
+                tgtSy = 1f - 0.16f * t;
+                springScale = false;
                 break;
             }
         }
 
-        // Idle breathing bob
-        if (CurrentState == FighterState.Idle)
-            bodyOffset.Y += Mathf.Sin(_animTime * 2.5f) * 1.5f;
+        // Landing squash impulse (wide + low), recovers via the spring.
+        if (_landSquash > 0f && CurrentState != FighterState.KO)
+        {
+            tgtSx += 0.16f * _landSquash;
+            tgtSy -= 0.14f * _landSquash;
+            bodyOffset.Y += 4f * _landSquash;
+            springScale = false;
+        }
 
-        BodyPolygon.Scale = new Vector2(scaleX, scaleY);
+        // Clamp campy-but-tasteful (±18%).
+        tgtSx = Mathf.Clamp(tgtSx, 0.82f, 1.18f);
+        tgtSy = Mathf.Clamp(tgtSy, 0.82f, 1.18f);
+
+        // Critically-damped spring on the body scale so transitions never snap
+        // and impacts overshoot before settling (squash & stretch follow-through).
+        Vector2 target = new(tgtSx, tgtSy);
+        if (springScale)
+            SpringScale(target);
+        else
+        {
+            // Drive directly but keep velocity continuous for the next release.
+            _bodyScaleVel = (target - _bodyScaleSmoothed) / Mathf.Max(0.016f, 1f / 60f);
+            _bodyScaleSmoothed = target;
+        }
+
+        float sx = _bodyScaleSmoothed.X * facing;
+        float sy = _bodyScaleSmoothed.Y;
+
+        BodyPolygon.Scale = new Vector2(sx, sy);
         BodyPolygon.Rotation = rotation;
         BodyPolygon.Position = bodyOffset;
         BodyPolygon.Color = TintColor(_originalColor, alpha);
 
-        if (_punchEffect != null)
-            _punchEffect.Visible = showPunch;
-        if (_kickEffect != null)
-            _kickEffect.Visible = showKick;
+        if (_punchEffect != null) _punchEffect.Visible = showPunch;
+        if (_kickEffect != null) _kickEffect.Visible = showKick;
 
-        // Head and hair follow body offset and rotation but not scale
+        Vector2 bodyDelta = bodyOffset - _bodyBasePosition;
+
+        // Head follows the torso offset + rotation (but not its squash scale).
         if (_head != null)
         {
-            Vector2 bodyDelta = bodyOffset - _bodyBasePosition;
             _head.Position = _headBase + bodyDelta;
-            _head.Rotation = rotation;
-            _head.Scale = new Vector2(FacingRight ? 1 : -1, 1);
+            _head.Rotation = _headBaseRot + rotation;
+            _head.Scale = new Vector2(facing, 1f);
             _head.Color = TintColor(_headOrigColor, alpha);
         }
+        // Hair position + color here; its rotation (base + body + sway) is set
+        // in the cloth pass so the two systems don't fight over Rotation.
         if (_hair != null)
         {
-            Vector2 bodyDelta = bodyOffset - _bodyBasePosition;
             _hair.Position = _hairBase + bodyDelta;
-            _hair.Rotation = rotation;
-            _hair.Scale = new Vector2(FacingRight ? 1 : -1, 1);
+            _hair.Scale = new Vector2(facing, 1f);
             _hair.Color = TintColor(_hairOrigColor, alpha);
         }
 
+        ApplyClothSway(rotation);
         UpdateFaceAnimations();
+        UpdateLimbs(alpha, bodyDelta);
+    }
 
-        Vector2 limbDelta = bodyOffset - _bodyBasePosition;
-        UpdateLimbs(alpha, limbDelta);
+    // Spring the smoothed body scale toward a target (semi-implicit, stable).
+    private void SpringScale(Vector2 target)
+    {
+        const float stiffness = 220f;
+        const float damping = 22f;
+        float dt = 1f / 60f;
+        Vector2 force = (target - _bodyScaleSmoothed) * stiffness - _bodyScaleVel * damping;
+        _bodyScaleVel += force * dt;
+        _bodyScaleSmoothed += _bodyScaleVel * dt;
     }
 
     private void UpdateLimbs(float alpha, Vector2 bodyDelta)
@@ -754,17 +1049,18 @@ public partial class Fighter : CharacterBody2D
 
         float dir = FacingRight ? 1f : -1f;
 
-        // Compute mirrored base positions + body offset
-        Vector2 armRPos = new(dir * Mathf.Abs(_armRBase.X), _armRBase.Y + bodyDelta.Y);
-        Vector2 armLPos = new(-dir * Mathf.Abs(_armLBase.X), _armLBase.Y + bodyDelta.Y);
-        Vector2 legRPos = new(dir * Mathf.Abs(_legRBase.X), _legRBase.Y + bodyDelta.Y);
-        Vector2 legLPos = new(-dir * Mathf.Abs(_legLBase.X), _legLBase.Y + bodyDelta.Y);
+        // Mirrored joint positions + body vertical offset (pivots = node origin).
+        _armR.Position = new Vector2(dir * Mathf.Abs(_armRBase.X), _armRBase.Y + bodyDelta.Y);
+        _armL.Position = new Vector2(-dir * Mathf.Abs(_armLBase.X), _armLBase.Y + bodyDelta.Y);
+        _legR.Position = new Vector2(dir * Mathf.Abs(_legRBase.X), _legRBase.Y + bodyDelta.Y);
+        _legL.Position = new Vector2(-dir * Mathf.Abs(_legLBase.X), _legLBase.Y + bodyDelta.Y);
 
-        // Default rest pose
-        float armRRot = -dir * 0.15f;
-        float armLRot = dir * 0.15f;
-        float legRRot = 0f;
-        float legLRot = 0f;
+        // Target rotations (rest pose) + per-segment forearm/shin bend targets.
+        float armRRot = -dir * 0.15f, armLRot = dir * 0.15f;
+        float legRRot = 0f, legLRot = 0f;
+        float foreRRot = -dir * 0.25f, foreLRot = dir * 0.25f; // soft resting elbow bend
+        float shinRRot = 0.15f, shinLRot = 0.15f;               // soft resting knee bend
+        float limbLag = 0.5f; // default lerp toward target (≈1-2 frame trail)
 
         switch (CurrentState)
         {
@@ -772,26 +1068,35 @@ public partial class Fighter : CharacterBody2D
             case FighterState.WalkBackward:
             {
                 float swing = Mathf.Sin(_animTime * 8f);
-                armRRot = -dir * (0.15f + swing * 0.3f);
-                armLRot = dir * (0.15f - swing * 0.3f);
-                legRRot = -dir * swing * 0.35f;
-                legLRot = dir * swing * 0.35f;
+                armRRot = -dir * (0.15f + swing * 0.35f);
+                armLRot = dir * (0.15f - swing * 0.35f);
+                legRRot = -dir * swing * 0.38f;
+                legLRot = dir * swing * 0.38f;
+                // Counter-swing the forearms/shins so the stride reads as a real
+                // contact/passing gait (elbows/knees bend on the back-swing).
+                foreRRot = -dir * (0.3f + Mathf.Max(0f, swing) * 0.5f);
+                foreLRot = dir * (0.3f + Mathf.Max(0f, -swing) * 0.5f);
+                shinRRot = 0.2f + Mathf.Max(0f, -swing) * 0.7f;
+                shinLRot = 0.2f + Mathf.Max(0f, swing) * 0.7f;
+                limbLag = 0.55f;
                 break;
             }
             case FighterState.Jump:
             {
-                armRRot = -dir * 0.6f;
-                armLRot = dir * 0.6f;
-                legRRot = dir * 0.25f;
-                legLRot = -dir * 0.15f;
+                armRRot = -dir * 0.6f; armLRot = dir * 0.6f;
+                legRRot = dir * 0.25f; legLRot = -dir * 0.15f;
+                foreRRot = -dir * 0.7f; foreLRot = dir * 0.7f;
+                shinRRot = 0.9f; shinLRot = 0.5f; // tuck knees
+                limbLag = 0.6f;
                 break;
             }
             case FighterState.Crouch:
             {
-                armRRot = -dir * 0.3f;
-                armLRot = dir * 0.3f;
-                legRRot = -dir * 0.5f;
-                legLRot = dir * 0.5f;
+                armRRot = -dir * 0.3f; armLRot = dir * 0.3f;
+                legRRot = -dir * 0.5f; legLRot = dir * 0.5f;
+                foreRRot = -dir * 0.6f; foreLRot = dir * 0.6f;
+                shinRRot = 1.1f; shinLRot = 1.1f; // deep knee bend
+                limbLag = 0.6f;
                 break;
             }
             case FighterState.Punch:
@@ -799,86 +1104,126 @@ public partial class Fighter : CharacterBody2D
                 float p = Mathf.Clamp(_stateTimer / PunchDuration, 0f, 1f);
                 if (p < 0.4f)
                 {
-                    float t = p / 0.4f;
-                    armRRot = Mathf.Lerp(-dir * 0.15f, dir * 0.5f, t);
+                    float t = SmoothStep(p / 0.4f);
+                    armRRot = Mathf.Lerp(-dir * 0.15f, dir * 0.5f, t); // wind back
+                    foreRRot = Mathf.Lerp(-dir * 0.25f, -dir * 0.9f, t); // cock the elbow
+                    limbLag = 0.45f;
                 }
                 else if (p < 0.7f)
                 {
                     armRRot = -dir * 1.4f;
                     armLRot = dir * 0.3f;
+                    foreRRot = -dir * 0.05f; // snap the forearm straight at impact
+                    limbLag = 0.8f;           // fast on the strike
                 }
                 else
                 {
-                    float t = (p - 0.7f) / 0.3f;
+                    float t = SmoothStep((p - 0.7f) / 0.3f);
                     armRRot = Mathf.Lerp(-dir * 1.4f, -dir * 0.15f, t);
+                    foreRRot = Mathf.Lerp(-dir * 0.05f, -dir * 0.25f, t);
+                    limbLag = 0.4f; // overshoot/settle reads via the trail
                 }
                 break;
             }
             case FighterState.Kick:
             {
                 float p = Mathf.Clamp(_stateTimer / KickDuration, 0f, 1f);
-                armRRot = -dir * 0.4f;
-                armLRot = dir * 0.4f;
+                armRRot = -dir * 0.4f; armLRot = dir * 0.4f;
                 if (p < 0.4f)
                 {
-                    float t = p / 0.4f;
-                    legRRot = Mathf.Lerp(0f, dir * 0.4f, t);
+                    float t = SmoothStep(p / 0.4f);
+                    legRRot = Mathf.Lerp(0f, dir * 0.4f, t); // chamber
+                    shinRRot = Mathf.Lerp(0.15f, 1.3f, t);    // bend knee back
+                    limbLag = 0.45f;
                 }
                 else if (p < 0.7f)
                 {
                     legRRot = -dir * 1.3f;
+                    shinRRot = 0.05f; // snap leg straight
+                    limbLag = 0.8f;
                 }
                 else
                 {
-                    float t = (p - 0.7f) / 0.3f;
+                    float t = SmoothStep((p - 0.7f) / 0.3f);
                     legRRot = Mathf.Lerp(-dir * 1.3f, 0f, t);
+                    shinRRot = Mathf.Lerp(0.05f, 0.15f, t);
+                    limbLag = 0.4f;
                 }
                 break;
             }
             case FighterState.Block:
             {
-                armRRot = -dir * 0.9f;
-                armLRot = -dir * 0.7f;
+                armRRot = -dir * 0.9f; armLRot = -dir * 0.7f;
+                foreRRot = -dir * 1.1f; foreLRot = -dir * 1.0f; // guard up
+                shinRRot = 0.35f; shinLRot = 0.35f;
+                limbLag = 0.6f;
                 break;
             }
             case FighterState.Hurt:
             {
                 float p = Mathf.Clamp(_stateTimer / HurtDuration, 0f, 1f);
                 float decay = 1f - p;
-                armRRot = dir * 0.6f * decay;
-                armLRot = dir * 0.8f * decay;
-                legRRot = -dir * 0.2f * decay;
-                legLRot = dir * 0.3f * decay;
+                armRRot = dir * 0.6f * decay; armLRot = dir * 0.8f * decay;
+                legRRot = -dir * 0.2f * decay; legLRot = dir * 0.3f * decay;
+                foreRRot = dir * 0.5f * decay; foreLRot = dir * 0.6f * decay;
+                limbLag = 0.65f;
                 break;
             }
             case FighterState.Special:
             {
                 float pulse = Mathf.Sin(_stateTimer * 15f) * 0.15f;
-                armRRot = -dir * (1.0f + pulse);
-                armLRot = dir * (0.8f + pulse);
+                armRRot = -dir * (1.0f + pulse); armLRot = dir * (0.8f + pulse);
+                foreRRot = -dir * (0.6f + pulse); foreLRot = dir * (0.5f + pulse);
+                limbLag = 0.55f;
                 break;
             }
             case FighterState.KO:
             {
-                armRRot = dir * 0.5f;
-                armLRot = dir * 0.7f;
-                legRRot = -dir * 0.3f;
-                legLRot = dir * 0.2f;
+                // Limbs splay out as she topples.
+                armRRot = dir * 0.9f; armLRot = dir * 1.1f;
+                legRRot = -dir * 0.5f; legLRot = dir * 0.4f;
+                foreRRot = dir * 0.4f; foreLRot = dir * 0.5f;
+                shinRRot = 0.4f; shinLRot = 0.3f;
+                limbLag = 0.4f;
                 break;
             }
         }
 
-        _armR.Position = armRPos;
-        _armL.Position = armLPos;
-        _legR.Position = legRPos;
-        _legL.Position = legLPos;
+        // Apply the upper-limb rotations with a little lag (follow-through trail).
+        _armRRotLag = Mathf.LerpAngle(_armRRotLag, armRRot, limbLag);
+        _armLRotLag = Mathf.LerpAngle(_armLRotLag, armLRot, limbLag);
+        _legRRotLag = Mathf.LerpAngle(_legRRotLag, legRRot, limbLag);
+        _legLRotLag = Mathf.LerpAngle(_legLRotLag, legLRot, limbLag);
+        _armR.Rotation = _armRRotLag;
+        _armL.Rotation = _armLRotLag;
+        _legR.Rotation = _legRRotLag;
+        _legL.Rotation = _legLRotLag;
 
-        _armR.Rotation = armRRot;
-        _armL.Rotation = armLRot;
-        _legR.Rotation = legRRot;
-        _legL.Rotation = legLRot;
+        // Articulated second segments — drive elbow/knee bend if present, with
+        // a slightly tighter lag so they crack like a whip on the strike.
+        float segLag = Mathf.Min(1f, limbLag + 0.15f);
+        if (_forearmR != null)
+        {
+            _foreRRotLag = Mathf.LerpAngle(_foreRRotLag, foreRRot, segLag);
+            _forearmR.Rotation = _forearmRBaseRot + _foreRRotLag;
+        }
+        if (_forearmL != null)
+        {
+            _foreLRotLag = Mathf.LerpAngle(_foreLRotLag, foreLRot, segLag);
+            _forearmL.Rotation = _forearmLBaseRot + _foreLRotLag;
+        }
+        if (_shinR != null)
+        {
+            _shinRRotLag = Mathf.LerpAngle(_shinRRotLag, shinRRot, segLag);
+            _shinR.Rotation = _shinRBaseRot + _shinRRotLag;
+        }
+        if (_shinL != null)
+        {
+            _shinLRotLag = Mathf.LerpAngle(_shinLRotLag, shinLRot, segLag);
+            _shinL.Rotation = _shinLBaseRot + _shinLRotLag;
+        }
 
-        // Front limbs use their own original color, back limbs 30% darker
+        // Front limbs use their own original color, back limbs 30% darker.
         Color armRC = TintColor(_armROrigColor, alpha);
         Color armLC = TintColor(_armLOrigColor, alpha);
         Color legRC = TintColor(_legROrigColor, alpha);
@@ -887,6 +1232,47 @@ public partial class Fighter : CharacterBody2D
         _legR.Color = legRC;
         _armL.Color = new Color(armLC.R * 0.7f, armLC.G * 0.7f, armLC.B * 0.7f, armLC.A);
         _legL.Color = new Color(legLC.R * 0.7f, legLC.G * 0.7f, legLC.B * 0.7f, legLC.A);
+    }
+
+    // Velocity-lagged cloth/hair sway with spring overshoot. Called from the
+    // anim clock (_Process) so cloth keeps drifting while physics is frozen.
+    private void UpdateSecondaryMotion(float dt)
+    {
+        if (_clothNodes == null || _clothNodes.Length == 0) return;
+
+        // Drive the sway target from horizontal velocity (drag) + a tiny idle
+        // float. Cloth lags BEHIND motion, so it leans opposite to travel.
+        float vx = Velocity.X;
+        float idleFloat = Mathf.Sin(_animTime * 1.8f) * 0.025f;
+        float dragTarget = Mathf.Clamp(-vx / 600f, -0.45f, 0.45f) + idleFloat;
+        // Extra flutter when airborne / hurt for camp.
+        if (CurrentState == FighterState.Jump)
+            dragTarget += -Mathf.Sign(Velocity.Y) * 0.12f;
+
+        const float stiffness = 90f;
+        const float damping = 9f;
+
+        for (int i = 0; i < _clothNodes.Length; i++)
+        {
+            // Stagger so multiple cloth pieces don't move in lockstep.
+            float target = dragTarget + Mathf.Sin(_animTime * 2.3f + i) * 0.02f;
+            float force = (target - _clothSway[i]) * stiffness - _clothSwayVel[i] * damping;
+            _clothSwayVel[i] += force * dt;
+            _clothSway[i] += _clothSwayVel[i] * dt;
+        }
+    }
+
+    private void ApplyClothSway(float bodyRotation)
+    {
+        if (_clothNodes == null) return;
+        for (int i = 0; i < _clothNodes.Length; i++)
+        {
+            var node = _clothNodes[i];
+            if (node == null) continue;
+            // Sway swings with facing so it always trails behind travel.
+            float sway = _clothSway[i] * (FacingRight ? 1f : -1f);
+            node.Rotation = _clothBaseRot[i] + bodyRotation + sway;
+        }
     }
 
     private void UpdateFaceAnimations()

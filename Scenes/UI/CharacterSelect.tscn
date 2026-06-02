@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://charsel01"]
+[gd_scene load_steps=18 format=3 uid="uid://charsel01"]
 
 [ext_resource type="Script" path="res://Scripts/UI/CharacterSelect.cs" id="1_script"]
 [ext_resource type="Texture2D" path="res://Assets/Portraits/miranda.webp" id="2_miranda"]
@@ -7,6 +7,41 @@
 [ext_resource type="Texture2D" path="res://Assets/Portraits/witch.jpg" id="5_witch"]
 [ext_resource type="Texture2D" path="res://Assets/Portraits/donna.jpg" id="6_donna"]
 [ext_resource type="Texture2D" path="res://Assets/Portraits/aloysius.jpg" id="7_aloysius"]
+[ext_resource type="Shader" path="res://Shaders/duotone.gdshader" id="8_duotone"]
+[ext_resource type="FontFile" path="res://Assets/Fonts/StreetFighter.ttf" id="9_font"]
+
+[sub_resource type="ShaderMaterial" id="Duo_A"]
+shader = ExtResource("8_duotone")
+shader_parameter/dark = Color(0.45, 0.05, 0.08, 1)
+shader_parameter/light = Color(0.96, 0.79, 0.18, 1)
+shader_parameter/mid = Color(0.8, 0.1, 0.13, 1)
+shader_parameter/use_mid = true
+shader_parameter/levels = 3.0
+shader_parameter/contrast = 1.15
+
+[sub_resource type="ShaderMaterial" id="Duo_B"]
+shader = ExtResource("8_duotone")
+shader_parameter/dark = Color(0.09, 0.07, 0.12, 1)
+shader_parameter/light = Color(1.0, 0.92, 0.45, 1)
+shader_parameter/mid = Color(0.62, 0.46, 0.08, 1)
+shader_parameter/use_mid = true
+shader_parameter/levels = 3.0
+shader_parameter/contrast = 1.2
+
+[sub_resource type="StyleBoxFlat" id="HeaderBox"]
+bg_color = Color(0.45, 0.05, 0.08, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.96, 0.79, 0.18, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+
+[sub_resource type="StyleBoxFlat" id="NameBox"]
+bg_color = Color(0.06, 0.04, 0.1, 0.85)
+border_width_top = 2
+border_color = Color(0.96, 0.79, 0.18, 1)
 
 [node name="CharacterSelect" type="Control"]
 layout_mode = 3
@@ -22,32 +57,113 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color(0.05, 0.03, 0.08, 1)
+color = Color(0.06, 0.04, 0.1, 1)
+
+[node name="Sunburst" type="Polygon2D" parent="."]
+position = Vector2(640, 28)
+color = Color(0.45, 0.05, 0.08, 0.85)
+polygon = PackedVector2Array(0, 0, 360, 240, 420, 200, 0, 0, 420, 200, 470, 150, 0, 0, 470, 150, 500, 90, 0, 0, -360, 240, -420, 200, 0, 0, -420, 200, -470, 150, 0, 0, -470, 150, -500, 90)
+
+[node name="DecoFrame" type="Polygon2D" parent="."]
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(14, 14, 1266, 14, 1266, 706, 14, 706, 14, 14, 20, 20, 20, 700, 1260, 700, 1260, 20, 20, 20)
+
+[node name="CornerTL" type="Polygon2D" parent="."]
+position = Vector2(14, 14)
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(0, 0, 60, 0, 60, 10, 26, 10, 26, 26, 10, 26, 10, 60, 0, 60)
+
+[node name="CornerTR" type="Polygon2D" parent="."]
+position = Vector2(1266, 14)
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(0, 0, -60, 0, -60, 10, -26, 10, -26, 26, -10, 26, -10, 60, 0, 60)
+
+[node name="CornerBL" type="Polygon2D" parent="."]
+position = Vector2(14, 706)
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(0, 0, 60, 0, 60, -10, 26, -10, 26, -26, 10, -26, 10, -60, 0, -60)
+
+[node name="CornerBR" type="Polygon2D" parent="."]
+position = Vector2(1266, 706)
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(0, 0, -60, 0, -60, -10, -26, -10, -26, -26, -10, -26, -10, -60, 0, -60)
 
 [node name="TopStripe" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 50.0
-color = Color(0.85, 0.1, 0.1, 1)
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 64.0
+color = Color(0.8, 0.1, 0.13, 1)
 
 [node name="GoldLine" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_top = 50.0
-offset_bottom = 54.0
-color = Color(0.95, 0.78, 0.15, 1)
+offset_left = 20.0
+offset_top = 64.0
+offset_right = -20.0
+offset_bottom = 68.0
+color = Color(0.96, 0.79, 0.18, 1)
+
+[node name="HeaderBulbs" type="Node2D" parent="."]
+
+[node name="b0" type="Polygon2D" parent="HeaderBulbs"]
+position = Vector2(60, 42)
+color = Color(1, 0.92, 0.45, 1)
+polygon = PackedVector2Array(-7, 0, -5, -5, 0, -7, 5, -5, 7, 0, 5, 5, 0, 7, -5, 5)
+
+[node name="b1" type="Polygon2D" parent="HeaderBulbs"]
+position = Vector2(160, 42)
+color = Color(1, 0.92, 0.45, 1)
+polygon = PackedVector2Array(-7, 0, -5, -5, 0, -7, 5, -5, 7, 0, 5, 5, 0, 7, -5, 5)
+
+[node name="b2" type="Polygon2D" parent="HeaderBulbs"]
+position = Vector2(260, 42)
+color = Color(1, 0.92, 0.45, 1)
+polygon = PackedVector2Array(-7, 0, -5, -5, 0, -7, 5, -5, 7, 0, 5, 5, 0, 7, -5, 5)
+
+[node name="b3" type="Polygon2D" parent="HeaderBulbs"]
+position = Vector2(360, 42)
+color = Color(1, 0.92, 0.45, 1)
+polygon = PackedVector2Array(-7, 0, -5, -5, 0, -7, 5, -5, 7, 0, 5, 5, 0, 7, -5, 5)
+
+[node name="b4" type="Polygon2D" parent="HeaderBulbs"]
+position = Vector2(920, 42)
+color = Color(1, 0.92, 0.45, 1)
+polygon = PackedVector2Array(-7, 0, -5, -5, 0, -7, 5, -5, 7, 0, 5, 5, 0, 7, -5, 5)
+
+[node name="b5" type="Polygon2D" parent="HeaderBulbs"]
+position = Vector2(1020, 42)
+color = Color(1, 0.92, 0.45, 1)
+polygon = PackedVector2Array(-7, 0, -5, -5, 0, -7, 5, -5, 7, 0, 5, 5, 0, 7, -5, 5)
+
+[node name="b6" type="Polygon2D" parent="HeaderBulbs"]
+position = Vector2(1120, 42)
+color = Color(1, 0.92, 0.45, 1)
+polygon = PackedVector2Array(-7, 0, -5, -5, 0, -7, 5, -5, 7, 0, 5, 5, 0, 7, -5, 5)
+
+[node name="b7" type="Polygon2D" parent="HeaderBulbs"]
+position = Vector2(1220, 42)
+color = Color(1, 0.92, 0.45, 1)
+polygon = PackedVector2Array(-7, 0, -5, -5, 0, -7, 5, -5, 7, 0, 5, 5, 0, 7, -5, 5)
 
 [node name="TitleLabel" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 50.0
-theme_override_colors/font_color = Color(0.95, 0.78, 0.15, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 36
+offset_top = 14.0
+offset_bottom = 64.0
+theme_override_colors/font_color = Color(0.96, 0.79, 0.18, 1)
+theme_override_colors/font_outline_color = Color(0.09, 0.07, 0.12, 1)
+theme_override_colors/font_shadow_color = Color(0.45, 0.05, 0.08, 0.85)
+theme_override_constants/outline_size = 6
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_fonts/font = ExtResource("9_font")
+theme_override_font_sizes/font_size = 38
 text = "SELECT YOUR FIGHTER"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -60,9 +176,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -470.0
-offset_top = -90.0
+offset_top = -100.0
 offset_right = 470.0
-offset_bottom = 90.0
+offset_bottom = 100.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 16
@@ -70,7 +186,52 @@ theme_override_constants/separation = 16
 [node name="Panel0" type="Panel" parent="CharacterPanels"]
 clip_contents = true
 layout_mode = 2
-custom_minimum_size = Vector2(140, 180)
+custom_minimum_size = Vector2(140, 192)
+
+[node name="Portrait" type="TextureRect" parent="CharacterPanels/Panel0"]
+material = SubResource("Duo_A")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 26.0
+offset_right = -8.0
+offset_bottom = -32.0
+texture = ExtResource("2_miranda")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="DecoBorder" type="Polygon2D" parent="CharacterPanels/Panel0"]
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(4, 4, 136, 4, 136, 188, 4, 188, 4, 4, 8, 8, 8, 184, 132, 184, 132, 8, 8, 8)
+
+[node name="HeaderBar" type="Panel" parent="CharacterPanels/Panel0"]
+layout_mode = 1
+anchors_preset = 10
+offset_left = 8.0
+anchor_right = 1.0
+offset_right = -8.0
+offset_top = 8.0
+offset_bottom = 26.0
+theme_override_styles/panel = SubResource("HeaderBox")
+
+[node name="Star" type="Polygon2D" parent="CharacterPanels/Panel0"]
+position = Vector2(70, 17)
+color = Color(1, 0.92, 0.45, 1)
+polygon = PackedVector2Array(0, -7, 1.6, -2.2, 6.6, -2.2, 2.6, 1, 4.2, 5.8, 0, 2.8, -4.2, 5.8, -2.6, 1, -6.6, -2.2, -1.6, -2.2)
+
+[node name="NameBg" type="Panel" parent="CharacterPanels/Panel0"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = -32.0
+offset_right = -4.0
+offset_bottom = -4.0
+theme_override_styles/panel = SubResource("NameBox")
 
 [node name="NameLabel" type="Label" parent="CharacterPanels/Panel0"]
 layout_mode = 1
@@ -79,30 +240,63 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -32.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
+theme_override_colors/font_color = Color(0.97, 0.93, 0.82, 1)
+theme_override_colors/font_outline_color = Color(0.45, 0.05, 0.08, 1)
+theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 14
 text = "Miranda Priestly"
 horizontal_alignment = 1
-
-[node name="Portrait" type="TextureRect" parent="CharacterPanels/Panel0"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 4.0
-offset_top = 4.0
-offset_right = -4.0
-offset_bottom = -32.0
-texture = ExtResource("2_miranda")
-expand_mode = 1
-stretch_mode = 6
+vertical_alignment = 1
 
 [node name="Panel1" type="Panel" parent="CharacterPanels"]
 clip_contents = true
 layout_mode = 2
-custom_minimum_size = Vector2(140, 180)
+custom_minimum_size = Vector2(140, 192)
+
+[node name="Portrait" type="TextureRect" parent="CharacterPanels/Panel1"]
+material = SubResource("Duo_B")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 26.0
+offset_right = -8.0
+offset_bottom = -32.0
+texture = ExtResource("3_julia")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="DecoBorder" type="Polygon2D" parent="CharacterPanels/Panel1"]
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(4, 4, 136, 4, 136, 188, 4, 188, 4, 4, 8, 8, 8, 184, 132, 184, 132, 8, 8, 8)
+
+[node name="HeaderBar" type="Panel" parent="CharacterPanels/Panel1"]
+layout_mode = 1
+anchors_preset = 10
+offset_left = 8.0
+anchor_right = 1.0
+offset_right = -8.0
+offset_top = 8.0
+offset_bottom = 26.0
+theme_override_styles/panel = SubResource("HeaderBox")
+
+[node name="Star" type="Polygon2D" parent="CharacterPanels/Panel1"]
+position = Vector2(70, 17)
+color = Color(1, 0.92, 0.45, 1)
+polygon = PackedVector2Array(0, -7, 1.6, -2.2, 6.6, -2.2, 2.6, 1, 4.2, 5.8, 0, 2.8, -4.2, 5.8, -2.6, 1, -6.6, -2.2, -1.6, -2.2)
+
+[node name="NameBg" type="Panel" parent="CharacterPanels/Panel1"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = -32.0
+offset_right = -4.0
+offset_bottom = -4.0
+theme_override_styles/panel = SubResource("NameBox")
 
 [node name="NameLabel" type="Label" parent="CharacterPanels/Panel1"]
 layout_mode = 1
@@ -111,30 +305,63 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -32.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
+theme_override_colors/font_color = Color(0.97, 0.93, 0.82, 1)
+theme_override_colors/font_outline_color = Color(0.45, 0.05, 0.08, 1)
+theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 14
 text = "Julia Child"
 horizontal_alignment = 1
-
-[node name="Portrait" type="TextureRect" parent="CharacterPanels/Panel1"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 4.0
-offset_top = 4.0
-offset_right = -4.0
-offset_bottom = -32.0
-texture = ExtResource("3_julia")
-expand_mode = 1
-stretch_mode = 6
+vertical_alignment = 1
 
 [node name="Panel2" type="Panel" parent="CharacterPanels"]
 clip_contents = true
 layout_mode = 2
-custom_minimum_size = Vector2(140, 180)
+custom_minimum_size = Vector2(140, 192)
+
+[node name="Portrait" type="TextureRect" parent="CharacterPanels/Panel2"]
+material = SubResource("Duo_A")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 26.0
+offset_right = -8.0
+offset_bottom = -32.0
+texture = ExtResource("4_thatcher")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="DecoBorder" type="Polygon2D" parent="CharacterPanels/Panel2"]
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(4, 4, 136, 4, 136, 188, 4, 188, 4, 4, 8, 8, 8, 184, 132, 184, 132, 8, 8, 8)
+
+[node name="HeaderBar" type="Panel" parent="CharacterPanels/Panel2"]
+layout_mode = 1
+anchors_preset = 10
+offset_left = 8.0
+anchor_right = 1.0
+offset_right = -8.0
+offset_top = 8.0
+offset_bottom = 26.0
+theme_override_styles/panel = SubResource("HeaderBox")
+
+[node name="Star" type="Polygon2D" parent="CharacterPanels/Panel2"]
+position = Vector2(70, 17)
+color = Color(1, 0.92, 0.45, 1)
+polygon = PackedVector2Array(0, -7, 1.6, -2.2, 6.6, -2.2, 2.6, 1, 4.2, 5.8, 0, 2.8, -4.2, 5.8, -2.6, 1, -6.6, -2.2, -1.6, -2.2)
+
+[node name="NameBg" type="Panel" parent="CharacterPanels/Panel2"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = -32.0
+offset_right = -4.0
+offset_bottom = -4.0
+theme_override_styles/panel = SubResource("NameBox")
 
 [node name="NameLabel" type="Label" parent="CharacterPanels/Panel2"]
 layout_mode = 1
@@ -143,30 +370,63 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -32.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
+theme_override_colors/font_color = Color(0.97, 0.93, 0.82, 1)
+theme_override_colors/font_outline_color = Color(0.45, 0.05, 0.08, 1)
+theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 14
 text = "Margaret Thatcher"
 horizontal_alignment = 1
-
-[node name="Portrait" type="TextureRect" parent="CharacterPanels/Panel2"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 4.0
-offset_top = 4.0
-offset_right = -4.0
-offset_bottom = -32.0
-texture = ExtResource("4_thatcher")
-expand_mode = 1
-stretch_mode = 6
+vertical_alignment = 1
 
 [node name="Panel3" type="Panel" parent="CharacterPanels"]
 clip_contents = true
 layout_mode = 2
-custom_minimum_size = Vector2(140, 180)
+custom_minimum_size = Vector2(140, 192)
+
+[node name="Portrait" type="TextureRect" parent="CharacterPanels/Panel3"]
+material = SubResource("Duo_B")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 26.0
+offset_right = -8.0
+offset_bottom = -32.0
+texture = ExtResource("5_witch")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="DecoBorder" type="Polygon2D" parent="CharacterPanels/Panel3"]
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(4, 4, 136, 4, 136, 188, 4, 188, 4, 4, 8, 8, 8, 184, 132, 184, 132, 8, 8, 8)
+
+[node name="HeaderBar" type="Panel" parent="CharacterPanels/Panel3"]
+layout_mode = 1
+anchors_preset = 10
+offset_left = 8.0
+anchor_right = 1.0
+offset_right = -8.0
+offset_top = 8.0
+offset_bottom = 26.0
+theme_override_styles/panel = SubResource("HeaderBox")
+
+[node name="Star" type="Polygon2D" parent="CharacterPanels/Panel3"]
+position = Vector2(70, 17)
+color = Color(1, 0.92, 0.45, 1)
+polygon = PackedVector2Array(0, -7, 1.6, -2.2, 6.6, -2.2, 2.6, 1, 4.2, 5.8, 0, 2.8, -4.2, 5.8, -2.6, 1, -6.6, -2.2, -1.6, -2.2)
+
+[node name="NameBg" type="Panel" parent="CharacterPanels/Panel3"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = -32.0
+offset_right = -4.0
+offset_bottom = -4.0
+theme_override_styles/panel = SubResource("NameBox")
 
 [node name="NameLabel" type="Label" parent="CharacterPanels/Panel3"]
 layout_mode = 1
@@ -175,30 +435,63 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -32.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
+theme_override_colors/font_color = Color(0.97, 0.93, 0.82, 1)
+theme_override_colors/font_outline_color = Color(0.45, 0.05, 0.08, 1)
+theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 14
 text = "The Witch"
 horizontal_alignment = 1
-
-[node name="Portrait" type="TextureRect" parent="CharacterPanels/Panel3"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 4.0
-offset_top = 4.0
-offset_right = -4.0
-offset_bottom = -32.0
-texture = ExtResource("5_witch")
-expand_mode = 1
-stretch_mode = 6
+vertical_alignment = 1
 
 [node name="Panel4" type="Panel" parent="CharacterPanels"]
 clip_contents = true
 layout_mode = 2
-custom_minimum_size = Vector2(140, 180)
+custom_minimum_size = Vector2(140, 192)
+
+[node name="Portrait" type="TextureRect" parent="CharacterPanels/Panel4"]
+material = SubResource("Duo_A")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 26.0
+offset_right = -8.0
+offset_bottom = -32.0
+texture = ExtResource("6_donna")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="DecoBorder" type="Polygon2D" parent="CharacterPanels/Panel4"]
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(4, 4, 136, 4, 136, 188, 4, 188, 4, 4, 8, 8, 8, 184, 132, 184, 132, 8, 8, 8)
+
+[node name="HeaderBar" type="Panel" parent="CharacterPanels/Panel4"]
+layout_mode = 1
+anchors_preset = 10
+offset_left = 8.0
+anchor_right = 1.0
+offset_right = -8.0
+offset_top = 8.0
+offset_bottom = 26.0
+theme_override_styles/panel = SubResource("HeaderBox")
+
+[node name="Star" type="Polygon2D" parent="CharacterPanels/Panel4"]
+position = Vector2(70, 17)
+color = Color(1, 0.92, 0.45, 1)
+polygon = PackedVector2Array(0, -7, 1.6, -2.2, 6.6, -2.2, 2.6, 1, 4.2, 5.8, 0, 2.8, -4.2, 5.8, -2.6, 1, -6.6, -2.2, -1.6, -2.2)
+
+[node name="NameBg" type="Panel" parent="CharacterPanels/Panel4"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = -32.0
+offset_right = -4.0
+offset_bottom = -4.0
+theme_override_styles/panel = SubResource("NameBox")
 
 [node name="NameLabel" type="Label" parent="CharacterPanels/Panel4"]
 layout_mode = 1
@@ -207,30 +500,63 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -32.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
+theme_override_colors/font_color = Color(0.97, 0.93, 0.82, 1)
+theme_override_colors/font_outline_color = Color(0.45, 0.05, 0.08, 1)
+theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 14
 text = "Donna Sheridan"
 horizontal_alignment = 1
-
-[node name="Portrait" type="TextureRect" parent="CharacterPanels/Panel4"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 4.0
-offset_top = 4.0
-offset_right = -4.0
-offset_bottom = -32.0
-texture = ExtResource("6_donna")
-expand_mode = 1
-stretch_mode = 6
+vertical_alignment = 1
 
 [node name="Panel5" type="Panel" parent="CharacterPanels"]
 clip_contents = true
 layout_mode = 2
-custom_minimum_size = Vector2(140, 180)
+custom_minimum_size = Vector2(140, 192)
+
+[node name="Portrait" type="TextureRect" parent="CharacterPanels/Panel5"]
+material = SubResource("Duo_B")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 26.0
+offset_right = -8.0
+offset_bottom = -32.0
+texture = ExtResource("7_aloysius")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="DecoBorder" type="Polygon2D" parent="CharacterPanels/Panel5"]
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(4, 4, 136, 4, 136, 188, 4, 188, 4, 4, 8, 8, 8, 184, 132, 184, 132, 8, 8, 8)
+
+[node name="HeaderBar" type="Panel" parent="CharacterPanels/Panel5"]
+layout_mode = 1
+anchors_preset = 10
+offset_left = 8.0
+anchor_right = 1.0
+offset_right = -8.0
+offset_top = 8.0
+offset_bottom = 26.0
+theme_override_styles/panel = SubResource("HeaderBox")
+
+[node name="Star" type="Polygon2D" parent="CharacterPanels/Panel5"]
+position = Vector2(70, 17)
+color = Color(1, 0.92, 0.45, 1)
+polygon = PackedVector2Array(0, -7, 1.6, -2.2, 6.6, -2.2, 2.6, 1, 4.2, 5.8, 0, 2.8, -4.2, 5.8, -2.6, 1, -6.6, -2.2, -1.6, -2.2)
+
+[node name="NameBg" type="Panel" parent="CharacterPanels/Panel5"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = -32.0
+offset_right = -4.0
+offset_bottom = -4.0
+theme_override_styles/panel = SubResource("NameBox")
 
 [node name="NameLabel" type="Label" parent="CharacterPanels/Panel5"]
 layout_mode = 1
@@ -239,25 +565,13 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -32.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
+theme_override_colors/font_color = Color(0.97, 0.93, 0.82, 1)
+theme_override_colors/font_outline_color = Color(0.45, 0.05, 0.08, 1)
+theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 14
 text = "Sister Aloysius"
 horizontal_alignment = 1
-
-[node name="Portrait" type="TextureRect" parent="CharacterPanels/Panel5"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 4.0
-offset_top = 4.0
-offset_right = -4.0
-offset_bottom = -32.0
-texture = ExtResource("7_aloysius")
-expand_mode = 1
-stretch_mode = 6
+vertical_alignment = 1
 
 [node name="P1Label" type="Label" parent="."]
 layout_mode = 1
@@ -267,15 +581,19 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -300.0
-offset_top = -110.0
+offset_top = -116.0
 offset_right = -20.0
-offset_bottom = -80.0
-theme_override_colors/font_color = Color(0.15, 0.45, 0.95, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
+offset_bottom = -82.0
+theme_override_colors/font_color = Color(0.18, 0.5, 0.98, 1)
+theme_override_colors/font_outline_color = Color(0.09, 0.07, 0.12, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6)
+theme_override_constants/outline_size = 4
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 22
 text = "1P: Miranda Priestly"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="VsLabel" type="Label" parent="."]
 layout_mode = 1
@@ -284,14 +602,18 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -30.0
-offset_top = -110.0
-offset_right = 30.0
+offset_left = -34.0
+offset_top = -120.0
+offset_right = 34.0
 offset_bottom = -80.0
-theme_override_colors/font_color = Color(0.95, 0.78, 0.15, 1)
-theme_override_colors/font_outline_color = Color(0.85, 0.1, 0.1, 1)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 28
+theme_override_colors/font_color = Color(0.96, 0.79, 0.18, 1)
+theme_override_colors/font_outline_color = Color(0.8, 0.1, 0.13, 1)
+theme_override_colors/font_shadow_color = Color(0.09, 0.07, 0.12, 0.9)
+theme_override_constants/outline_size = 5
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 3
+theme_override_fonts/font = ExtResource("9_font")
+theme_override_font_sizes/font_size = 30
 text = "VS"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -304,15 +626,19 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = 20.0
-offset_top = -110.0
+offset_top = -116.0
 offset_right = 300.0
-offset_bottom = -80.0
-theme_override_colors/font_color = Color(0.95, 0.2, 0.15, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
+offset_bottom = -82.0
+theme_override_colors/font_color = Color(0.96, 0.22, 0.16, 1)
+theme_override_colors/font_outline_color = Color(0.09, 0.07, 0.12, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6)
+theme_override_constants/outline_size = 4
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 22
 text = "2P: Julia Child"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="InstructionsLabel" type="Label" parent="."]
 layout_mode = 1
@@ -321,11 +647,13 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -300.0
-offset_top = -50.0
-offset_right = 300.0
-offset_bottom = -20.0
-theme_override_colors/font_color = Color(0.7, 0.65, 0.55, 1)
+offset_left = -340.0
+offset_top = -56.0
+offset_right = 340.0
+offset_bottom = -26.0
+theme_override_colors/font_color = Color(0.97, 0.93, 0.82, 0.85)
+theme_override_colors/font_outline_color = Color(0.09, 0.07, 0.12, 1)
+theme_override_constants/outline_size = 3
 theme_override_font_sizes/font_size = 14
 text = "P1: A/D + F to confirm  |  P2: Left/Right + Num1 to confirm"
 horizontal_alignment = 1

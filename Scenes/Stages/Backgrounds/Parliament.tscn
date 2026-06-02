@@ -1,252 +1,712 @@
-[gd_scene load_steps=3 format=3 uid="uid://bg_parl01"]
+[gd_scene load_steps=4 format=3 uid="uid://bg_parl01"]
 
-[ext_resource type="Shader" path="res://Shaders/pixelate.gdshader" id="1"]
+[ext_resource type="Shader" path="res://Shaders/halftone.gdshader" id="1"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_1"]
+; ---- Moody regal halftone for the sky/clock window (Ben-Day dots) ----
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_Sky"]
 shader = ExtResource("1")
-shader_parameter/pixel_size = 4.0
+shader_parameter/dot_size = 11.0
+shader_parameter/angle = 0.42
+shader_parameter/tint = Color(0.10, 0.14, 0.30, 1)
+shader_parameter/bg = Color(0.04, 0.05, 0.14, 1)
+shader_parameter/softness = 0.55
+shader_parameter/density = 0.46
 
-[node name="Parliament" type="CanvasGroup"]
-material = SubResource("ShaderMaterial_1")
+; ---- Halftone wash for the back oak wall (warm regal dots) ----
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_Wall"]
+shader = ExtResource("1")
+shader_parameter/dot_size = 9.0
+shader_parameter/angle = 0.7
+shader_parameter/tint = Color(0.16, 0.10, 0.05, 1)
+shader_parameter/bg = Color(0.26, 0.17, 0.09, 1)
+shader_parameter/softness = 0.45
+shader_parameter/density = 0.40
 
-[node name="Ceiling" type="ColorRect" parent="."]
-z_index = -10
-offset_right = 1280.0
-offset_bottom = 100.0
-color = Color(0.18, 0.12, 0.08, 1)
+[node name="Parliament" type="Node2D"]
 
-[node name="BackWall" type="ColorRect" parent="."]
-z_index = -10
-offset_top = 100.0
+; ==================================================================
+; ===============   BACKDROP  (z -20 .. -15)   =====================
+; ==================================================================
+
+[node name="NightFill" type="ColorRect" parent="."]
+z_index = -20
 offset_right = 1280.0
 offset_bottom = 500.0
-color = Color(0.28, 0.2, 0.12, 1)
+color = Color(0.05, 0.04, 0.11, 1)
 
+[node name="HalftoneSky" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_Sky")
+z_index = -19
+offset_right = 1280.0
+offset_bottom = 360.0
+
+; ---- Tall arched window framing Big Ben (recessed dark stone) ----
+[node name="WindowStone" type="Polygon2D" parent="."]
+z_index = -18
+color = Color(0.13, 0.10, 0.07, 1)
+polygon = PackedVector2Array(536, 110, 560, 60, 600, 28, 640, 18, 680, 28, 720, 60, 744, 110, 744, 460, 536, 460)
+
+[node name="WindowSky" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_Sky")
+z_index = -18
+offset_left = 556.0
+offset_top = 112.0
+offset_right = 724.0
+offset_bottom = 458.0
+color = Color(0.07, 0.09, 0.22, 1)
+
+[node name="WindowSkyGlow" type="Polygon2D" parent="."]
+z_index = -18
+color = Color(0.16, 0.20, 0.40, 0.55)
+polygon = PackedVector2Array(556, 458, 640, 150, 724, 458)
+
+; ---- Big Ben clock tower silhouette through the window ----
+[node name="ClockTower" type="Polygon2D" parent="."]
+z_index = -17
+color = Color(0.10, 0.10, 0.16, 1)
+polygon = PackedVector2Array(596, 458, 596, 246, 590, 246, 590, 226, 600, 198, 614, 178, 614, 158, 624, 138, 640, 124, 656, 138, 666, 158, 666, 178, 680, 198, 690, 226, 690, 246, 684, 246, 684, 458)
+
+[node name="ClockTowerShadow" type="Polygon2D" parent="."]
+z_index = -17
+color = Color(0.06, 0.06, 0.11, 1)
+polygon = PackedVector2Array(656, 138, 666, 158, 666, 178, 680, 198, 690, 226, 690, 246, 684, 246, 684, 458, 644, 458, 644, 124)
+
+[node name="ClockTowerInk" type="Line2D" parent="."]
+z_index = -16
+points = PackedVector2Array(596, 458, 596, 246, 590, 246, 590, 226, 600, 198, 614, 178, 614, 158, 624, 138, 640, 124, 656, 138, 666, 158, 666, 178, 680, 198, 690, 226, 690, 246, 684, 246, 684, 458)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+; ---- The glowing clock dial ----
+[node name="ClockDial" type="Polygon2D" parent="."]
+z_index = -16
+color = Color(0.98, 0.88, 0.50, 1)
+polygon = PackedVector2Array(640, 268, 654, 272, 664, 282, 668, 296, 664, 310, 654, 320, 640, 324, 626, 320, 616, 310, 612, 296, 616, 282, 626, 272)
+
+[node name="ClockDialShadow" type="Polygon2D" parent="."]
+z_index = -16
+color = Color(0.72, 0.65, 0.37, 1)
+polygon = PackedVector2Array(668, 296, 664, 310, 654, 320, 640, 324, 626, 320, 640, 296)
+
+[node name="ClockHands" type="Polygon2D" parent="."]
+z_index = -15
+color = Color(0.09, 0.07, 0.12, 1)
+polygon = PackedVector2Array(638, 298, 640, 280, 642, 298, 660, 296, 642, 300, 640, 300)
+
+[node name="ClockDialInk" type="Line2D" parent="."]
+z_index = -15
+points = PackedVector2Array(640, 268, 654, 272, 664, 282, 668, 296, 664, 310, 654, 320, 640, 324, 626, 320, 616, 310, 612, 296, 616, 282, 626, 272)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+; ---- Gothic window mullions (tracery bars) ----
+[node name="MullionV" type="Polygon2D" parent="."]
+z_index = -17
+color = Color(0.18, 0.13, 0.08, 1)
+polygon = PackedVector2Array(637, 112, 643, 112, 643, 458, 637, 458)
+
+[node name="MullionH1" type="Polygon2D" parent="."]
+z_index = -17
+color = Color(0.18, 0.13, 0.08, 1)
+polygon = PackedVector2Array(556, 220, 724, 220, 724, 226, 556, 226)
+
+[node name="MullionH2" type="Polygon2D" parent="."]
+z_index = -17
+color = Color(0.18, 0.13, 0.08, 1)
+polygon = PackedVector2Array(556, 358, 724, 358, 724, 364, 556, 364)
+
+[node name="WindowArchInk" type="Line2D" parent="."]
+z_index = -15
+points = PackedVector2Array(536, 110, 560, 60, 600, 28, 640, 18, 680, 28, 720, 60, 744, 110, 744, 460, 536, 460)
+closed = true
+width = 6.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+; ==================================================================
+; ===============   MID  (z -14 .. -8)   ===========================
+; ==================================================================
+
+; ---- Carved oak back wall flanking the window ----
+[node name="OakWallL" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_Wall")
+z_index = -14
+offset_right = 536.0
+offset_bottom = 500.0
+color = Color(0.26, 0.17, 0.09, 1)
+
+[node name="OakWallR" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_Wall")
+z_index = -14
+offset_left = 744.0
+offset_right = 1280.0
+offset_bottom = 500.0
+color = Color(0.26, 0.17, 0.09, 1)
+
+; ---- Directional moody light shaft from the upper-left window ----
+[node name="LightShaft" type="Polygon2D" parent="."]
+z_index = -13
+color = Color(0.96, 0.86, 0.52, 0.16)
+polygon = PackedVector2Array(560, 112, 700, 130, 940, 500, 360, 500)
+
+[node name="LightShaftCore" type="Polygon2D" parent="."]
+z_index = -13
+color = Color(1.0, 0.92, 0.60, 0.12)
+polygon = PackedVector2Array(596, 120, 668, 130, 760, 500, 480, 500)
+
+; ---- Ambient floor-level gloom on the right (light from upper-left) ----
+[node name="WallShadowR" type="Polygon2D" parent="."]
+z_index = -13
+color = Color(0.16, 0.10, 0.05, 0.6)
+polygon = PackedVector2Array(744, 0, 1280, 0, 1280, 500, 744, 500)
+
+; ---- Decorative carved oak panels (left) ----
+[node name="PanelL1" type="Polygon2D" parent="."]
+z_index = -12
+color = Color(0.30, 0.20, 0.11, 1)
+polygon = PackedVector2Array(40, 110, 220, 110, 220, 430, 40, 430)
+
+[node name="PanelL1Shadow" type="Polygon2D" parent="PanelL1"]
+color = Color(0.22, 0.15, 0.08, 1)
+polygon = PackedVector2Array(150, 110, 220, 110, 220, 430, 40, 430, 40, 360)
+
+[node name="PanelL1Ink" type="Line2D" parent="PanelL1"]
+points = PackedVector2Array(40, 110, 220, 110, 220, 430, 40, 430)
+closed = true
+width = 5.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="PanelL1Inset" type="Line2D" parent="PanelL1"]
+points = PackedVector2Array(64, 134, 196, 134, 196, 406, 64, 406)
+closed = true
+width = 2.5
+default_color = Color(0.16, 0.13, 0.2, 1)
+antialiased = true
+
+[node name="PanelL2" type="Polygon2D" parent="."]
+z_index = -12
+color = Color(0.30, 0.20, 0.11, 1)
+polygon = PackedVector2Array(240, 150, 400, 150, 400, 430, 240, 430)
+
+[node name="PanelL2Shadow" type="Polygon2D" parent="PanelL2"]
+color = Color(0.22, 0.15, 0.08, 1)
+polygon = PackedVector2Array(330, 150, 400, 150, 400, 430, 240, 430, 240, 360)
+
+[node name="PanelL2Ink" type="Line2D" parent="PanelL2"]
+points = PackedVector2Array(240, 150, 400, 150, 400, 430, 240, 430)
+closed = true
+width = 5.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="PanelL2Inset" type="Line2D" parent="PanelL2"]
+points = PackedVector2Array(262, 172, 378, 172, 378, 408, 262, 408)
+closed = true
+width = 2.5
+default_color = Color(0.16, 0.13, 0.2, 1)
+antialiased = true
+
+; ---- Decorative carved oak panels (right) ----
+[node name="PanelR1" type="Polygon2D" parent="."]
+z_index = -12
+color = Color(0.30, 0.20, 0.11, 1)
+polygon = PackedVector2Array(880, 150, 1040, 150, 1040, 430, 880, 430)
+
+[node name="PanelR1Shadow" type="Polygon2D" parent="PanelR1"]
+color = Color(0.22, 0.15, 0.08, 1)
+polygon = PackedVector2Array(970, 150, 1040, 150, 1040, 430, 880, 430, 880, 360)
+
+[node name="PanelR1Ink" type="Line2D" parent="PanelR1"]
+points = PackedVector2Array(880, 150, 1040, 150, 1040, 430, 880, 430)
+closed = true
+width = 5.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="PanelR1Inset" type="Line2D" parent="PanelR1"]
+points = PackedVector2Array(902, 172, 1018, 172, 1018, 408, 902, 408)
+closed = true
+width = 2.5
+default_color = Color(0.16, 0.13, 0.2, 1)
+antialiased = true
+
+[node name="PanelR2" type="Polygon2D" parent="."]
+z_index = -12
+color = Color(0.30, 0.20, 0.11, 1)
+polygon = PackedVector2Array(1060, 110, 1240, 110, 1240, 430, 1060, 430)
+
+[node name="PanelR2Shadow" type="Polygon2D" parent="PanelR2"]
+color = Color(0.22, 0.15, 0.08, 1)
+polygon = PackedVector2Array(1150, 110, 1240, 110, 1240, 430, 1060, 430, 1060, 360)
+
+[node name="PanelR2Ink" type="Line2D" parent="PanelR2"]
+points = PackedVector2Array(1060, 110, 1240, 110, 1240, 430, 1060, 430)
+closed = true
+width = 5.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="PanelR2Inset" type="Line2D" parent="PanelR2"]
+points = PackedVector2Array(1084, 134, 1216, 134, 1216, 406, 1084, 406)
+closed = true
+width = 2.5
+default_color = Color(0.16, 0.13, 0.2, 1)
+antialiased = true
+
+; ---- Gilded carved columns flanking the window ----
+[node name="ColumnL" type="Polygon2D" parent="."]
+z_index = -11
+color = Color(0.40, 0.30, 0.16, 1)
+polygon = PackedVector2Array(478, 96, 520, 96, 520, 500, 478, 500)
+
+[node name="ColumnLShadow" type="Polygon2D" parent="ColumnL"]
+color = Color(0.30, 0.22, 0.12, 1)
+polygon = PackedVector2Array(502, 96, 520, 96, 520, 500, 502, 500)
+
+[node name="ColumnLHi" type="Polygon2D" parent="ColumnL"]
+color = Color(0.55, 0.43, 0.24, 1)
+polygon = PackedVector2Array(478, 96, 486, 96, 486, 500, 478, 500)
+
+[node name="ColumnLInk" type="Line2D" parent="ColumnL"]
+points = PackedVector2Array(478, 96, 520, 96, 520, 500, 478, 500)
+closed = true
+width = 5.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="ColumnLCap" type="Polygon2D" parent="."]
+z_index = -11
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(470, 84, 528, 84, 528, 100, 470, 100)
+
+[node name="ColumnLCapInk" type="Line2D" parent="ColumnLCap"]
+points = PackedVector2Array(470, 84, 528, 84, 528, 100, 470, 100)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="ColumnR" type="Polygon2D" parent="."]
+z_index = -11
+color = Color(0.40, 0.30, 0.16, 1)
+polygon = PackedVector2Array(760, 96, 802, 96, 802, 500, 760, 500)
+
+[node name="ColumnRShadow" type="Polygon2D" parent="ColumnR"]
+color = Color(0.30, 0.22, 0.12, 1)
+polygon = PackedVector2Array(784, 96, 802, 96, 802, 500, 784, 500)
+
+[node name="ColumnRHi" type="Polygon2D" parent="ColumnR"]
+color = Color(0.55, 0.43, 0.24, 1)
+polygon = PackedVector2Array(760, 96, 768, 96, 768, 500, 760, 500)
+
+[node name="ColumnRInk" type="Line2D" parent="ColumnR"]
+points = PackedVector2Array(760, 96, 802, 96, 802, 500, 760, 500)
+closed = true
+width = 5.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="ColumnRCap" type="Polygon2D" parent="."]
+z_index = -11
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(752, 84, 810, 84, 810, 100, 752, 100)
+
+[node name="ColumnRCapInk" type="Line2D" parent="ColumnRCap"]
+points = PackedVector2Array(752, 84, 810, 84, 810, 100, 752, 100)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+; ---- Crown / royal coat-of-arms medallion above the window ----
+[node name="CrestBack" type="Polygon2D" parent="."]
+z_index = -11
+color = Color(0.62, 0.46, 0.08, 1)
+polygon = PackedVector2Array(606, 28, 640, 12, 674, 28, 682, 64, 640, 86, 598, 64)
+
+[node name="CrestFace" type="Polygon2D" parent="CrestBack"]
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(614, 34, 640, 22, 666, 34, 672, 60, 640, 78, 608, 60)
+
+[node name="CrestFaceShadow" type="Polygon2D" parent="CrestBack"]
+color = Color(0.71, 0.58, 0.13, 1)
+polygon = PackedVector2Array(672, 60, 640, 78, 608, 60, 640, 50)
+
+[node name="CrestRose" type="Polygon2D" parent="CrestBack"]
+color = Color(0.80, 0.10, 0.13, 1)
+polygon = PackedVector2Array(640, 38, 650, 44, 654, 54, 640, 64, 626, 54, 630, 44)
+
+[node name="CrestInk" type="Line2D" parent="CrestBack"]
+points = PackedVector2Array(606, 28, 640, 12, 674, 28, 682, 64, 640, 86, 598, 64)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+; ---- Crown atop the crest ----
+[node name="Crown" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(1.0, 0.92, 0.45, 1)
+polygon = PackedVector2Array(616, 14, 624, 0, 632, 12, 640, -4, 648, 12, 656, 0, 664, 14, 664, 22, 616, 22)
+
+[node name="CrownInk" type="Line2D" parent="Crown"]
+points = PackedVector2Array(616, 14, 624, 0, 632, 12, 640, -4, 648, 12, 656, 0, 664, 14, 664, 22, 616, 22)
+closed = true
+width = 3.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+; ---- Speaker's chair / throne, set behind window-left, kept off-center ----
+[node name="ThroneBack" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.16, 0.36, 0.22, 1)
+polygon = PackedVector2Array(300, 250, 420, 250, 420, 420, 300, 420)
+
+[node name="ThroneBackShadow" type="Polygon2D" parent="ThroneBack"]
+color = Color(0.12, 0.27, 0.16, 1)
+polygon = PackedVector2Array(370, 250, 420, 250, 420, 420, 300, 420, 300, 360)
+
+[node name="ThroneBackInk" type="Line2D" parent="ThroneBack"]
+points = PackedVector2Array(300, 250, 420, 250, 420, 420, 300, 420)
+closed = true
+width = 5.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="ThroneCanopy" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.40, 0.30, 0.16, 1)
+polygon = PackedVector2Array(290, 250, 360, 200, 430, 250)
+
+[node name="ThroneCanopyHi" type="Polygon2D" parent="ThroneCanopy"]
+color = Color(0.55, 0.43, 0.24, 1)
+polygon = PackedVector2Array(290, 250, 360, 200, 326, 250)
+
+[node name="ThroneCanopyInk" type="Line2D" parent="ThroneCanopy"]
+points = PackedVector2Array(290, 250, 360, 200, 430, 250)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="ThroneFinial" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(354, 200, 366, 200, 360, 182)
+
+; ---- Hanging gilded lamp/chandelier (left of window) ----
+[node name="ChainL" type="Polygon2D" parent="."]
+z_index = -11
+color = Color(0.62, 0.46, 0.08, 1)
+polygon = PackedVector2Array(247, 0, 251, 0, 251, 70, 247, 70)
+
+[node name="LampL" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(224, 70, 274, 70, 264, 106, 234, 106)
+
+[node name="LampLGlow" type="Polygon2D" parent="LampL"]
+color = Color(1.0, 0.92, 0.45, 1)
+polygon = PackedVector2Array(234, 76, 264, 76, 258, 100, 240, 100)
+
+[node name="LampLInk" type="Line2D" parent="LampL"]
+points = PackedVector2Array(224, 70, 274, 70, 264, 106, 234, 106)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+; ---- Hanging gilded lamp/chandelier (right of window) ----
+[node name="ChainR" type="Polygon2D" parent="."]
+z_index = -11
+color = Color(0.62, 0.46, 0.08, 1)
+polygon = PackedVector2Array(1029, 0, 1033, 0, 1033, 70, 1029, 70)
+
+[node name="LampR" type="Polygon2D" parent="."]
+z_index = -10
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(1006, 70, 1056, 70, 1046, 106, 1016, 106)
+
+[node name="LampRGlow" type="Polygon2D" parent="LampR"]
+color = Color(1.0, 0.92, 0.45, 1)
+polygon = PackedVector2Array(1016, 76, 1046, 76, 1040, 100, 1022, 100)
+
+[node name="LampRInk" type="Line2D" parent="LampR"]
+points = PackedVector2Array(1006, 70, 1056, 70, 1046, 106, 1016, 106)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+; ==================================================================
+; ===============   NEAR / FLOOR  (z -7 .. -4)   ===================
+; ==================================================================
+
+; ---- Stone floor ----
 [node name="Floor" type="ColorRect" parent="."]
-z_index = -9
+z_index = -7
 offset_top = 500.0
 offset_right = 1280.0
 offset_bottom = 720.0
-color = Color(0.2, 0.4, 0.25, 1)
+color = Color(0.20, 0.15, 0.10, 1)
 
-[node name="FloorAccent" type="ColorRect" parent="."]
-z_index = -8
-offset_top = 496.0
-offset_right = 1280.0
-offset_bottom = 504.0
-color = Color(0.72, 0.6, 0.25, 1)
-
-[node name="CarpetStripe1" type="Polygon2D" parent="."]
-z_index = -8
-color = Color(0.7, 0.55, 0.2, 1)
-polygon = PackedVector2Array(0, 540, 1280, 540, 1280, 546, 0, 546)
-
-[node name="CarpetStripe2" type="Polygon2D" parent="."]
-z_index = -8
-color = Color(0.7, 0.55, 0.2, 1)
-polygon = PackedVector2Array(0, 640, 1280, 640, 1280, 646, 0, 646)
-
-[node name="WoodPanelL" type="Polygon2D" parent="."]
-z_index = -9
-color = Color(0.32, 0.22, 0.14, 1)
-polygon = PackedVector2Array(0, 100, 80, 100, 80, 500, 0, 500)
-
-[node name="WoodPanelR" type="Polygon2D" parent="."]
-z_index = -9
-color = Color(0.32, 0.22, 0.14, 1)
-polygon = PackedVector2Array(1200, 100, 1280, 100, 1280, 500, 1200, 500)
-
-[node name="PanelGrooveL1" type="Polygon2D" parent="."]
-z_index = -8
-color = Color(0.26, 0.18, 0.1, 1)
-polygon = PackedVector2Array(25, 110, 28, 110, 28, 490, 25, 490)
-
-[node name="PanelGrooveL2" type="Polygon2D" parent="."]
-z_index = -8
-color = Color(0.26, 0.18, 0.1, 1)
-polygon = PackedVector2Array(55, 110, 58, 110, 58, 490, 55, 490)
-
-[node name="PanelGrooveR1" type="Polygon2D" parent="."]
-z_index = -8
-color = Color(0.26, 0.18, 0.1, 1)
-polygon = PackedVector2Array(1225, 110, 1228, 110, 1228, 490, 1225, 490)
-
-[node name="PanelGrooveR2" type="Polygon2D" parent="."]
-z_index = -8
-color = Color(0.26, 0.18, 0.1, 1)
-polygon = PackedVector2Array(1255, 110, 1258, 110, 1258, 490, 1255, 490)
-
-[node name="PillarL1" type="Polygon2D" parent="."]
-z_index = -8
-color = Color(0.35, 0.28, 0.18, 1)
-polygon = PackedVector2Array(76, 100, 100, 100, 100, 500, 76, 500)
-
-[node name="PillarL1Cap" type="Polygon2D" parent="."]
+[node name="FloorShadowBand" type="Polygon2D" parent="."]
 z_index = -7
-color = Color(0.72, 0.6, 0.25, 1)
-polygon = PackedVector2Array(72, 96, 104, 96, 104, 106, 72, 106)
+color = Color(0.13, 0.09, 0.06, 1)
+polygon = PackedVector2Array(0, 620, 1280, 620, 1280, 720, 0, 720)
 
-[node name="PillarL2" type="Polygon2D" parent="."]
-z_index = -8
-color = Color(0.35, 0.28, 0.18, 1)
-polygon = PackedVector2Array(340, 100, 364, 100, 364, 500, 340, 500)
+[node name="FloorEdge" type="Polygon2D" parent="."]
+z_index = -6
+color = Color(0.62, 0.46, 0.08, 1)
+polygon = PackedVector2Array(0, 496, 1280, 496, 1280, 504, 0, 504)
 
-[node name="PillarL2Cap" type="Polygon2D" parent="."]
-z_index = -7
-color = Color(0.72, 0.6, 0.25, 1)
-polygon = PackedVector2Array(336, 96, 368, 96, 368, 106, 336, 106)
+[node name="FloorEdgeInk" type="Line2D" parent="."]
+z_index = -5
+points = PackedVector2Array(0, 504, 1280, 504)
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+antialiased = true
 
-[node name="PillarR1" type="Polygon2D" parent="."]
-z_index = -8
-color = Color(0.35, 0.28, 0.18, 1)
-polygon = PackedVector2Array(916, 100, 940, 100, 940, 500, 916, 500)
+; ---- Green carpet runner down the centre aisle (recedes to window) ----
+[node name="CarpetRunner" type="Polygon2D" parent="."]
+z_index = -6
+color = Color(0.18, 0.40, 0.24, 1)
+polygon = PackedVector2Array(560, 504, 720, 504, 880, 720, 400, 720)
 
-[node name="PillarR1Cap" type="Polygon2D" parent="."]
-z_index = -7
-color = Color(0.72, 0.6, 0.25, 1)
-polygon = PackedVector2Array(912, 96, 944, 96, 944, 106, 912, 106)
+[node name="CarpetRunnerShadow" type="Polygon2D" parent="CarpetRunner"]
+color = Color(0.13, 0.30, 0.18, 1)
+polygon = PackedVector2Array(640, 504, 720, 504, 880, 720, 640, 720)
 
-[node name="PillarR2" type="Polygon2D" parent="."]
-z_index = -8
-color = Color(0.35, 0.28, 0.18, 1)
-polygon = PackedVector2Array(1180, 100, 1204, 100, 1204, 500, 1180, 500)
+[node name="CarpetRunnerInk" type="Line2D" parent="CarpetRunner"]
+points = PackedVector2Array(560, 504, 720, 504, 880, 720, 400, 720)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
 
-[node name="PillarR2Cap" type="Polygon2D" parent="."]
-z_index = -7
-color = Color(0.72, 0.6, 0.25, 1)
-polygon = PackedVector2Array(1176, 96, 1208, 96, 1208, 106, 1176, 106)
+[node name="CarpetTrimL" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(556, 504, 562, 504, 396, 720, 384, 720)
 
-[node name="PortraitL" type="Polygon2D" parent="."]
-z_index = -9
-color = Color(0.72, 0.6, 0.25, 1)
-polygon = PackedVector2Array(160, 150, 260, 150, 260, 280, 160, 280)
+[node name="CarpetTrimR" type="Polygon2D" parent="."]
+z_index = -5
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(718, 504, 724, 504, 896, 720, 884, 720)
 
-[node name="PortraitLInner" type="Polygon2D" parent="."]
-z_index = -8
-color = Color(0.22, 0.16, 0.1, 1)
-polygon = PackedVector2Array(168, 158, 252, 158, 252, 272, 168, 272)
-
-[node name="PortraitR" type="Polygon2D" parent="."]
-z_index = -9
-color = Color(0.72, 0.6, 0.25, 1)
-polygon = PackedVector2Array(1020, 150, 1120, 150, 1120, 280, 1020, 280)
-
-[node name="PortraitRInner" type="Polygon2D" parent="."]
-z_index = -8
-color = Color(0.22, 0.16, 0.1, 1)
-polygon = PackedVector2Array(1028, 158, 1112, 158, 1112, 272, 1028, 272)
-
-[node name="CeilingMedallion" type="Polygon2D" parent="."]
-z_index = -9
-color = Color(0.72, 0.6, 0.25, 1)
-polygon = PackedVector2Array(610, 20, 625, 12, 640, 8, 655, 12, 670, 20, 676, 35, 670, 50, 655, 58, 640, 62, 625, 58, 610, 50, 604, 35)
-
-[node name="CeilingMedallionInner" type="Polygon2D" parent="."]
-z_index = -8
-color = Color(0.18, 0.12, 0.08, 1)
-polygon = PackedVector2Array(620, 24, 630, 18, 640, 16, 650, 18, 660, 24, 664, 35, 660, 46, 650, 52, 640, 54, 630, 52, 620, 46, 616, 35)
-
+; ---- Green leather front benches (left, edge of playfield) ----
 [node name="BenchL" type="Polygon2D" parent="."]
-z_index = -6
-color = Color(0.22, 0.45, 0.28, 1)
-polygon = PackedVector2Array(110, 380, 330, 380, 330, 440, 110, 440)
-
-[node name="BenchLBack" type="Polygon2D" parent="."]
-z_index = -7
-color = Color(0.18, 0.38, 0.22, 1)
-polygon = PackedVector2Array(110, 320, 330, 320, 330, 385, 110, 385)
-
-[node name="BenchLArmL" type="Polygon2D" parent="."]
 z_index = -5
-color = Color(0.3, 0.2, 0.12, 1)
-polygon = PackedVector2Array(106, 350, 116, 350, 116, 440, 106, 440)
+color = Color(0.22, 0.46, 0.28, 1)
+polygon = PackedVector2Array(40, 524, 300, 524, 300, 600, 40, 600)
 
-[node name="BenchLArmR" type="Polygon2D" parent="."]
+[node name="BenchLShadow" type="Polygon2D" parent="BenchL"]
+color = Color(0.16, 0.34, 0.21, 1)
+polygon = PackedVector2Array(40, 570, 300, 570, 300, 600, 40, 600)
+
+[node name="BenchLSeam" type="Polygon2D" parent="BenchL"]
+color = Color(0.16, 0.34, 0.21, 1)
+polygon = PackedVector2Array(40, 556, 300, 556, 300, 560, 40, 560)
+
+[node name="BenchLHi" type="Polygon2D" parent="BenchL"]
+color = Color(0.34, 0.58, 0.40, 1)
+polygon = PackedVector2Array(40, 524, 300, 524, 300, 534, 40, 534)
+
+[node name="BenchLInk" type="Line2D" parent="BenchL"]
+points = PackedVector2Array(40, 524, 300, 524, 300, 600, 40, 600)
+closed = true
+width = 5.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="BenchLBase" type="Polygon2D" parent="."]
 z_index = -5
-color = Color(0.3, 0.2, 0.12, 1)
-polygon = PackedVector2Array(324, 350, 334, 350, 334, 440, 324, 440)
+color = Color(0.30, 0.20, 0.11, 1)
+polygon = PackedVector2Array(40, 600, 300, 600, 300, 660, 40, 660)
 
+[node name="BenchLBaseInk" type="Line2D" parent="BenchLBase"]
+points = PackedVector2Array(40, 600, 300, 600, 300, 660, 40, 660)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+; ---- Green leather front benches (right, edge of playfield) ----
 [node name="BenchR" type="Polygon2D" parent="."]
-z_index = -6
-color = Color(0.22, 0.45, 0.28, 1)
-polygon = PackedVector2Array(950, 380, 1170, 380, 1170, 440, 950, 440)
-
-[node name="BenchRBack" type="Polygon2D" parent="."]
-z_index = -7
-color = Color(0.18, 0.38, 0.22, 1)
-polygon = PackedVector2Array(950, 320, 1170, 320, 1170, 385, 950, 385)
-
-[node name="BenchRArmL" type="Polygon2D" parent="."]
 z_index = -5
-color = Color(0.3, 0.2, 0.12, 1)
-polygon = PackedVector2Array(946, 350, 956, 350, 956, 440, 946, 440)
+color = Color(0.22, 0.46, 0.28, 1)
+polygon = PackedVector2Array(980, 524, 1240, 524, 1240, 600, 980, 600)
 
-[node name="BenchRArmR" type="Polygon2D" parent="."]
+[node name="BenchRShadow" type="Polygon2D" parent="BenchR"]
+color = Color(0.16, 0.34, 0.21, 1)
+polygon = PackedVector2Array(980, 570, 1240, 570, 1240, 600, 980, 600)
+
+[node name="BenchRSeam" type="Polygon2D" parent="BenchR"]
+color = Color(0.16, 0.34, 0.21, 1)
+polygon = PackedVector2Array(980, 556, 1240, 556, 1240, 560, 980, 560)
+
+[node name="BenchRHi" type="Polygon2D" parent="BenchR"]
+color = Color(0.34, 0.58, 0.40, 1)
+polygon = PackedVector2Array(980, 524, 1240, 524, 1240, 534, 980, 534)
+
+[node name="BenchRInk" type="Line2D" parent="BenchR"]
+points = PackedVector2Array(980, 524, 1240, 524, 1240, 600, 980, 600)
+closed = true
+width = 5.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="BenchRBase" type="Polygon2D" parent="."]
 z_index = -5
-color = Color(0.3, 0.2, 0.12, 1)
-polygon = PackedVector2Array(1164, 350, 1174, 350, 1174, 440, 1164, 440)
+color = Color(0.30, 0.20, 0.11, 1)
+polygon = PackedVector2Array(980, 600, 1240, 600, 1240, 660, 980, 660)
 
+[node name="BenchRBaseInk" type="Line2D" parent="BenchRBase"]
+points = PackedVector2Array(980, 600, 1240, 600, 1240, 660, 980, 660)
+closed = true
+width = 4.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+; ---- Dispatch box (the iconic centre podium), low so it stays clear of fighters ----
 [node name="DispatchBox" type="Polygon2D" parent="."]
-z_index = -5
-color = Color(0.4, 0.25, 0.15, 1)
-polygon = PackedVector2Array(600, 420, 680, 420, 680, 500, 600, 500)
-
-[node name="DispatchBoxTop" type="Polygon2D" parent="."]
 z_index = -4
-color = Color(0.72, 0.6, 0.25, 1)
-polygon = PackedVector2Array(595, 416, 685, 416, 685, 424, 595, 424)
+color = Color(0.34, 0.22, 0.12, 1)
+polygon = PackedVector2Array(596, 636, 684, 636, 684, 700, 596, 700)
 
-[node name="BookStack1" type="Polygon2D" parent="."]
-z_index = -3
-color = Color(0.55, 0.15, 0.15, 1)
-polygon = PackedVector2Array(610, 406, 640, 406, 640, 416, 610, 416)
+[node name="DispatchBoxShadow" type="Polygon2D" parent="DispatchBox"]
+color = Color(0.25, 0.16, 0.09, 1)
+polygon = PackedVector2Array(644, 636, 684, 636, 684, 700, 596, 700, 596, 676)
 
-[node name="BookStack2" type="Polygon2D" parent="."]
-z_index = -3
-color = Color(0.15, 0.25, 0.5, 1)
-polygon = PackedVector2Array(615, 398, 635, 398, 635, 406, 615, 406)
+[node name="DispatchBoxHi" type="Polygon2D" parent="DispatchBox"]
+color = Color(0.46, 0.31, 0.18, 1)
+polygon = PackedVector2Array(596, 636, 684, 636, 684, 646, 596, 646)
 
-[node name="BookStack3" type="Polygon2D" parent="."]
-z_index = -3
-color = Color(0.3, 0.45, 0.2, 1)
-polygon = PackedVector2Array(645, 408, 670, 408, 670, 416, 645, 416)
+[node name="DispatchBoxInk" type="Line2D" parent="DispatchBox"]
+points = PackedVector2Array(596, 636, 684, 636, 684, 700, 596, 700)
+closed = true
+width = 5.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
 
-[node name="SpeakerChair" type="Polygon2D" parent="."]
-z_index = -7
-color = Color(0.22, 0.45, 0.28, 1)
-polygon = PackedVector2Array(580, 200, 700, 200, 700, 310, 580, 310)
+[node name="DispatchBoxTrim" type="Polygon2D" parent="."]
+z_index = -4
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(590, 632, 690, 632, 690, 640, 590, 640)
 
-[node name="SpeakerChairBack" type="Polygon2D" parent="."]
-z_index = -8
-color = Color(0.18, 0.38, 0.22, 1)
-polygon = PackedVector2Array(590, 140, 690, 140, 690, 205, 590, 205)
+; ---- Stacked order-papers / red despatch books on the box ----
+[node name="Books1" type="Polygon2D" parent="."]
+z_index = -4
+color = Color(0.80, 0.10, 0.13, 1)
+polygon = PackedVector2Array(606, 618, 648, 618, 648, 632, 606, 632)
 
-[node name="SpeakerChairCrown" type="Polygon2D" parent="."]
-z_index = -7
-color = Color(0.72, 0.6, 0.25, 1)
-polygon = PackedVector2Array(600, 130, 620, 120, 640, 130, 660, 120, 680, 130, 680, 145, 600, 145)
+[node name="Books1Ink" type="Line2D" parent="Books1"]
+points = PackedVector2Array(606, 618, 648, 618, 648, 632, 606, 632)
+closed = true
+width = 3.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+antialiased = true
 
-[node name="Chandelier" type="Polygon2D" parent="."]
-z_index = -7
-color = Color(0.72, 0.6, 0.25, 1)
-polygon = PackedVector2Array(380, 20, 400, 20, 410, 40, 420, 50, 420, 60, 360, 60, 360, 50, 370, 40)
+[node name="Books2" type="Polygon2D" parent="."]
+z_index = -4
+color = Color(0.18, 0.50, 0.98, 1)
+polygon = PackedVector2Array(648, 622, 680, 622, 680, 632, 648, 632)
 
-[node name="ChandelierChain" type="Polygon2D" parent="."]
-z_index = -8
-color = Color(0.6, 0.5, 0.2, 1)
-polygon = PackedVector2Array(389, 0, 391, 0, 391, 24, 389, 24)
+[node name="Books2Ink" type="Line2D" parent="Books2"]
+points = PackedVector2Array(648, 622, 680, 622, 680, 632, 648, 632)
+closed = true
+width = 3.0
+default_color = Color(0.09, 0.07, 0.12, 1)
+joint_mode = 2
+antialiased = true
 
-[node name="Chandelier2" type="Polygon2D" parent="."]
-z_index = -7
-color = Color(0.72, 0.6, 0.25, 1)
-polygon = PackedVector2Array(860, 20, 880, 20, 890, 40, 900, 50, 900, 60, 840, 60, 840, 50, 850, 40)
+[node name="Books3" type="Polygon2D" parent="."]
+z_index = -4
+color = Color(0.96, 0.79, 0.18, 1)
+polygon = PackedVector2Array(616, 610, 654, 610, 654, 618, 616, 618)
 
-[node name="Chandelier2Chain" type="Polygon2D" parent="."]
-z_index = -8
-color = Color(0.6, 0.5, 0.2, 1)
-polygon = PackedVector2Array(869, 0, 871, 0, 871, 24, 869, 24)
+; ---- Soft cinematic vignette to frame the fighters ----
+[node name="VignetteL" type="Polygon2D" parent="."]
+z_index = -4
+color = Color(0.04, 0.02, 0.06, 0.5)
+polygon = PackedVector2Array(0, 0, 130, 0, 60, 360, 130, 720, 0, 720)
 
-[node name="CoatOfArms" type="Polygon2D" parent="."]
-z_index = -8
-color = Color(0.72, 0.6, 0.25, 1)
-polygon = PackedVector2Array(620, 260, 640, 250, 660, 260, 660, 290, 640, 300, 620, 290)
+[node name="VignetteR" type="Polygon2D" parent="."]
+z_index = -4
+color = Color(0.04, 0.02, 0.06, 0.5)
+polygon = PackedVector2Array(1280, 0, 1150, 0, 1220, 360, 1150, 720, 1280, 720)
