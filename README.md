@@ -7,8 +7,6 @@
 A 16-bit-style arcade fighting game starring six iconic Meryl Streep characters.
 Built with Godot 4.6 and C#.
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Meryl_Streep_by_Lincoln_Townley.JPG/400px-Meryl_Streep_by_Lincoln_Townley.JPG" width="280" alt="Meryl Streep portrait by Lincoln Townley" />
-
 ---
 
 ![Godot](https://img.shields.io/badge/Godot-4.6-%23478CBF?logo=godotengine&logoColor=white)
@@ -276,7 +274,5 @@ _"I don't know why I'm so scary. I don't want to be."_
 ---
 
 Made with 🎬 and 👊 in Godot 4.6
-
-_Photo: [Meryl Streep by Lincoln Townley](https://commons.wikimedia.org/wiki/File:Meryl_Streep_by_Lincoln_Townley.JPG), CC BY-SA 4.0_
 
 </div>
