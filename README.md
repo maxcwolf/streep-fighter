@@ -24,7 +24,7 @@ Built with Godot 4.6 and C#.
 
 **Streep Fighter** is a love letter to both classic 90s arcade fighters and the greatest actress of all time. Pick your favorite Meryl, choose a stage inspired by her filmography, and duke it out in best-of-3 rounds.
 
-Features PvP local multiplayer and a VS CPU mode with AI opponent.
+Features PvP local multiplayer and a VS CPU mode with eight difficulty levels.
 
 It looks and plays like the SNES-era Street Fighter II it parodies: chunky 384×216 pixel art, frame-by-frame
 sprite animation, scrolling parallax stages, and frame-data combat with crouching and jumping attacks,
@@ -179,10 +179,12 @@ Stained-glass saints that drift behind the arches as you move, altar boys either
 | `←` / `→` | Move Left / Right |
 | `↑`       | Jump              |
 | `↓`       | Crouch            |
-| `Num1`    | Punch             |
-| `Num2`    | Kick              |
-| `Num3`    | Block             |
-| `Num0`    | Special Move      |
+| `K`       | Punch             |
+| `L`       | Kick              |
+| `;`       | Block             |
+| `O`       | Special Move      |
+
+Player 2's attacks also work on the numpad (`Num1` / `Num2` / `Num3` / `Num0`) if you have one.
 
 ### Moves
 
@@ -195,7 +197,8 @@ Stained-glass saints that drift behind the arches as you move, altar boys either
 | Hold **away** from an attack  | Block (crouch to block low). The Block key works too |
 | Special                       | Signature move, on a cooldown shown under your name |
 
-Menus: `W`/`S` or the arrow keys to move, `F` / `Enter` to confirm, `Esc` to pause.
+Menus: `W`/`S` or the arrow keys to move, `F` / `K` / `Enter` to confirm (or click). `Esc` goes back a
+screen on the select screens (un-readying a locked-in pick first) and pauses mid-fight.
 
 ---
 
@@ -231,6 +234,9 @@ streep-fighter/
 - **99-second timer** — If time runs out, the fighter with more HP% wins the round
 - **Blocking** — Hold away from an attack; reduces damage (varies per fighter, 70%–92%)
 - **High / low** — Sweeps must be blocked crouching, jump-ins standing
+- **CPU level** — Eight star levels on the title screen (left/right on the CPU LEVEL row), remembered
+  between sessions. The CPU blocks, anti-airs, punishes whiffed attacks, times wake-up attacks and follows
+  up jump-ins; the level sets how fast it reacts and how often it gets each of those right
 - **Special moves** — Unique per fighter, with cooldowns ranging from 3–5 seconds
 - **Knockdowns** — Sweeps, specials and anything that hits you out of the air put you on the floor
 - **Frame data** — Everything runs on a fixed 60Hz tick with startup / active / recovery frames, hit-stop and an input buffer, like the 16-bit originals
@@ -258,6 +264,13 @@ editor afterwards (or run `godot --headless --import`) so it re-imports the chan
 
 After changing poses, `python3 Tools/art/audit.py [out.png]` measures every arm and leg in every frame and
 reports anything anatomically off (elbows or knees bending backwards, arms folded shut, hidden hands).
+
+To tune the CPU, a hidden mode plays one CPU-vs-CPU match at the given levels (and speed), prints the
+result and quits. It also runs headless:
+
+```bash
+godot --headless --path . res://Scenes/Stages/FightStage.tscn -- --cpu-vs-cpu <p1 level> <p2 level> [speed]
+```
 
 To check the result without playing through by hand, `screenshot_tool.tscn` drives the real menus and a
 fight with synthetic key presses and saves native-resolution screenshots:
