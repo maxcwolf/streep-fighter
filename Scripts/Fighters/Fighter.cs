@@ -39,6 +39,29 @@ public partial class Fighter : Node2D
         or FighterState.CrouchPunch or FighterState.CrouchKick or FighterState.JumpPunch
         or FighterState.JumpKick or FighterState.Special;
 
+    // ---- what an opponent (the CPU) can read off this fighter, as a player reads the screen
+    /// <summary>Standing or crouching with nothing in progress: a button pressed now comes out now.</summary>
+    public bool IsFree => _stun <= 0 && CurrentState is FighterState.Idle or FighterState.WalkForward
+        or FighterState.WalkBackward or FighterState.Crouch or FighterState.Block or FighterState.CrouchBlock;
+
+    /// <summary>In an attack whose hitting part is over: it whiffed, was blocked or already landed.</summary>
+    public bool AttackSpent => CurrentState switch
+    {
+        FighterState.Special => StateTick >= SpecialActiveEnd,
+        FighterState.Punch or FighterState.Kick or FighterState.CrouchPunch or FighterState.CrouchKick
+            => _hitDone || StateTick >= _currentMove.Startup + _currentMove.Active,
+        _ => false,
+    };
+
+    /// <summary>Ticks until a grounded attack finishes and this fighter can act again (0 if not attacking).</summary>
+    public int AttackTicksLeft => CurrentState switch
+    {
+        FighterState.Special => Mathf.Max(0, SpecialTotal - StateTick),
+        FighterState.Punch or FighterState.Kick or FighterState.CrouchPunch or FighterState.CrouchKick
+            => Mathf.Max(0, _currentMove.Total - StateTick),
+        _ => 0,
+    };
+
     // ---- world (native pixels)
     public const float GroundY = 200f;
     public const float StageLeft = 14f;
@@ -153,6 +176,9 @@ public partial class Fighter : Node2D
     {
         new(SpriteSheet.Sp0, 8), new(SpriteSheet.Sp1, 6), new(SpriteSheet.Sp2, 8), new(SpriteSheet.Sp3, 8)
     };
+
+    /// <summary>Tick at which the signature move stops being dangerous (for the CPU's punishes).</summary>
+    protected virtual int SpecialActiveEnd => SpecialTotal * 6 / 10;
 
     private int SpecialTotal
     {

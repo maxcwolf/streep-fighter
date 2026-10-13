@@ -29,6 +29,8 @@ public partial class DonnaSheridan : Fighter
         new(SpriteSheet.Sp1, 5), new(SpriteSheet.Sp0, 5), new(SpriteSheet.Sp3, 12)
     };
 
+    protected override int SpecialActiveEnd => SecondHit + HitWindow;
+
     protected override void SpecialTick(int t)
     {
         Velocity.X = t < 25 ? Dir * 1.3f : 0;

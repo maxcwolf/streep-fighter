@@ -18,6 +18,8 @@ public partial class GameManager : Node2D
 
     private Fighter _p1, _p2;
     private AiController _ai;
+    private AiController _demoAi;      // drives player 1 in the CPU-vs-CPU dev mode
+    private double _baseTimeScale = 1.0;
     private FightHUD _hud;
     private VictoryScreen _victoryScreen;
     private Camera2D _camera;
@@ -100,8 +102,20 @@ public partial class GameManager : Node2D
         AddChild(_p1);
         AddChild(_p2);
 
-        if (GameState.Mode == GameMode.VsCPU)
+        // Dev aid for tuning the AI:  godot ... -- --cpu-vs-cpu <p1 level> <p2 level> [speed]
+        // Both sides are CPU-driven, results are printed, and the game quits after the match.
+        string[] args = OS.GetCmdlineUserArgs();
+        int demo = System.Array.IndexOf(args, "--cpu-vs-cpu");
+        if (demo >= 0 && args.Length > demo + 2)
+        {
+            _demoAi = new AiController(_p1, args[demo + 1].ToInt());
+            _ai = new AiController(_p2, args[demo + 2].ToInt());
+            if (args.Length > demo + 3) _baseTimeScale = Mathf.Max(1, args[demo + 3].ToInt());
+        }
+        else if (GameState.Mode == GameMode.VsCPU)
+        {
             _ai = new AiController(_p2);
+        }
 
         _p1.Died += () => OnFighterDied();
         _p2.Died += () => OnFighterDied();
@@ -118,7 +132,7 @@ public partial class GameManager : Node2D
         _roundTimer = RoundSeconds;
         _roundActive = false;
         _matchOver = false;
-        Engine.TimeScale = 1.0;
+        Engine.TimeScale = _baseTimeScale;
         _slowTicks = 0;
         Juice.Reset();
 
@@ -167,7 +181,7 @@ public partial class GameManager : Node2D
         }
 
         if (_slowTicks > 0 && --_slowTicks == 0)
-            Engine.TimeScale = 1.0;
+            Engine.TimeScale = _baseTimeScale;
 
         // Hit-stop: the world holds still, but buttons pressed now are buffered.
         if (Juice.HitStopFrames > 0)
@@ -178,6 +192,7 @@ public partial class GameManager : Node2D
             return;
         }
 
+        _demoAi?.Tick();
         _ai?.Tick();
         _p1.PollInput();
         _p2.PollInput();
@@ -252,7 +267,7 @@ public partial class GameManager : Node2D
         _roundActive = false;
 
         // Dramatic slow-motion on the finishing blow.
-        Engine.TimeScale = 0.4;
+        Engine.TimeScale = 0.4 * _baseTimeScale;
         _slowTicks = 34;
 
         _hud.Announce("ko", 110);
@@ -320,6 +335,13 @@ public partial class GameManager : Node2D
             _matchOver = true;
             AudioManager.Instance?.PlaySFX("victory");
             int winner = GameState.P1RoundWins >= GameState.RoundsToWin ? 0 : 1;
+            if (_demoAi != null)
+            {
+                GD.Print($"MATCH winner=P{winner + 1} rounds={GameState.P1RoundWins}-{GameState.P2RoundWins}");
+                GameState.Reset();
+                GetTree().Quit();
+                return;
+            }
             var stats = FighterData.GetByIndex(winner == 0 ? GameState.P1CharacterIndex : GameState.P2CharacterIndex);
             _victoryScreen.ShowWinner(winner, stats);
         }

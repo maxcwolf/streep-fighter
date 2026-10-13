@@ -14,6 +14,8 @@ public partial class TheWitch : Fighter
         new(SpriteSheet.Sp0, 10), new(SpriteSheet.Sp1, 6), new(SpriteSheet.Sp2, 8), new(SpriteSheet.Sp3, 8)
     };
 
+    protected override int SpecialActiveEnd => ReleaseTick + 2;
+
     protected override void SpecialTick(int t)
     {
         Velocity.X = 0;

@@ -23,6 +23,8 @@ public partial class MirandaPriestly : Fighter
         new(SpriteSheet.Sp2, 8), new(SpriteSheet.Sp3, 12)
     };
 
+    protected override int SpecialActiveEnd => Slap.Startup + Slap.Active;
+
     protected override void SpecialTick(int t)
     {
         Velocity.X = t >= DashStart && t < DashEnd ? Dir * DashSpeed : 0;

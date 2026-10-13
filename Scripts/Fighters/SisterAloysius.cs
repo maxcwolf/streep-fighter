@@ -24,6 +24,8 @@ public partial class SisterAloysius : Fighter
         new(SpriteSheet.Sp2, 8), new(SpriteSheet.Sp3, 12)
     };
 
+    protected override int SpecialActiveEnd => Ruler.Startup + Ruler.Active;
+
     protected override void SpecialTick(int t)
     {
         Velocity.X = t >= LungeStart && t < LungeEnd ? Dir * LungeSpeed : 0;

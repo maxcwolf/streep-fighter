@@ -23,6 +23,8 @@ public partial class MargaretThatcher : Fighter
         new(SpriteSheet.Sp0, 12), new(SpriteSheet.Sp1, 10), new(SpriteSheet.Sp2, 8), new(SpriteSheet.Sp3, 12)
     };
 
+    protected override int SpecialActiveEnd => Handbag.Startup + Handbag.Active;
+
     private bool ArmorActive => CurrentState == FighterState.Special && StateTick < ArmorEnd;
 
     protected override void SpecialTick(int t)
