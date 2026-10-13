@@ -9,12 +9,11 @@ namespace StreepFighter;
 ///
 /// Hit-stop semantics:
 ///   - HitStopFrames is counted in PHYSICS ticks (game runs at 60 ticks/s).
-///   - Decremented exactly once per physics tick at the TOP of
-///     GameManager._PhysicsProcess.
-///   - While HitStopFrames > 0 every Fighter early-returns from its
-///     _PhysicsProcess (no movement / state timer / anim-time advance), but
-///     rendering (_Process / UpdateVisuals) keeps running so the freeze frame
-///     is fully drawn.
+///   - GameManager._PhysicsProcess decrements it once per tick and, while it
+///     is above zero, skips the fighters' Tick() entirely (their input is
+///     still polled, so presses during the freeze are buffered).
+///   - Rendering keeps running, so the impact frame stays on screen and the
+///     victim's sprite rattles.
 ///
 /// Trauma drives the screen shake; CameraShake decays it each frame.
 /// </summary>

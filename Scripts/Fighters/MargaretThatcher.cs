@@ -3,76 +3,46 @@ using Godot;
 namespace StreepFighter;
 
 /// <summary>
-/// "Iron Fist" — armored power punch. Cannot be interrupted during windup.
+/// "Iron Fist" - winds the handbag right round and brings it down. She walks
+/// through anything thrown at her on the way: hits during the wind-up do half
+/// damage and do not make her flinch.
 /// </summary>
 public partial class MargaretThatcher : Fighter
 {
-    private bool _armorActive;
-    private bool _specialHit;
+    private const int ArmorEnd = 34;
 
-    public override void _Ready()
+    private static readonly Move Handbag = new()
     {
-        base._Ready();
-        SpecialDuration = 0.7f;
+        Startup = 22, Active = 6, Box = new Rect2(8, 36, 44, 46),
+        Hitstun = 24, Blockstun = 16, Push = 3.0f, Knockdown = true, LaunchX = 2.8f, LaunchY = -4.8f,
+        Stop = Juice.StopSpecial, Trauma = Juice.TraumaHeavy, HitSfx = "kick_hit",
+    };
+
+    protected override Step[] SpecialSteps { get; } =
+    {
+        new(SpriteSheet.Sp0, 12), new(SpriteSheet.Sp1, 10), new(SpriteSheet.Sp2, 8), new(SpriteSheet.Sp3, 12)
+    };
+
+    private bool ArmorActive => CurrentState == FighterState.Special && StateTick < ArmorEnd;
+
+    protected override void SpecialTick(int t)
+    {
+        Velocity.X = t < Handbag.Startup ? Dir * 1.0f : 0;
+        if (t >= Handbag.Startup && t < Handbag.Startup + Handbag.Active)
+            Strike(Handbag, Stats.SpecialDmg);
     }
 
-    protected override void HandleSpecialState(float dt)
+    public override bool ReceiveHit(Fighter attacker, int damage, Move move, Vector2 contact)
     {
-        _stateTimer += dt;
-        float progress = _stateTimer / SpecialDuration;
-
-        _armorActive = progress < 0.8f;
-
-        // Step forward slowly
-        if (progress < 0.6f)
+        if (ArmorActive && CurrentHealth > damage / 2)
         {
-            float dir = FacingRight ? 1 : -1;
-            var vel = Velocity;
-            vel.X = dir * 120;
-            Velocity = vel;
+            ApplyDamage(damage / 2);
+            Fx.Spawn(GetParent(), "blockspark", contact, 3, 3);
+            AudioManager.Instance?.PlaySFX("block_hit");
+            Juice.HitStop(Juice.StopLight);
+            Nudge(attacker != null && attacker.Position.X > Position.X ? -0.8f : 0.8f);
+            return true;
         }
-        else
-        {
-            var vel = Velocity;
-            vel.X = 0;
-            Velocity = vel;
-        }
-
-        // Hit at 60-80%
-        if (progress >= 0.6f && progress < 0.8f && !_specialHit)
-        {
-            _specialHit = true;
-            if (Opponent != null)
-            {
-                float dist = Mathf.Abs(Position.X - Opponent.Position.X);
-                if (dist < 90)
-                    Opponent.TakeDamage(Stats.SpecialDmg, this);
-            }
-        }
-
-        if (_stateTimer >= SpecialDuration)
-        {
-            _armorActive = false;
-            _specialHit = false;
-            ChangeState(FighterState.Idle);
-        }
-    }
-
-    public override void TakeDamage(int amount, Fighter attacker)
-    {
-        if (_armorActive)
-        {
-            // Take half damage, no stun/knockback
-            int reduced = amount / 2;
-            CurrentHealth = Mathf.Max(0, CurrentHealth - reduced);
-            EmitSignal(SignalName.HealthChanged, CurrentHealth, Stats.MaxHealth);
-            if (CurrentHealth <= 0)
-            {
-                ChangeState(FighterState.KO);
-                EmitSignal(SignalName.Died);
-            }
-            return;
-        }
-        base.TakeDamage(amount, attacker);
+        return base.ReceiveHit(attacker, damage, move, contact);
     }
 }

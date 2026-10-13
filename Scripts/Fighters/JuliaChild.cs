@@ -3,50 +3,25 @@ using Godot;
 namespace StreepFighter;
 
 /// <summary>
-/// "Bon Appétit" — throws a pot projectile.
+/// "Bon Appetit" - heaves a stockpot across the room.
 /// </summary>
 public partial class JuliaChild : Fighter
 {
-	private readonly PackedScene _potScene = GD.Load<PackedScene>("res://Scenes/Fighters/PotProjectile.tscn");
+	private const int ReleaseTick = 14;
 
-	public override void _Ready()
+	protected override Step[] SpecialSteps { get; } =
 	{
-		base._Ready();
-		SpecialDuration = 0.5f;
-	}
+		new(SpriteSheet.Sp0, 8), new(SpriteSheet.Sp1, 6), new(SpriteSheet.Sp2, 8), new(SpriteSheet.Sp3, 10)
+	};
 
-	protected override void HandleSpecialState(float dt)
+	protected override void SpecialTick(int t)
 	{
-		_stateTimer += dt;
-		float progress = _stateTimer / SpecialDuration;
-
-		// Spawn pot at 50%
-		if (progress >= 0.5f && !SpecialActive)
+		Velocity.X = 0;
+		if (t == ReleaseTick)
 		{
-			SpecialActive = true;
-			SpawnPot();
+			// Lobbed from overhead: a shallow arc that drops into the chest.
+			Projectile.Spawn(this, "pot", new Vector2(Dir * 22, -84), new Vector2(3.3f, -0.9f), 0.055f,
+				Stats.SpecialDmg, spin: true);
 		}
-
-		var vel = Velocity;
-		vel.X = 0;
-		Velocity = vel;
-
-		if (_stateTimer >= SpecialDuration)
-			ChangeState(FighterState.Idle);
-	}
-
-	private void SpawnPot()
-	{
-		var pot = _potScene.Instantiate<Projectile>();
-		pot.Damage = Stats.SpecialDmg;
-		pot.Direction = FacingRight ? 1 : -1;
-		pot.OwnerFighter = this;
-
-		// Set projectile collision: layer 16 (Projectiles), mask opponent hurtbox
-		pot.SetPlayerIndex(PlayerIndex);
-
-		float xOffset = FacingRight ? 50 : -50;
-		pot.Position = new Vector2(Position.X + xOffset, Position.Y - 30);
-		GetParent().AddChild(pot);
 	}
 }

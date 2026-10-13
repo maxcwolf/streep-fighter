@@ -2,138 +2,186 @@ using Godot;
 
 namespace StreepFighter;
 
+/// <summary>
+/// SF2-style fight HUD: two life gauges draining toward the K.O. badge, names,
+/// round markers, the big timer and the centre-screen announcer art.
+/// </summary>
 public partial class FightHUD : Control
 {
-    private ProgressBar _p1HealthBar;
-    private ProgressBar _p2HealthBar;
-    private Label _timerLabel;
-    private Label _p1NameLabel;
-    private Label _p2NameLabel;
-    private Label _roundLabel;
-    private Label _announcementLabel;
-    private Label _stageNameLabel;
+    private const int BarW = 154, BarH = 8, BarY = 16;
+    private const int P1BarX = 16, P2BarX = 214;
+    private const int MeterW = 40;
 
-    private Panel _p1Round1;
-    private Panel _p1Round2;
-    private Panel _p2Round1;
-    private Panel _p2Round2;
+    private static readonly Color BarEmpty = new("d82800");
+    private static readonly Color BarFull = new("f8d800");
+    private static readonly Color BarShine = new("fcf8a0");
+    private static readonly Color BarChunk = new("fcfcfc");
 
-    private StyleBoxFlat _p1FillStyle;
-    private StyleBoxFlat _p2FillStyle;
-    private StyleBoxFlat _roundWonStyle;
-    private StyleBoxFlat _roundEmptyStyle;
+    private Fighter _p1, _p2;
+    private readonly ColorRect[] _fill = new ColorRect[2];
+    private readonly ColorRect[] _shine = new ColorRect[2];
+    private readonly ColorRect[] _chunk = new ColorRect[2];
+    private readonly ColorRect[] _meter = new ColorRect[2];
+    private readonly float[] _shown = { 1f, 1f };   // gauge as drawn (lags the truth)
+    private readonly float[] _actual = { 1f, 1f };
+    private readonly TextureRect[,] _rounds = new TextureRect[2, 2];
+    private Texture2D _roundWon, _roundEmpty;
+
+    private Label _timerLabel, _p1Name, _p2Name, _stageName;
+    private TextureRect _koBadge, _announce;
+    private int _announceTicks, _announceAge, _stageNameTicks, _clock;
 
     public override void _Ready()
     {
-        _p1HealthBar = GetNode<ProgressBar>("TopBar/P1Section/P1HealthBar");
-        _p2HealthBar = GetNode<ProgressBar>("TopBar/P2Section/P2HealthBar");
-        _timerLabel = GetNode<Label>("TopBar/TimerFrame/TimerLabel");
-        _p1NameLabel = GetNode<Label>("TopBar/P1Section/P1Name");
-        _p2NameLabel = GetNode<Label>("TopBar/P2Section/P2Name");
-        _roundLabel = GetNode<Label>("RoundLabel");
-        _announcementLabel = GetNode<Label>("AnnouncementLabel");
-        _stageNameLabel = GetNode<Label>("StageNameLabel");
+        PixelUI.Fill(this);
+        _roundWon = PixelUI.Tex("res://Assets/UI/round_won.png");
+        _roundEmpty = PixelUI.Tex("res://Assets/UI/round_empty.png");
 
-        var stageInfo = StageData.GetByIndex(GameState.StageIndex);
-        _stageNameLabel.Text = stageInfo.DisplayLabel;
+        BuildGauge(0, P1BarX);
+        BuildGauge(1, P2BarX);
+        _koBadge = PixelUI.Image(this, "res://Assets/UI/ko_badge.png", 172, 13);
 
-        _p1Round1 = GetNode<Panel>("TopBar/P1Section/P1RoundIndicators/P1Round1");
-        _p1Round2 = GetNode<Panel>("TopBar/P1Section/P1RoundIndicators/P1Round2");
-        _p2Round1 = GetNode<Panel>("TopBar/P2Section/P2RoundIndicators/P2Round1");
-        _p2Round2 = GetNode<Panel>("TopBar/P2Section/P2RoundIndicators/P2Round2");
+        PixelUI.Text(this, "1P", 16, 4);
+        PixelUI.Text(this, GameState.Mode == GameMode.VsCPU ? "CPU" : "2P", 248, 4, "bold", null,
+            HorizontalAlignment.Right, 120);
+        _p1Name = PixelUI.Text(this, "", 16, 27, "bold", PixelUI.Yellow);
+        _p2Name = PixelUI.Text(this, "", 248, 27, "bold", PixelUI.Yellow, HorizontalAlignment.Right, 120);
 
-        // Clone fill styles so we can mutate color per-frame
-        var origFill = _p1HealthBar.GetThemeStylebox("fill") as StyleBoxFlat;
-        _p1FillStyle = origFill.Duplicate() as StyleBoxFlat;
-        _p2FillStyle = origFill.Duplicate() as StyleBoxFlat;
-        _p1HealthBar.AddThemeStyleboxOverride("fill", _p1FillStyle);
-        _p2HealthBar.AddThemeStyleboxOverride("fill", _p2FillStyle);
+        for (int i = 0; i < 2; i++)
+        {
+            _rounds[0, i] = PixelUI.Image(this, "res://Assets/UI/round_empty.png", 152 - i * 11, 28);
+            _rounds[1, i] = PixelUI.Image(this, "res://Assets/UI/round_empty.png", 223 + i * 11, 28);
+        }
 
-        // Cache round indicator styles
-        _roundEmptyStyle = _p1Round1.GetThemeStylebox("panel") as StyleBoxFlat;
-        _roundWonStyle = new StyleBoxFlat();
-        _roundWonStyle.BgColor = new Color(0.95f, 0.78f, 0.15f, 1);
-        _roundWonStyle.CornerRadiusTopLeft = 6;
-        _roundWonStyle.CornerRadiusTopRight = 6;
-        _roundWonStyle.CornerRadiusBottomLeft = 6;
-        _roundWonStyle.CornerRadiusBottomRight = 6;
+        // Special-move charge, under each name.
+        for (int p = 0; p < 2; p++)
+        {
+            int x = p == 0 ? 16 : PixelUI.W - 16 - MeterW;
+            PixelUI.Box(this, x - 1, 38, MeterW + 2, 4, PixelUI.Ink);
+            _meter[p] = PixelUI.Box(this, x, 39, MeterW, 2, PixelUI.Cyan);
+        }
+
+        _timerLabel = PixelUI.Centered(this, "99", 192, 29, "big", null, 60);
+        _stageName = PixelUI.Centered(this, "", 192, 203, "pixel", null, 380);
+        _stageName.Visible = false;
+
+        _announce = new TextureRect { MouseFilter = MouseFilterEnum.Ignore, Visible = false };
+        AddChild(_announce);
+    }
+
+    private void BuildGauge(int p, int x)
+    {
+        PixelUI.Box(this, x - 2, BarY - 2, BarW + 4, BarH + 4, PixelUI.Ink);
+        PixelUI.Box(this, x - 1, BarY - 1, BarW + 2, BarH + 2, PixelUI.White);
+        PixelUI.Box(this, x, BarY, BarW, BarH, BarEmpty);
+        _chunk[p] = PixelUI.Box(this, x, BarY, 0, BarH, BarChunk);
+        _fill[p] = PixelUI.Box(this, x, BarY, BarW, BarH, BarFull);
+        _shine[p] = PixelUI.Box(this, x, BarY, BarW, 2, BarShine);
     }
 
     public void SetupFighters(Fighter p1, Fighter p2)
     {
-        _p1NameLabel.Text = p1.Stats.Name;
-        _p2NameLabel.Text = p2.Stats.Name;
+        _p1 = p1;
+        _p2 = p2;
+        _p1Name.Text = p1.Stats.ShortName;
+        _p2Name.Text = p2.Stats.ShortName;
 
-        _p1HealthBar.MaxValue = p1.Stats.MaxHealth;
-        _p1HealthBar.Value = p1.Stats.MaxHealth;
-        _p2HealthBar.MaxValue = p2.Stats.MaxHealth;
-        _p2HealthBar.Value = p2.Stats.MaxHealth;
-
-        p1.HealthChanged += (current, max) =>
-        {
-            _p1HealthBar.Value = current;
-            UpdateHealthBarColor(_p1FillStyle, (float)current / max);
-        };
-        p2.HealthChanged += (current, max) =>
-        {
-            _p2HealthBar.Value = current;
-            UpdateHealthBarColor(_p2FillStyle, (float)current / max);
-        };
+        p1.HealthChanged += (current, max) => SetHealth(0, (float)current / max);
+        p2.HealthChanged += (current, max) => SetHealth(1, (float)current / max);
 
         UpdateRounds(GameState.P1RoundWins, GameState.P2RoundWins);
     }
 
-    private void UpdateHealthBarColor(StyleBoxFlat fillStyle, float healthPct)
+    private void SetHealth(int p, float pct)
     {
-        Color color;
-        if (healthPct > 0.5f)
-        {
-            // Green to Yellow (1.0 → 0.5)
-            float t = (healthPct - 0.5f) / 0.5f;
-            color = new Color(0.9f, 0.9f, 0.15f, 1).Lerp(new Color(0.2f, 0.85f, 0.2f, 1), t);
-        }
-        else
-        {
-            // Yellow to Red (0.5 → 0.0)
-            float t = healthPct / 0.5f;
-            color = new Color(0.85f, 0.15f, 0.1f, 1).Lerp(new Color(0.9f, 0.9f, 0.15f, 1), t);
-        }
-        fillStyle.BgColor = color;
+        if (pct > _actual[p]) _shown[p] = pct; // refilled for a new round: no trailing chunk
+        _actual[p] = pct;
     }
 
     public void UpdateTimer(int seconds)
     {
-        _timerLabel.Text = seconds.ToString();
-
-        if (seconds <= 10)
-            _timerLabel.AddThemeColorOverride("font_color", new Color(0.95f, 0.2f, 0.15f, 1));
-        else
-            _timerLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1, 1));
+        _timerLabel.Text = seconds.ToString("00");
+        _timerLabel.Modulate = seconds <= 10 ? new Color(1f, 0.45f, 0.4f) : Colors.White;
     }
 
     public void UpdateRounds(int p1Wins, int p2Wins)
     {
-        _roundLabel.Text = $"P1: {p1Wins}  |  P2: {p2Wins}";
-
-        _p1Round1.AddThemeStyleboxOverride("panel", p1Wins >= 1 ? _roundWonStyle : _roundEmptyStyle);
-        _p1Round2.AddThemeStyleboxOverride("panel", p1Wins >= 2 ? _roundWonStyle : _roundEmptyStyle);
-        _p2Round1.AddThemeStyleboxOverride("panel", p2Wins >= 1 ? _roundWonStyle : _roundEmptyStyle);
-        _p2Round2.AddThemeStyleboxOverride("panel", p2Wins >= 2 ? _roundWonStyle : _roundEmptyStyle);
+        for (int i = 0; i < 2; i++)
+        {
+            _rounds[0, i].Texture = p1Wins > i ? _roundWon : _roundEmpty;
+            _rounds[1, i].Texture = p2Wins > i ? _roundWon : _roundEmpty;
+        }
     }
 
-    public async void ShowAnnouncement(string text, float duration)
+    /// <summary>Slam an announcer graphic (Assets/UI/announce_{key}.png) onto the screen.</summary>
+    public void Announce(string key, int ticks)
     {
-        _announcementLabel.Text = text;
-        _announcementLabel.Visible = true;
-        _announcementLabel.Scale = new Vector2(2f, 2f);
-        _announcementLabel.PivotOffset = _announcementLabel.Size / 2;
+        var tex = PixelUI.Tex($"res://Assets/UI/announce_{key}.png");
+        _announce.Texture = tex;
+        _announce.Size = tex.GetSize();
+        _announce.PivotOffset = tex.GetSize() / 2f;
+        _announce.Position = new Vector2(Mathf.Round((PixelUI.W - tex.GetWidth()) / 2f), 96 - tex.GetHeight() / 2);
+        _announce.Visible = true;
+        _announceTicks = ticks;
+        _announceAge = 0;
+    }
 
-        var tween = CreateTween();
-        tween.TweenProperty(_announcementLabel, "scale", new Vector2(1f, 1f), 0.2)
-            .SetTrans(Tween.TransitionType.Back)
-            .SetEase(Tween.EaseType.Out);
+    public void ShowStageName(string text, int ticks)
+    {
+        _stageName.Text = text;
+        _stageName.Visible = true;
+        _stageNameTicks = ticks;
+    }
 
-        await ToSignal(GetTree().CreateTimer(duration), SceneTreeTimer.SignalName.Timeout);
-        _announcementLabel.Visible = false;
+    public override void _PhysicsProcess(double delta)
+    {
+        _clock++;
+
+        // Announcer: three-frame zoom-in pop, hold, blink out.
+        if (_announceTicks > 0)
+        {
+            _announceAge++;
+            int scale = _announceAge < 3 ? 3 : _announceAge < 6 ? 2 : 1;
+            _announce.Scale = new Vector2(scale, scale);
+            if (--_announceTicks < 12)
+                _announce.Visible = _announceTicks > 0 && (_announceTicks & 2) == 0;
+        }
+
+        if (_stageNameTicks > 0 && --_stageNameTicks == 0)
+            _stageName.Visible = false;
+
+        for (int p = 0; p < 2; p++)
+        {
+            _shown[p] = Mathf.MoveToward(_shown[p], _actual[p], 0.012f);
+            int w = Mathf.RoundToInt(BarW * _actual[p]);
+            int lag = Mathf.RoundToInt(BarW * _shown[p]);
+            // Both gauges empty from the outside in, toward the K.O. badge.
+            int x0 = p == 0 ? P1BarX + BarW - w : P2BarX;
+            int lagX = p == 0 ? P1BarX + BarW - lag : P2BarX;
+            _fill[p].Position = new Vector2(x0, BarY);
+            _fill[p].Size = new Vector2(w, BarH);
+            _shine[p].Position = new Vector2(x0, BarY);
+            _shine[p].Size = new Vector2(w, 2);
+            _chunk[p].Position = new Vector2(lagX, BarY);
+            _chunk[p].Size = new Vector2(lag, BarH);
+        }
+
+        // K.O. badge flashes while anyone is in danger.
+        bool danger = (_actual[0] > 0 && _actual[0] < 0.25f) || (_actual[1] > 0 && _actual[1] < 0.25f);
+        _koBadge.Modulate = danger && _clock / 6 % 2 == 0 ? new Color(1f, 0.5f, 0.5f) : Colors.White;
+
+        UpdateMeter(0, _p1);
+        UpdateMeter(1, _p2);
+    }
+
+    private void UpdateMeter(int p, Fighter fighter)
+    {
+        if (fighter == null) return;
+        float pct = fighter.GetSpecialCooldownPercent();
+        int w = Mathf.RoundToInt(MeterW * pct);
+        int x = p == 0 ? 16 : PixelUI.W - 16 - w;
+        _meter[p].Position = new Vector2(x, 39);
+        _meter[p].Size = new Vector2(w, 2);
+        _meter[p].Color = pct >= 1f ? (_clock / 8 % 2 == 0 ? PixelUI.Yellow : PixelUI.White) : PixelUI.Cyan;
     }
 }

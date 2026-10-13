@@ -3,57 +3,39 @@ using Godot;
 namespace StreepFighter;
 
 /// <summary>
-/// "Dancing Queen" — spin attack hitting twice at 30% and 60% of 0.6s.
+/// "Dancing Queen" - a whirling double spin that hits on both sides, twice,
+/// and ends on the disco point.
 /// </summary>
 public partial class DonnaSheridan : Fighter
 {
-    private bool _hit1;
-    private bool _hit2;
+    private const int FirstHit = 3, SecondHit = 15, HitWindow = 6;
 
-    public override void _Ready()
+    private static readonly Move SpinA = new()
     {
-        base._Ready();
-        SpecialDuration = 0.6f;
-    }
-
-    protected override void HandleSpecialState(float dt)
+        Box = new Rect2(-30, 40, 64, 40),
+        Hitstun = 14, Blockstun = 10, Push = 0.8f,
+        Stop = Juice.StopLight, Trauma = Juice.TraumaLight, HitSfx = "punch_hit",
+    };
+    private static readonly Move SpinB = new()
     {
-        _stateTimer += dt;
-        float progress = _stateTimer / SpecialDuration;
+        Box = new Rect2(-30, 40, 64, 40),
+        Hitstun = 20, Blockstun = 12, Push = 2.4f, Knockdown = true, LaunchX = 2.2f, LaunchY = -4.6f,
+        Stop = Juice.StopHeavy, Trauma = Juice.TraumaHeavy, HitSfx = "kick_hit",
+    };
 
-        // Hit 1 at 30%
-        if (progress >= 0.3f && !_hit1)
-        {
-            _hit1 = true;
-            TrySpinHit();
-        }
-
-        // Hit 2 at 60%
-        if (progress >= 0.6f && !_hit2)
-        {
-            _hit2 = true;
-            TrySpinHit();
-        }
-
-        var vel = Velocity;
-        vel.X = 0;
-        Velocity = vel;
-
-        if (_stateTimer >= SpecialDuration)
-        {
-            _hit1 = false;
-            _hit2 = false;
-            ChangeState(FighterState.Idle);
-        }
-    }
-
-    private void TrySpinHit()
+    protected override Step[] SpecialSteps { get; } =
     {
-        if (Opponent != null)
-        {
-            float dist = Mathf.Abs(Position.X - Opponent.Position.X);
-            if (dist < 85)
-                Opponent.TakeDamage(Stats.SpecialDmg / 2, this);
-        }
+        new(SpriteSheet.Sp0, 5), new(SpriteSheet.Sp1, 5), new(SpriteSheet.Sp2, 5),
+        new(SpriteSheet.Sp1, 5), new(SpriteSheet.Sp0, 5), new(SpriteSheet.Sp3, 12)
+    };
+
+    protected override void SpecialTick(int t)
+    {
+        Velocity.X = t < 25 ? Dir * 1.3f : 0;
+        if (t == SecondHit) RearmStrike();
+        if (t >= FirstHit && t < FirstHit + HitWindow)
+            Strike(SpinA, Stats.SpecialDmg / 2);
+        else if (t >= SecondHit && t < SecondHit + HitWindow)
+            Strike(SpinB, Stats.SpecialDmg / 2);
     }
 }

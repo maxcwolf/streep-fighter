@@ -3,55 +3,30 @@ using Godot;
 namespace StreepFighter;
 
 /// <summary>
-/// "That's All" — dash-slap combo. Miranda dashes forward and hits.
+/// "That's All" - glides across the floor and delivers a backhand slap.
 /// </summary>
 public partial class MirandaPriestly : Fighter
 {
-    private const float DashSpeed = 600f;
-    private bool _dashHit;
+    private const int DashStart = 6, DashEnd = 18;
+    private const float DashSpeed = 6.0f;
 
-    public override void _Ready()
+    private static readonly Move Slap = new()
     {
-        base._Ready();
-        SpecialDuration = 0.45f;
-    }
+        Startup = DashEnd, Active = 5, Box = new Rect2(8, 54, 40, 24),
+        Hitstun = 22, Blockstun = 14, Push = 2.6f, Knockdown = true, LaunchX = 2.4f, LaunchY = -4.4f,
+        Stop = Juice.StopSpecial, Trauma = Juice.TraumaHeavy, HitSfx = "punch_hit",
+    };
 
-    protected override void HandleSpecialState(float dt)
+    protected override Step[] SpecialSteps { get; } =
     {
-        _stateTimer += dt;
-        float progress = _stateTimer / SpecialDuration;
+        new(SpriteSheet.Sp0, DashStart), new(SpriteSheet.Sp1, DashEnd - DashStart),
+        new(SpriteSheet.Sp2, 8), new(SpriteSheet.Sp3, 12)
+    };
 
-        // Dash forward for first 60%
-        if (progress < 0.6f)
-        {
-            float dir = FacingRight ? 1 : -1;
-            var vel = Velocity;
-            vel.X = dir * DashSpeed;
-            Velocity = vel;
-        }
-        else
-        {
-            var vel = Velocity;
-            vel.X = 0;
-            Velocity = vel;
-        }
-
-        // Hit at 50-70%
-        if (progress >= 0.5f && progress < 0.7f && !_dashHit)
-        {
-            _dashHit = true;
-            if (Opponent != null)
-            {
-                float dist = Mathf.Abs(Position.X - Opponent.Position.X);
-                if (dist < 80)
-                    Opponent.TakeDamage(Stats.SpecialDmg, this);
-            }
-        }
-
-        if (_stateTimer >= SpecialDuration)
-        {
-            _dashHit = false;
-            ChangeState(FighterState.Idle);
-        }
+    protected override void SpecialTick(int t)
+    {
+        Velocity.X = t >= DashStart && t < DashEnd ? Dir * DashSpeed : 0;
+        if (t >= Slap.Startup && t < Slap.Startup + Slap.Active)
+            Strike(Slap, Stats.SpecialDmg);
     }
 }

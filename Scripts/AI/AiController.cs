@@ -2,122 +2,136 @@ using Godot;
 
 namespace StreepFighter;
 
-public partial class AiController : Node
+/// <summary>
+/// CPU opponent. Presses the same buttons a player would, re-deciding every
+/// few ticks (its "reaction time"). GameManager calls <see cref="Tick"/> once
+/// per simulation tick, just before the fighters read their input.
+/// </summary>
+public class AiController
 {
-    [Export] public NodePath FighterPath;
+    private readonly Fighter _fighter;
+    private readonly bool _hasProjectile;
+    private int _wait;
+    private bool _airAttackDecided;
 
-    private Fighter _fighter;
-    private float _decisionTimer;
-    private const float DecisionInterval = 0.3f;
+    private bool _left, _right, _jump, _crouch, _punch, _kick, _block, _special;
 
-    // Current AI intent
-    private bool _wantLeft, _wantRight, _wantJump, _wantCrouch;
-    private bool _wantPunch, _wantKick, _wantBlock, _wantSpecial;
+    // Ranges in native pixels (fighters are ~22px wide, a kick reaches ~54).
+    private const float FarRange = 104f;
+    private const float PokeRange = 56f;
 
-    public override void _Ready()
-    {
-        SetPhysicsProcess(false);
-    }
-
-    public void Setup(Fighter fighter)
+    public AiController(Fighter fighter)
     {
         _fighter = fighter;
         _fighter.IsAiControlled = true;
-        SetPhysicsProcess(true);
+        _hasProjectile = fighter is JuliaChild or TheWitch;
     }
 
-    public override void _PhysicsProcess(double delta)
+    public void Tick()
     {
-        if (_fighter == null || _fighter.Opponent == null) return;
-        if (_fighter.CurrentState == FighterState.KO) return;
-
-        _decisionTimer -= (float)delta;
-        if (_decisionTimer <= 0)
-        {
-            _decisionTimer = DecisionInterval;
-            MakeDecision();
-        }
-
-        _fighter.AiInput(_wantLeft, _wantRight, _wantJump, _wantCrouch,
-                          _wantPunch, _wantKick, _wantBlock, _wantSpecial);
-
-        // Clear one-shot actions after sending
-        _wantPunch = false;
-        _wantKick = false;
-        _wantSpecial = false;
-        _wantJump = false;
-    }
-
-    private void MakeDecision()
-    {
-        ClearIntent();
-
         Fighter opp = _fighter.Opponent;
+        if (opp == null || _fighter.Locked || _fighter.IsDown)
+        {
+            _fighter.ClearAiInput();
+            _wait = 0;
+            return;
+        }
+
+        // Buttons are taps: release them the tick after pressing.
+        _punch = _kick = _special = false;
+
         float dist = Mathf.Abs(_fighter.Position.X - opp.Position.X);
-        bool oppAttacking = opp.CurrentState is FighterState.Punch or FighterState.Kick or FighterState.Special;
 
-        // Use special if off cooldown and in range
-        if (_fighter.GetSpecialCooldownPercent() >= 1.0f && dist < 150)
+        // Jump-ins: kick on the way down, decided once per jump.
+        if (_fighter.CurrentState == FighterState.Jump)
         {
-            _wantSpecial = true;
-            return;
-        }
-
-        // Far: approach
-        if (dist > 200)
-        {
-            bool oppRight = opp.Position.X > _fighter.Position.X;
-            _wantRight = oppRight;
-            _wantLeft = !oppRight;
-
-            // Occasionally jump approach
-            if (GD.Randf() < 0.15f)
-                _wantJump = true;
-            return;
-        }
-
-        // Medium range: mix attack and approach
-        if (dist > 100)
-        {
-            float roll = GD.Randf();
-            if (roll < 0.3f)
+            if (!_airAttackDecided && _fighter.Velocity.Y > -1f && dist < 70f)
             {
-                // Approach
-                bool oppRight = opp.Position.X > _fighter.Position.X;
-                _wantRight = oppRight;
-                _wantLeft = !oppRight;
+                _airAttackDecided = true;
+                if (GD.Randf() < 0.75f) _kick = true;
             }
-            else if (roll < 0.55f)
-                _wantKick = true;
-            else if (roll < 0.8f)
-                _wantPunch = true;
-            else if (oppAttacking)
-                _wantBlock = true;
-            return;
         }
-
-        // Close range: fight
-        float closeRoll = GD.Randf();
-        if (oppAttacking && closeRoll < 0.4f)
-        {
-            _wantBlock = true;
-        }
-        else if (closeRoll < 0.5f)
-            _wantPunch = true;
-        else if (closeRoll < 0.75f)
-            _wantKick = true;
         else
         {
-            // Back off slightly
-            bool oppRight = opp.Position.X > _fighter.Position.X;
-            _wantLeft = oppRight;
-            _wantRight = !oppRight;
+            _airAttackDecided = false;
         }
+
+        if (--_wait <= 0)
+        {
+            _wait = (int)GD.RandRange(9, 17);
+            Decide(opp, dist);
+        }
+
+        _fighter.AiInput(_left, _right, _jump, _crouch, _punch, _kick, _block, _special);
+        _jump = false;
     }
 
-    private void ClearIntent()
+    private void Decide(Fighter opp, float dist)
     {
-        _wantLeft = _wantRight = _wantJump = _wantCrouch = false;
-        _wantPunch = _wantKick = _wantBlock = _wantSpecial = false;
+        _left = _right = _jump = _crouch = _block = false;
+        bool oppRight = opp.Position.X > _fighter.Position.X;
+        float roll = GD.Randf();
+
+        // Guard against whatever is coming (low for sweeps).
+        if (opp.Threatens(_fighter) && roll < 0.55f)
+        {
+            _block = true;
+            _crouch = opp.CurrentState == FighterState.CrouchKick;
+            return;
+        }
+
+        // Swat jump-ins out of the air.
+        if (!opp.Grounded && dist < 64f && roll < 0.5f)
+        {
+            _kick = true;
+            return;
+        }
+
+        // Punish a floored opponent's wake-up by spacing, not by swinging at air.
+        if (opp.IsDown)
+        {
+            if (dist < PokeRange) Walk(!oppRight);
+            else if (dist > FarRange) Walk(oppRight);
+            return;
+        }
+
+        if (_fighter.GetSpecialCooldownPercent() >= 1f)
+        {
+            if (_hasProjectile ? dist > 84f && roll < 0.6f : dist < 76f && roll < 0.45f)
+            {
+                _special = true;
+                return;
+            }
+        }
+
+        if (dist > FarRange)
+        {
+            Walk(oppRight);
+            if (roll < 0.10f) _jump = true;
+            return;
+        }
+
+        if (dist > PokeRange)
+        {
+            if (roll < 0.45f) Walk(oppRight);
+            else if (roll < 0.60f) { Walk(oppRight); _jump = true; }
+            else if (roll < 0.75f) _kick = true;
+            else if (roll < 0.88f) Walk(!oppRight);
+            return;
+        }
+
+        // In range: mix highs, lows and a little footsies.
+        if (roll < 0.28f) _punch = true;
+        else if (roll < 0.50f) _kick = true;
+        else if (roll < 0.66f) { _crouch = true; _kick = true; }
+        else if (roll < 0.76f) { _crouch = true; _punch = true; }
+        else if (roll < 0.86f) _block = true;
+        else Walk(!oppRight);
+    }
+
+    private void Walk(bool right)
+    {
+        _right = right;
+        _left = !right;
     }
 }

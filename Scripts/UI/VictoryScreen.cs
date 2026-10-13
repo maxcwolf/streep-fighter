@@ -4,40 +4,49 @@ namespace StreepFighter;
 
 public partial class VictoryScreen : Control
 {
-    private Label _winnerLabel;
-    private Label _characterLabel;
-    private Button _playAgainButton;
-    private Button _menuButton;
+    private TextureRect _portrait;
+    private Label _winnerLabel, _characterLabel, _quoteLabel;
+    private PixelMenu _menu;
 
     public override void _Ready()
     {
-        _winnerLabel = GetNode<Label>("VBoxContainer/WinnerLabel");
-        _characterLabel = GetNode<Label>("VBoxContainer/CharacterLabel");
-        _playAgainButton = GetNode<Button>("VBoxContainer/PlayAgainButton");
-        _menuButton = GetNode<Button>("VBoxContainer/MenuButton");
+        PixelUI.Fill(this);
+        Visible = false;
 
-        _playAgainButton.Pressed += () =>
-        {
-            AudioManager.Instance?.PlaySFX("menu_confirm");
-            GameState.Reset();
-            GetTree().ChangeSceneToFile("res://Scenes/UI/CharacterSelect.tscn");
-        };
+        PixelUI.Box(this, 0, 0, PixelUI.W, PixelUI.H, new Color(PixelUI.Ink, 0.78f));
+        PixelUI.Box(this, 38, 44, 84, 104, PixelUI.White);
+        PixelUI.Box(this, 39, 45, 82, 102, PixelUI.Ink);
+        _portrait = PixelUI.Image(this, FighterData.MirandaPriestly.BigPortraitPath, 40, 46);
 
-        _menuButton.Pressed += () =>
-        {
-            AudioManager.Instance?.PlaySFX("menu_confirm");
-            GameState.Reset();
-            GetTree().ChangeSceneToFile("res://Scenes/UI/TitleScreen.tscn");
-        };
+        _winnerLabel = PixelUI.Text(this, "", 136, 46, "big");
+        _characterLabel = PixelUI.Text(this, "", 136, 68, "bold", PixelUI.Yellow);
+        _quoteLabel = PixelUI.Text(this, "", 136, 84, "pixel", PixelUI.White, HorizontalAlignment.Left, 232);
+        _quoteLabel.AutowrapMode = TextServer.AutowrapMode.Word;
+        _quoteLabel.Size = new Vector2(232, 40);
+
+        _menu = new PixelMenu { Position = new Vector2(252, 158), Active = false };
+        AddChild(_menu);
+        _menu.Add("PLAY AGAIN", () => Leave("res://Scenes/UI/CharacterSelect.tscn"));
+        _menu.Add("MAIN MENU", () => Leave("res://Scenes/UI/TitleScreen.tscn"));
     }
 
-    public void ShowWinner(int playerIndex, string characterName)
+    private void Leave(string scene)
     {
-        string playerStr = playerIndex == 0 ? "PLAYER 1" : "PLAYER 2";
+        _menu.Active = false;
+        GameState.Reset();
+        GetTree().ChangeSceneToFile(scene);
+    }
+
+    public void ShowWinner(int playerIndex, FighterStats stats)
+    {
+        string playerStr = playerIndex == 0 ? "1P" : "2P";
         if (GameState.Mode == GameMode.VsCPU && playerIndex == 1)
             playerStr = "CPU";
         _winnerLabel.Text = $"{playerStr} WINS!";
-        _characterLabel.Text = characterName;
+        _characterLabel.Text = stats.Name.ToUpper();
+        _quoteLabel.Text = $"\"{stats.WinQuote}\"";
+        _portrait.Texture = PixelUI.Tex(stats.BigPortraitPath);
         Visible = true;
+        _menu.Active = true;
     }
 }

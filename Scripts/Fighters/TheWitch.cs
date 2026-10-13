@@ -3,49 +3,21 @@ using Godot;
 namespace StreepFighter;
 
 /// <summary>
-/// "Curse of the Woods" — throws a curse projectile.
+/// "Curse of the Woods" - gathers a hex between her claws and hurls it.
 /// </summary>
 public partial class TheWitch : Fighter
 {
-    private readonly PackedScene _curseScene = GD.Load<PackedScene>("res://Scenes/Fighters/CurseProjectile.tscn");
+    private const int ReleaseTick = 16;
 
-    public override void _Ready()
+    protected override Step[] SpecialSteps { get; } =
     {
-        base._Ready();
-        SpecialDuration = 0.5f;
-    }
+        new(SpriteSheet.Sp0, 10), new(SpriteSheet.Sp1, 6), new(SpriteSheet.Sp2, 8), new(SpriteSheet.Sp3, 8)
+    };
 
-    protected override void HandleSpecialState(float dt)
+    protected override void SpecialTick(int t)
     {
-        _stateTimer += dt;
-        float progress = _stateTimer / SpecialDuration;
-
-        // Spawn curse at 50%
-        if (progress >= 0.5f && !SpecialActive)
-        {
-            SpecialActive = true;
-            SpawnCurse();
-        }
-
-        var vel = Velocity;
-        vel.X = 0;
-        Velocity = vel;
-
-        if (_stateTimer >= SpecialDuration)
-            ChangeState(FighterState.Idle);
-    }
-
-    private void SpawnCurse()
-    {
-        var curse = _curseScene.Instantiate<Projectile>();
-        curse.Damage = Stats.SpecialDmg;
-        curse.Direction = FacingRight ? 1 : -1;
-        curse.OwnerFighter = this;
-
-        curse.SetPlayerIndex(PlayerIndex);
-
-        float xOffset = FacingRight ? 50 : -50;
-        curse.Position = new Vector2(Position.X + xOffset, Position.Y - 30);
-        GetParent().AddChild(curse);
+        Velocity.X = 0;
+        if (t == ReleaseTick)
+            Projectile.Spawn(this, "curse", new Vector2(Dir * 30, -56), new Vector2(3.8f, 0), 0f, Stats.SpecialDmg);
     }
 }

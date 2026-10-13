@@ -2,46 +2,84 @@ using Godot;
 
 namespace StreepFighter;
 
-public partial class Projectile : Area2D
+/// <summary>
+/// A thrown special (stockpot, curse). Moves in pixels per tick, optionally
+/// under gravity, and hits by rectangle overlap with the opponent's hurtbox.
+/// </summary>
+public partial class Projectile : Node2D
 {
     public int Damage { get; set; } = 100;
-    public int Direction { get; set; } = 1; // 1=right, -1=left
     public Fighter OwnerFighter { get; set; }
 
-    private const float Speed = 450f;
-    private const float Lifetime = 2f;
-    private float _timer;
+    private const int Frames = 4;
+    private const int LifetimeTicks = 150;
+    private static readonly Vector2 HalfSize = new(7, 7);
 
-    public void SetPlayerIndex(int playerIndex)
-    {
-        // Projectile layer: 16 (Projectiles)
-        // Mask: opponent hurtbox layer (P1=1, P2=2)
-        CollisionLayer = 16;
-        CollisionMask = playerIndex == 0 ? 2u : 1u;
-    }
+    private Vector2 _velocity;
+    private float _gravity;
+    private int _age;
+    private Sprite2D _sprite;
 
-    public override void _Ready()
+    /// <param name="offset">Start point relative to the thrower's feet (already facing-adjusted in X).</param>
+    /// <param name="velocity">Pixels per tick; X is "forward" and gets flipped for a left-facing thrower.</param>
+    public static Projectile Spawn(Fighter owner, string sprite, Vector2 offset, Vector2 velocity, float gravity,
+                                   int damage, bool spin = false)
     {
-        AreaEntered += OnAreaEntered;
+        var p = new Projectile
+        {
+            OwnerFighter = owner,
+            Damage = damage,
+            Position = owner.Position + offset,
+            _velocity = new Vector2(velocity.X * owner.Dir, velocity.Y),
+            _gravity = gravity,
+            ZIndex = 5,
+        };
+        var tex = GD.Load<Texture2D>($"res://Assets/Sprites/FX/{sprite}.png");
+        p._sprite = new Sprite2D { Texture = tex, Hframes = Frames, FlipH = owner.Dir < 0 };
+        p.AddChild(p._sprite);
+        owner.LiveProjectiles++;
+        owner.GetParent().AddChild(p);
+        return p;
     }
 
     public override void _PhysicsProcess(double delta)
     {
-        float dt = (float)delta;
-        _timer += dt;
+        if (Juice.HitStopFrames > 0) return;
 
-        Position += new Vector2(Direction * Speed * dt, 0);
+        _age++;
+        _velocity.Y += _gravity;
+        Position += _velocity;
+        _sprite.Frame = _age / 4 % Frames;
 
-        if (_timer >= Lifetime || Position.X < 0 || Position.X > 1280)
-            QueueFree();
+        var target = OwnerFighter?.Opponent;
+        if (target != null)
+        {
+            var box = new Rect2(Position - HalfSize, HalfSize * 2);
+            var hurt = target.Hurtbox;
+            if (hurt.Size.X > 0 && box.Intersects(hurt)
+                && target.ReceiveHit(OwnerFighter, Damage, Fighter.ProjectileHit, Position))
+            {
+                Remove();
+                return;
+            }
+        }
+
+        if (Position.Y >= Fighter.GroundY)
+        {
+            Fx.Spawn(GetParent(), "dust", new Vector2(Position.X, Fighter.GroundY - 7), 4, 3);
+            Remove();
+        }
+        else if (_age >= LifetimeTicks || Position.X < -20 || Position.X > Fighter.StageRight + 34)
+        {
+            Remove();
+        }
     }
 
-    private void OnAreaEntered(Area2D area)
+    private void Remove()
     {
-        if (area.GetParent() is Fighter target && target != OwnerFighter)
-        {
-            target.TakeDamage(Damage, OwnerFighter);
-            QueueFree();
-        }
+        if (OwnerFighter != null && OwnerFighter.LiveProjectiles > 0)
+            OwnerFighter.LiveProjectiles--;
+        OwnerFighter = null;
+        QueueFree();
     }
 }

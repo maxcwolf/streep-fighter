@@ -4,19 +4,21 @@ namespace StreepFighter;
 
 public partial class PauseMenu : Control
 {
-    private Button _resumeButton;
-    private Button _quitButton;
-
     public override void _Ready()
     {
         ProcessMode = ProcessModeEnum.Always;
+        PixelUI.Fill(this);
         Visible = false;
 
-        _resumeButton = GetNode<Button>("VBoxContainer/ResumeButton");
-        _quitButton = GetNode<Button>("VBoxContainer/QuitButton");
+        PixelUI.Box(this, 0, 0, PixelUI.W, PixelUI.H, new Color(PixelUI.Ink, 0.7f));
+        PixelUI.Box(this, 112, 62, 160, 92, PixelUI.White);
+        PixelUI.Box(this, 113, 63, 158, 90, PixelUI.Ink);
+        PixelUI.Centered(this, "PAUSED", 192, 72, "big");
 
-        _resumeButton.Pressed += Resume;
-        _quitButton.Pressed += QuitToTitle;
+        var menu = new PixelMenu { Position = new Vector2(PixelUI.W / 2, 108) };
+        AddChild(menu);
+        menu.Add("RESUME", Resume);
+        menu.Add("QUIT TO TITLE", QuitToTitle);
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -40,14 +42,12 @@ public partial class PauseMenu : Control
 
     private void Resume()
     {
-        AudioManager.Instance?.PlaySFX("menu_confirm");
         Visible = false;
         GetTree().Paused = false;
     }
 
     private void QuitToTitle()
     {
-        AudioManager.Instance?.PlaySFX("menu_confirm");
         Visible = false;
         GetTree().Paused = false;
         GameState.Reset();
