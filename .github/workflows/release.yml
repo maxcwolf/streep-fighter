@@ -4,12 +4,14 @@ on:
   push:
     tags:
       - "v*"
+  # Manual runs build and sign everything but publish nothing.
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  build-and-release:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -44,9 +46,64 @@ jobs:
           cd build/windows
           zip -r ../../StreepFighter-Windows.zip .
 
-      - name: Package macOS build
+      - name: Upload Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: StreepFighter-Windows.zip
+
+      - name: Upload unsigned macOS build
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-unsigned
+          path: build/macos/StreepFighter.zip
+
+  # Godot's built-in signer writes entitlements that current macOS refuses to
+  # load, so the app is signed (ad-hoc) with Apple's own codesign instead.
+  sign-macos:
+    needs: build
+    runs-on: macos-latest
+
+    steps:
+      - name: Download unsigned macOS build
+        uses: actions/download-artifact@v4
+        with:
+          name: macos-unsigned
+
+      - name: Sign
         run: |
-          mv build/macos/StreepFighter.zip StreepFighter-macOS.zip
+          ditto -x -k StreepFighter.zip app
+          codesign --force --deep --sign - "app/Streep Fighter.app"
+          codesign --verify --deep --strict --verbose=2 "app/Streep Fighter.app"
+
+      - name: Check the signed app launches
+        timeout-minutes: 2
+        run: '"app/Streep Fighter.app/Contents/MacOS/Streep Fighter" --headless --quit-after 30'
+
+      - name: Package macOS build
+        run: ditto -c -k --keepParent "app/Streep Fighter.app" StreepFighter-macOS.zip
+
+      - name: Upload macOS build
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: StreepFighter-macOS.zip
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [build, sign-macos]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Windows build
+        uses: actions/download-artifact@v4
+        with:
+          name: windows
+
+      - name: Download macOS build
+        uses: actions/download-artifact@v4
+        with:
+          name: macos
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
