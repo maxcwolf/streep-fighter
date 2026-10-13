@@ -1,8 +1,8 @@
 <div align="center">
 
-# 👊 STREEP FIGHTER 👊
+<h1><img src="docs/logo.png" width="598" alt="Streep Fighter" /></h1>
 
-### _Meryl Kombat_
+<img src="docs/kombat.png" width="472" alt="Meryl Kombat" />
 
 A 16-bit-style arcade fighting game starring six iconic Meryl Streep characters.
 Built with Godot 4.6 and C#.

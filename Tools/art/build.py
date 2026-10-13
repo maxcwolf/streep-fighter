@@ -97,6 +97,11 @@ def build_docs():
     for i, (key, *_rest) in enumerate(ui.PORTRAITS):
         card = ui.roster_card(i, sheet.render_frame(key, "idle0"), names[i])
         card.resize((card.width * 3, card.height * 3), Image.NEAREST).save("docs/roster/%s.png" % key)
+    logo = ui.title_logo()
+    logo = logo.crop(logo.getbbox())                   # trim the transparent margin
+    logo.resize((logo.width * 2, logo.height * 2), Image.NEAREST).save("docs/logo.png")
+    kombat = ui.kombat_logo()
+    kombat.resize((kombat.width * 2, kombat.height * 2), Image.NEAREST).save("docs/kombat.png")
     print("docs")
 
 
