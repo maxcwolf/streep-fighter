@@ -180,6 +180,27 @@ def ko_badge():
     return a.im
 
 
+def roster_card(i, sprite, name):
+    """README roster card: framed portrait beside the fighter's idle sprite."""
+    w, h = 176, 126
+    a = Art(w, h)
+    a.vgrad(0, 0, w, h, ["#101050", "#182088", "#2838c0"])
+    for y in range(10, h, 12):
+        a.rect(0, y, w, y + 1, "#1c2ca0")
+    a.rect(6, 6, 90, 110, "#fcfcfc")
+    a.rect(7, 7, 89, 109, "#181028")
+    a.paste(portrait(i, (80, 100), 28), (8, 8))
+    # sprite stands on a mesh shadow, feet on a common baseline
+    import fx
+    import rig
+    base_y, cx = 110, 134
+    sh = fx.shadow()
+    a.paste(sh, (cx - sh.width // 2, base_y - 3))
+    a.paste(sprite, (cx - rig.ORG[0], base_y - rig.ORG[1]))
+    a.text((w // 2, 114), name, "#fcd800", bold=True, align="center", outline="#181028")
+    return a.im
+
+
 def title_screen():
     """Mockup composite (the game assembles the same pieces itself)."""
     a = Art(384, 216)

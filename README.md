@@ -51,7 +51,7 @@ Six playable fighters, each with unique stats and a signature special move.
 <table>
 <tr>
 <td align="center" width="33%">
-<img src="Assets/Portraits/miranda.webp" width="120" /><br/>
+<img src="docs/roster/miranda.png" width="250" alt="Miranda Priestly: in-game portrait and sprite" /><br/>
 <b>Miranda Priestly</b><br/>
 <i>The Devil Wears Prada (2006)</i><br/><br/>
 <b>Special:</b> "That's All" — Lightning dash-slap<br/>
@@ -59,7 +59,7 @@ Six playable fighters, each with unique stats and a signature special move.
 <code>HP 1000 · SPD 105 · DMG 150</code>
 </td>
 <td align="center" width="33%">
-<img src="Assets/Portraits/julia.jpg" width="120" /><br/>
+<img src="docs/roster/julia.png" width="250" alt="Julia Child: in-game portrait and sprite" /><br/>
 <b>Julia Child</b><br/>
 <i>Julie & Julia (2009)</i><br/><br/>
 <b>Special:</b> "Bon Appétit" — Throws a pot projectile<br/>
@@ -67,7 +67,7 @@ Six playable fighters, each with unique stats and a signature special move.
 <code>HP 1000 · SPD 84 · DMG 180</code>
 </td>
 <td align="center" width="33%">
-<img src="Assets/Portraits/thatcher.jpg" width="120" /><br/>
+<img src="docs/roster/thatcher.png" width="250" alt="Margaret Thatcher: in-game portrait and sprite" /><br/>
 <b>Margaret Thatcher</b><br/>
 <i>The Iron Lady (2011)</i><br/><br/>
 <b>Special:</b> "Iron Fist" — Armored power punch<br/>
@@ -77,7 +77,7 @@ Six playable fighters, each with unique stats and a signature special move.
 </tr>
 <tr>
 <td align="center">
-<img src="Assets/Portraits/witch.jpg" width="120" /><br/>
+<img src="docs/roster/witch.png" width="250" alt="The Witch: in-game portrait and sprite" /><br/>
 <b>The Witch</b><br/>
 <i>Into the Woods (2014)</i><br/><br/>
 <b>Special:</b> "Curse of the Woods" — Curse projectile<br/>
@@ -85,7 +85,7 @@ Six playable fighters, each with unique stats and a signature special move.
 <code>HP 900 · SPD 92 · DMG 200</code>
 </td>
 <td align="center">
-<img src="Assets/Portraits/donna.jpg" width="120" /><br/>
+<img src="docs/roster/donna.png" width="250" alt="Donna Sheridan: in-game portrait and sprite" /><br/>
 <b>Donna Sheridan</b><br/>
 <i>Mamma Mia! (2008)</i><br/><br/>
 <b>Special:</b> "Dancing Queen" — Double spin attack<br/>
@@ -93,7 +93,7 @@ Six playable fighters, each with unique stats and a signature special move.
 <code>HP 950 · SPD 118 · DMG 130</code>
 </td>
 <td align="center">
-<img src="Assets/Portraits/aloysius.jpg" width="120" /><br/>
+<img src="docs/roster/aloysius.png" width="250" alt="Sister Aloysius: in-game portrait and sprite" /><br/>
 <b>Sister Aloysius</b><br/>
 <i>Doubt (2008)</i><br/><br/>
 <b>Special:</b> "Divine Discipline" — Lunging knockback strike<br/>
@@ -179,7 +179,7 @@ streep-fighter/
 │   ├── Managers/              # GameManager, GameState, StageData
 │   └── UI/                    # HUD, menus and screens (built in code at 384x216)
 ├── Tools/art/                 # The pixel-art generator (Python + Pillow)
-├── docs/screenshots/          # Images used in this README
+├── docs/                      # README images: screenshots + roster cards (`build.py docs`)
 ├── screenshot_tool.tscn       # Dev tool: scripted playthrough that saves screenshots
 ├── project.godot
 └── StreepFighter.csproj

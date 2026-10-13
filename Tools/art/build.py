@@ -1,8 +1,8 @@
 """Regenerate every pixel-art asset in the game.
 
-    python3 Tools/art/build.py [fighters] [stages] [ui] [fx] [fonts]
+    python3 Tools/art/build.py [fighters] [stages] [ui] [fx] [fonts] [docs]
 
-With no arguments everything is rebuilt.  Run from the repo root; outputs go
+With no arguments every game asset is rebuilt ("docs" = README images, on request only).  Run from the repo root; outputs go
 to Assets/ and Scripts/Fighters/SpriteSheet.g.cs.  Requires only Pillow.
 """
 import os
@@ -85,6 +85,19 @@ def build_ui():
                               ("youwin", "YOU WIN", 4), ("youlose", "YOU LOSE", 4), ("vs", "VS", 6)):
         ui.announce(text, scale).save(out("UI", "announce_%s.png" % name))
     print("ui")
+
+
+def build_docs():
+    """Images for the README (not shipped with the game)."""
+    import fighters
+    fighters.ALT = False
+    os.makedirs("docs/roster", exist_ok=True)
+    names = ["MIRANDA PRIESTLY", "JULIA CHILD", "MARGARET THATCHER", "THE WITCH", "DONNA SHERIDAN",
+             "SISTER ALOYSIUS"]
+    for i, (key, *_rest) in enumerate(ui.PORTRAITS):
+        card = ui.roster_card(i, sheet.render_frame(key, "idle0"), names[i])
+        card.resize((card.width * 3, card.height * 3), Image.NEAREST).save("docs/roster/%s.png" % key)
+    print("docs")
 
 
 def build_fx():
