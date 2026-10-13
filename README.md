@@ -283,6 +283,18 @@ godot --path . res://screenshot_tool.tscn -- <out_dir> [fighter 0-5] [stage 0-5]
 
 ## 🚀 Getting Started
 
+### Playing a release
+
+Download the Windows or macOS zip from the [Releases](https://github.com/maxcwolf/streep-fighter/releases)
+page and unzip it.
+
+The macOS app is not notarised by Apple, so macOS blocks it the first time. Try to open it once, then go to
+**System Settings → Privacy & Security** and click **Open Anyway**. Or clear the download flag in Terminal:
+
+```bash
+xattr -dr com.apple.quarantine "/Applications/Streep Fighter.app"
+```
+
 ### Requirements
 
 - [Godot 4.6](https://godotengine.org/) with .NET support
