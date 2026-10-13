@@ -2,6 +2,8 @@
 
 Depth order (z): far arm 10 < far leg 20 < near leg 30 < back hair 35 <
 skirt 38 < torso 40 < collar 50 < head 60 < near arm 70 < held prop 74.
+Pose flags move an arm: front_f brings the far arm forward (66), back_n tucks
+the near arm behind the head (54) for overhead holds.
 """
 from PIL import Image
 
@@ -35,6 +37,8 @@ def _limbs(fr, J, leg, shoe, sleeve, hand=SKIN, cuff=None, thick=1.0, fore=None,
     for side, z_arm, z_leg, dark in (("f", 10, 20, 1), ("n", 70, 30, 0)):
         if J["pose"]["front_f"] and side == "f":
             z_arm = 66
+        if J["pose"]["back_n"] and side == "n":
+            z_arm = 54                      # raised beside the head: the head overlaps it
         hip, kn, an = J["hip_" + side], J["kn_" + side], J["an_" + side]
         sh, el, ha = J["sh_" + side], J["el_" + side], J["ha_" + side]
         fr.limb(z_leg, hip, kn, an, (5.0 * s, 4.0 * s, 2.6 * s), leg, shin, dark=dark)
@@ -187,10 +191,10 @@ def miranda(fr, J):
 
 MIRANDA_POSES = {
     # "That's all." - glide in, backhand slap, dismissive flick
-    "sp0": dict(pelvis=(-3, 42), lean=-4, twist=0.3, hf=(6, -6), hn=(-10, 2), en=1, hand_n="open"),
-    "sp1": dict(pelvis=(4, 38), lean=20, twist=0.7, ff=(18, 4), fn=(-16, 5), fan=-25, hf=(8, -8), hn=(-6, 4),
-                en=1, hand_n="open", face="attack"),
-    "sp2": dict(pelvis=(6, 40), lean=12, twist=-0.5, ff=(18, 4), fn=(-14, 4), hf=(-4, -10), hn=(29, 3),
+    "sp0": dict(pelvis=(-3, 42), lean=-4, twist=0.3, hf=(8, -8), hn=(11, 1), hand_n="open"),
+    "sp1": dict(pelvis=(4, 38), lean=20, twist=0.7, ff=(18, 4), fn=(-16, 5), fan=-25, hf=(9, -9), hn=(11, -4),
+                hand_n="open", face="attack"),
+    "sp2": dict(pelvis=(6, 40), lean=12, twist=-0.5, ff=(18, 4), fn=(-14, 4), hf=(-4, -10), hn=(26.5, 3),
                 hand_n="open", head=(-6, 0, 0), face="attack"),
     "sp3": dict(pelvis=(2, 43), lean=0, twist=0.2, ff=(12, 4), fn=(-10, 4), hf=(4, -14), hn=(19, -1),
                 hand_n="open", head=(8, 0, 0)),
@@ -267,10 +271,10 @@ def _pot(fr, c, z):
 
 JULIA_POSES = {
     # "Bon appetit!" - heave the stockpot overhead and lob it
-    "sp0": dict(pelvis=(-3, 41), lean=-10, twist=0.3, hf=(8, -4), hn=(-6, 22), en=1, prop="pot",
+    "sp0": dict(pelvis=(-3, 41), lean=-10, twist=0.3, hf=(8, -4), hn=(-6, 22), prop="pot", back_n=True,
                 head=(6, 0, 0)),
-    "sp1": dict(pelvis=(0, 41), lean=2, twist=0.5, hf=(10, -6), hn=(6, 26), en=1, prop="pot", face="attack"),
-    "sp2": dict(pelvis=(5, 39), lean=18, twist=-0.4, ff=(17, 4), fn=(-14, 4), hf=(-2, -10), hn=(28, 0),
+    "sp1": dict(pelvis=(0, 41), lean=2, twist=0.5, hf=(10, -6), hn=(6, 25), prop="pot", back_n=True, face="attack"),
+    "sp2": dict(pelvis=(5, 39), lean=18, twist=-0.4, ff=(17, 4), fn=(-14, 4), hf=(-13, -21), hn=(26.5, 0),
                 hand_n="open", head=(-8, 0, 0), face="attack"),
     "sp3": dict(pelvis=(3, 40), lean=12, twist=0.2, ff=(15, 4), fn=(-13, 4), hf=(4, -10), hn=(18, -10),
                 hand_n="open"),
@@ -340,15 +344,15 @@ def thatcher(fr, J):
 
 THATCHER_POSES = {
     # "Iron Fist" - wind the handbag right round and bring it down
-    "sp0": dict(pelvis=(-3, 41), lean=-8, twist=0.2, hf=(10, -4), hn=(-14, 8), en=1, prop="swing"),
-    "sp1": dict(pelvis=(0, 41), lean=0, twist=0.4, ff=(14, 4), hf=(10, -6), hn=(-4, 26), en=1, prop="swing",
+    "sp0": dict(pelvis=(-3, 41), lean=-8, twist=0.2, hf=(10, -4), hn=(-14, 8), prop="swing", back_n=True),
+    "sp1": dict(pelvis=(0, 41), lean=0, twist=0.4, ff=(14, 4), hf=(10, -6), hn=(-4, 25), prop="swing", back_n=True,
                 face="attack"),
     "sp2": dict(pelvis=(6, 38), lean=22, twist=-0.5, ff=(19, 4), fn=(-15, 4), hf=(-4, -8), hn=(27, -4),
                 prop="swing", head=(-10, 0, 0), face="attack"),
     "sp3": dict(pelvis=(4, 39), lean=16, twist=0.1, ff=(17, 4), fn=(-14, 4), hf=(2, -8), hn=(18, -16),
                 prop="swing"),
-    "win0": dict(pelvis=(0, 46), lean=-2, twist=0.9, ff=(6, 4), fn=(-7, 4), hf=(2, -16), ef=1, hn=(4, -24)),
-    "win1": dict(pelvis=(0, 46), lean=-2, twist=0.9, ff=(6, 4), fn=(-7, 4), hf=(2, -16), ef=1, hn=(4, -24),
+    "win0": dict(pelvis=(0, 46), lean=-2, twist=0.9, ff=(6, 4), fn=(-7, 4), hf=(2, -16), ef=1, hn=(3, -25)),
+    "win1": dict(pelvis=(0, 46), lean=-2, twist=0.9, ff=(6, 4), fn=(-7, 4), hf=(2, -16), ef=1, hn=(3, -25),
                  head=(-6, 0, 0)),
 }
 
@@ -420,7 +424,7 @@ def witch_modify(name, p):
 WITCH_POSES = {
     # "Curse of the Woods" - gather the hex, hurl it
     "sp0": dict(pelvis=(-2, 40), lean=-6, twist=0.8, hf=(4, 16), hn=(-6, 18), en=1, sway=0.6),
-    "sp1": dict(pelvis=(-1, 39), lean=2, twist=0.8, hf=(13, 0), hn=(9, 2), prop="curse", face="attack"),
+    "sp1": dict(pelvis=(-1, 39), lean=2, twist=0.8, hf=(15, -7), hn=(11, -6), prop="curse", face="attack"),
     "sp2": dict(pelvis=(4, 38), lean=16, twist=0.9, ff=(17, 4), fn=(-14, 4), hf=(22, 0), hn=(20, -6),
                 sway=-0.8, face="attack"),
     "sp3": dict(pelvis=(2, 39), lean=10, twist=0.7, ff=(15, 4), hf=(16, -6), hn=(12, -10), sway=-0.4),
@@ -487,9 +491,9 @@ DONNA_POSES = {
                 hand_f="open", hand_n="open", sway=-1.0, face="attack", front_f=True),
     "sp2": dict(pelvis=(3, 42), lean=6, twist=1.0, ff=(12, 4), fn=(-8, 6), fan=-30, hf=(26, 2), hn=(-20, 8),
                 hand_f="open", hand_n="open", sway=1.0, face="attack"),
-    "sp3": dict(pelvis=(0, 44), lean=-6, twist=0.8, ff=(10, 4), fn=(-10, 4), hf=(10, 28), hn=(-6, -16), en=1,
+    "sp3": dict(pelvis=(0, 44), lean=-6, twist=0.8, ff=(10, 4), fn=(-10, 4), hf=(9, 25), hn=(-6, -16),
                 hand_f="open", sway=0.3, face="attack"),
-    "win0": dict(pelvis=(0, 45), lean=-6, twist=0.8, ff=(9, 4), fn=(-9, 4), hf=(12, 26), hn=(-6, -16), en=1,
+    "win0": dict(pelvis=(0, 45), lean=-6, twist=0.8, ff=(9, 4), fn=(-9, 4), hf=(11, 24), hn=(-6, -16),
                  hand_f="open", face="attack"),
     "win1": dict(pelvis=(2, 44), lean=4, twist=0.8, ff=(9, 4), fn=(-9, 4), hf=(16, -18), hn=(-10, 22), en=1,
                  hand_n="open", face="attack", sway=0.6),
@@ -555,8 +559,8 @@ def aloysius(fr, J):
 
 ALOYSIUS_POSES = {
     # "Divine Discipline" - ruler raised to heaven, lunge, crack it down
-    "sp0": dict(pelvis=(-3, 42), lean=-8, twist=0.6, hf=(6, 25), ef=1, hn=(6, -8)),
-    "sp1": dict(pelvis=(4, 38), lean=18, twist=0.8, ff=(19, 4), fn=(-16, 5), fan=-25, hf=(12, 22), ef=1,
+    "sp0": dict(pelvis=(-3, 42), lean=-8, twist=0.6, hf=(6, 25), hn=(6, -8)),
+    "sp1": dict(pelvis=(4, 38), lean=18, twist=0.8, ff=(19, 4), fn=(-16, 5), fan=-25, hf=(12, 22),
                 hn=(4, -8), face="attack"),
     "sp2": dict(pelvis=(7, 38), lean=24, twist=1.0, ff=(20, 4), fn=(-15, 4), hf=(26, -6), hn=(2, -10),
                 front_f=True, head=(-12, 0, 0), face="attack"),

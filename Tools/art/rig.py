@@ -20,7 +20,7 @@ POSE = dict(
     hf=(11, -3), hn=(8, -7), ef=-1, en=-1,          # hands rel. to their shoulder
     ff=(13, 4), fn=(-12, 4), faf=0, fan=0, kf=1, kn=1,  # ankles (absolute), foot angles
     face="neutral", rot=0, pivot=None, ofs=(0, 0),
-    hand_f="fist", hand_n="fist", sway=0.0, front_f=False, prop=None,
+    hand_f="fist", hand_n="fist", sway=0.0, front_f=False, back_n=False, prop=None,
 )
 
 

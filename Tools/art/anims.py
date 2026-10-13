@@ -65,46 +65,46 @@ POSES = {
     "crouch1": C(),
 
     # ---- jump: push-off, tuck at the apex, reach for the floor
-    "jump0": S(pelvis=(0, 47), lean=2, ff=(6, 7), fn=(-5, 3), faf=-35, fan=-35, hf=(4, -14), hn=(-2, -15)),
+    "jump0": S(pelvis=(0, 47), lean=2, ff=(6, 7), fn=(-5, 3), faf=-35, fan=-35, hf=(11, 7), hn=(8, 3)),
     "jump1": A(),
-    "jump2": A(pelvis=(0, 48), lean=4, ff=(9, 12), fn=(-6, 8), faf=-20, fan=-20, hf=(12, 3), hn=(-9, 2)),
+    "jump2": A(pelvis=(0, 48), lean=4, ff=(9, 12), fn=(-6, 8), faf=-20, fan=-20, hf=(14, 3), hn=(10, -2)),
 
     # ---- standing punch: cock, snap out a long straight, pull back
-    "punch0": S(pelvis=(-1, 41), lean=2, twist=0.4, hf=(3, -5), hn=(8, -6)),
-    "punch1": S(pelvis=(4, 40), lean=13, twist=0.95, ff=(16, 4), fn=(-13, 4), hf=(29, 2), hn=(3, -8),
+    "punch0": S(pelvis=(-1, 41), lean=2, twist=0.4, hf=(6, -8), hn=(8, -6)),
+    "punch1": S(pelvis=(4, 40), lean=13, twist=0.95, ff=(16, 4), fn=(-13, 4), hf=(26.5, 2), hn=(6, -8),
                 head=(-6, 0, 0), face="attack"),
     "punch2": S(pelvis=(2, 40), lean=9, twist=0.8, ff=(15, 4), hf=(17, -1), hn=(5, -7)),
 
     # ---- standing kick: chamber the rear leg, whip it out high, recoil
-    "kick0": S(pelvis=(-2, 44), lean=-4, twist=0.4, ff=(2, 4), fn=(9, 30), fan=-40, hf=(7, -7), hn=(-3, -8)),
-    "kick1": S(pelvis=(-3, 45), lean=-19, twist=0.15, ff=(2, 4), fn=(37, 55), fan=28, hf=(5, -10),
-               hn=(-9, -9), head=(10, 0, 0), face="attack"),
-    "kick2": S(pelvis=(-2, 44), lean=-9, twist=0.3, ff=(2, 4), fn=(18, 32), fan=-25, hf=(6, -8), hn=(-5, -8)),
+    "kick0": S(pelvis=(-2, 44), lean=-4, twist=0.4, ff=(2, 4), fn=(9, 30), fan=-40, hf=(10, -6), hn=(-2, -25)),
+    "kick1": S(pelvis=(-3, 45), lean=-19, twist=0.15, ff=(2, 4), fn=(37, 55), fan=28, hf=(13, -7),
+               hn=(-15, -21), head=(10, 0, 0), face="attack"),
+    "kick2": S(pelvis=(-2, 44), lean=-9, twist=0.3, ff=(2, 4), fn=(18, 32), fan=-25, hf=(11, -6), hn=(-9, -23)),
 
     # ---- crouching punch
-    "cpunch0": C(lean=12, twist=0.4, hf=(3, -3)),
-    "cpunch1": C(pelvis=(0, 20), lean=22, twist=0.95, hf=(28, 1), hn=(3, -6), head=(-14, 0, 0), face="attack"),
+    "cpunch0": C(lean=12, twist=0.4, hf=(6, -7)),
+    "cpunch1": C(pelvis=(0, 20), lean=22, twist=0.95, hf=(26.5, 1), hn=(7, -7), head=(-14, 0, 0), face="attack"),
 
     # ---- crouching kick: a low sweep along the floor
     "ckick0": C(pelvis=(-3, 20), lean=6, fn=(4, 10), fan=-20),
-    "ckick1": C(pelvis=(-5, 17), lean=-8, twist=0.2, ff=(5, 4), fn=(38, 5), fan=18, hf=(7, -6),
-                hn=(-11, -12), head=(0, 0, 0), face="attack"),
+    "ckick1": C(pelvis=(-5, 17), lean=-8, twist=0.2, ff=(5, 4), fn=(38, 5), fan=18, hf=(10, -5),
+                hn=(-14, -22), head=(0, 0, 0), face="attack"),
 
     # ---- jumping attacks
     "jpunch0": A(lean=24, twist=0.95, hf=(22, -15), hn=(2, -8), head=(-12, 0, 0), face="attack"),
-    "jkick0": A(pelvis=(-2, 50), lean=-8, twist=0.2, ff=(4, 34), fn=(33, 26), fan=-14, hf=(6, -8),
-                hn=(-8, -6), face="attack"),
+    "jkick0": A(pelvis=(-2, 50), lean=-8, twist=0.2, ff=(4, 34), fn=(33, 26), fan=-14, hf=(11, -6),
+                hn=(-15, -21), face="attack"),
 
     # ---- guard
     "block0": S(pelvis=(-2, 41), lean=-3, twist=0.35, hf=(9, 5), hn=(11, 1), head=(8, 0, -1)),
     "cblock0": C(pelvis=(-3, 20), lean=8, twist=0.35, hf=(9, 5), hn=(11, 1), head=(4, 0, -1)),
 
     # ---- hit reactions
-    "hurt0": S(pelvis=(-4, 41), lean=-17, twist=0.4, hf=(11, -12), hn=(-5, -14), head=(-16, -1, 0),
+    "hurt0": S(pelvis=(-4, 41), lean=-17, twist=0.4, hf=(15, -10), hn=(-13, -22), head=(-16, -1, 0),
                face="hurt"),
     "hurt1": S(pelvis=(-3, 38), lean=17, curl=14, twist=0.5, hf=(4, -13), hn=(6, -15), head=(12, 0, 0),
                face="hurt"),
-    "churt0": C(pelvis=(-4, 20), lean=-4, hf=(10, -10), hn=(-4, -12), head=(-14, -1, 0), face="hurt"),
+    "churt0": C(pelvis=(-4, 20), lean=-4, hf=(14, -8), hn=(-14, -22), head=(-14, -1, 0), face="hurt"),
 
     # ---- knockdown: blown off the feet, flat on the back, then up
     "kd0": dict(FLAT, lean=-10, ff=(10, 6), fn=(4, 2), hf=(14, 2), hn=(8, 8), rot=48, ofs=(-2, 4),
@@ -113,7 +113,7 @@ POSES = {
     "kd2": dict(FLAT, ff=(4, 5), fn=(-2, 4), faf=40, fan=40, hf=(2, -24), hn=(-6, -22), rot=90,
                 ofs=(0, -41)),
     "getup0": dict(pelvis=(-6, 9), lean=-34, curl=20, twist=0.4, ff=(16, 4), fn=(10, 4), hf=(12, -14),
-                   hn=(-12, -22), head=(14, 0, 0), face="hurt"),
+                   hn=(-14, -23), head=(14, 0, 0), face="hurt"),
     "getup1": C(pelvis=(-2, 24), lean=24, hf=(9, -12), hn=(4, -14), head=(-4, 0, 0)),
 
     # ---- signature move: generic fallback (each fighter overrides sp0..sp3)
@@ -124,9 +124,9 @@ POSES = {
 
     # ---- round over
     "win0": dict(pelvis=(0, 46), lean=0, twist=0.9, ff=(7, 4), fn=(-7, 4), hf=(3, 22), hn=(-4, -14),
-                 en=1, face="attack"),
+                 face="attack"),
     "win1": dict(pelvis=(0, 45), lean=-2, twist=0.9, ff=(7, 4), fn=(-7, 4), hf=(4, 26), hn=(-4, -14),
-                 en=1, face="attack"),
+                 face="attack"),
     "lose0": dict(pelvis=(-2, 44), lean=22, curl=18, twist=0.5, ff=(6, 4), fn=(-8, 4), hf=(3, -27),
                   hn=(1, -27), head=(18, 0, 0), face="hurt"),
 }
