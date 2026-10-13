@@ -1,5 +1,7 @@
 """UI art: logo lettering, digitised portraits, panels."""
-from PIL import Image, ImageEnhance, ImageOps
+import math
+
+from PIL import Image, ImageDraw, ImageEnhance, ImageOps
 
 import font
 from bg import Art
@@ -15,6 +17,24 @@ PORTRAITS = [
 ]
 
 
+def _flame(base, top, height, colours=FIRE, edge="#281048", glow="#3050e8"):
+    """Colour a lettering mask: fire gradient, dark edge, blue drop."""
+    w, h = base.size
+    out = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    fat = dilate(dilate(base, True), True)
+    out.paste(rgb(glow) + (255,), mask=at(fat, -2, -3))
+    out.paste(rgb(edge) + (255,), mask=fat)
+    n = len(colours)
+    for i, c in enumerate(colours):
+        y0, y1 = top + height * i // n, top + height * (i + 1) // n
+        band = Image.new("L", (w, h), 0)
+        band.paste(base.crop((0, y0, w, y1)), (0, y0))
+        out.paste(rgb(c) + (255,), mask=band)
+    # specular nick on the top-left of every stroke
+    out.paste(rgb("#fcfcfc") + (255,), mask=m_sub(m_sub(base, at(base, 0, -1)), at(base, 1, 0)))
+    return out
+
+
 def logo_line(text, scale=5, slant=True, colours=FIRE, edge="#281048", glow="#3050e8"):
     """Chunky italic gradient lettering with a dark edge and a blue drop."""
     m = font.text_mask(text, bold=True, scale=scale, spacing=1)
@@ -27,19 +47,7 @@ def logo_line(text, scale=5, slant=True, colours=FIRE, edge="#281048", glow="#30
             base.paste(strip, (pad + (6 - row), pad + row * scale))
     else:
         base.paste(m, (pad, pad))
-    out = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    fat = dilate(dilate(base, True), True)
-    out.paste(rgb(glow) + (255,), mask=at(fat, -2, -3))
-    out.paste(rgb(edge) + (255,), mask=fat)
-    n = len(colours)
-    for i, c in enumerate(colours):
-        y0, y1 = pad + m.height * i // n, pad + m.height * (i + 1) // n
-        band = Image.new("L", (w, h), 0)
-        band.paste(base.crop((0, y0, w, y1)), (0, y0))
-        out.paste(rgb(c) + (255,), mask=band)
-    # specular nick on the top-left of every stroke
-    out.paste(rgb("#fcfcfc") + (255,), mask=m_sub(m_sub(base, at(base, 0, -1)), at(base, 1, 0)))
-    return out
+    return _flame(base, pad, m.height, colours, edge, glow)
 
 
 def portrait(i, size=(40, 50), colours=20):
@@ -104,7 +112,6 @@ def kombat_logo(text="MERYL KOMBAT", scale=2):
     out = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     a = Art(W, H, mode="RGBA")
     a.im = out
-    from PIL import ImageDraw
     a.d, a.p = ImageDraw.Draw(out), out.load()
     a.rect(0, 2, W, H - 2, "#0c0810")
     a.rect(0, 0, W, 2, "#b01818")
@@ -191,6 +198,61 @@ def star(lit):
         band = Image.new("L", (11, 11), 0)
         band.paste(m.crop((0, y + 1, 11, y + 2)), (0, y + 1))
         out.paste(rgb(c) + (255,), mask=band)
+    return out
+
+
+# ---- app icon: the title lettering cut down to a monogram
+ICON_SF = [
+    ".XXXXXX.XXXXXXX",
+    "XXXXXXX.XXXXXXX",
+    "XX......XX.....",
+    "XXXXXX..XX.....",
+    ".XXXXXX.XXXXXX.",
+    ".....XX.XXXXXX.",
+    ".....XX.XX.....",
+    "XXXXXXX.XX.....",
+    "XXXXXX..XX.....",
+]
+
+
+def app_icon():
+    """64x64 icon tile: fiery italic "SF" on a blue sunburst."""
+    n, scale, pad = 64, 3, 6
+    a = Art(n, n)
+    for y in range(n):
+        for x in range(n):
+            t = math.atan2(y - 35, x - 32) / (2 * math.pi) * 16
+            a.p[x, y] = a.c("#141460" if int(math.floor(t)) & 1 else "#0c0c38")
+    a.dither(0, 0, n, 18, "#080828", 0.5)
+    for i in range(0, 400, 3):
+        if (i * 37) % 23 == 0:
+            a.dot((i * 29) % n, (i * 53) % 16, "#fcfcfc")
+    rows, cols = len(ICON_SF), len(ICON_SF[0])
+    m = Image.new("L", (cols, rows), 0)
+    p = m.load()
+    for yy, row in enumerate(ICON_SF):
+        for xx, b in enumerate(row):
+            if b == "X":
+                p[xx, yy] = 255
+    m = m.resize((cols * scale, rows * scale), Image.NEAREST)
+    slant = (m.height - 1) // 5
+    base = Image.new("L", (m.width + slant + pad * 2, m.height + pad * 2), 0)
+    for y in range(m.height):                          # shear: one pixel every five rows
+        base.paste(m.crop((0, y, m.width, y + 1)), (pad + slant - y // 5, pad + y))
+    letters = _flame(base, pad, m.height)
+    a.paste(letters, ((n - letters.width) // 2 + 1, (n - letters.height) // 2))
+    return a.im
+
+
+def mac_icon(tile, size=1024):
+    """macOS wants its own shape: a rounded square inside a transparent margin."""
+    inner = size * 824 // 1024
+    art = tile.convert("RGBA").resize((inner, inner), Image.NEAREST)
+    m = Image.new("L", (inner * 2, inner * 2), 0)
+    ImageDraw.Draw(m).rounded_rectangle([0, 0, inner * 2 - 1, inner * 2 - 1], radius=int(inner * 2 * 0.225), fill=255)
+    art.putalpha(m.resize((inner, inner), Image.LANCZOS))
+    out = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    out.alpha_composite(art, ((size - inner) // 2,) * 2)
     return out
 
 
