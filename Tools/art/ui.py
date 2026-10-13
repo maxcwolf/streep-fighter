@@ -171,6 +171,29 @@ def round_marker(won):
     return a.im
 
 
+STAR = ["....X....", "....X....", "...XXX...", "XXXXXXXXX", ".XXXXXXX.", "..XXXXX..", "..XXXXX..",
+        ".XXX.XXX.", ".X.....X."]
+
+
+def star(lit):
+    """Difficulty star for the title screen's CPU LEVEL row (SF2's level stars)."""
+    m = Image.new("L", (11, 11), 0)
+    p = m.load()
+    for y, row in enumerate(STAR):
+        for x, ch in enumerate(row):
+            if ch == "X":
+                p[x + 1, y + 1] = 255
+    out = Image.new("RGBA", (11, 11), (0, 0, 0, 0))
+    out.paste(rgb("#181028") + (255,), mask=dilate(m))
+    rows = ["#fcf8a0", "#fcf8a0", "#fcd800", "#fcd800", "#f8a800", "#f8a800", "#f87800", "#f87800", "#e83800"] \
+        if lit else ["#585478"] * 9
+    for y, c in enumerate(rows):
+        band = Image.new("L", (11, 11), 0)
+        band.paste(m.crop((0, y + 1, 11, y + 2)), (0, y + 1))
+        out.paste(rgb(c) + (255,), mask=band)
+    return out
+
+
 def ko_badge():
     a = Art(40, 14, mode="RGBA")
     a.rect(0, 0, 40, 14, "#fcfcfc")

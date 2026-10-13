@@ -76,6 +76,8 @@ def build_ui():
     ui.ko_badge().save(out("UI", "ko_badge.png"))
     ui.round_marker(True).save(out("UI", "round_won.png"))
     ui.round_marker(False).save(out("UI", "round_empty.png"))
+    ui.star(True).save(out("UI", "star_on.png"))
+    ui.star(False).save(out("UI", "star_off.png"))
     for i, (key, *_rest) in enumerate(ui.PORTRAITS):
         ui.portrait(i).save(out("UI", "portrait_%s.png" % key))
         ui.portrait(i, (80, 100), 28).save(out("UI", "portrait_%s_big.png" % key))

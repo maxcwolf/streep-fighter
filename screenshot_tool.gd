@@ -9,7 +9,7 @@ extends Node
 
 const KEY := {"left": KEY_A, "right": KEY_D, "up": KEY_W, "down": KEY_S,
 	"punch": KEY_F, "kick": KEY_G, "block": KEY_H, "special": KEY_T,
-	"p2_punch": KEY_KP_1, "p2_right": KEY_RIGHT}
+	"p2_punch": KEY_K, "p2_right": KEY_RIGHT}
 
 var out := "user://shots"
 var pick := 0
@@ -75,7 +75,11 @@ func run() -> void:
 	await frames(8)
 	await shot("02_select")
 	await tap("punch")
-	if not cpu:
+	if cpu:
+		# against the CPU, player 1 picks the opponent too
+		await tap("right")
+		await tap("punch")
+	else:
 		await tap("p2_right")
 		await tap("p2_punch")
 	await frames(20)

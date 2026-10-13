@@ -47,6 +47,6 @@ public partial class VictoryScreen : Control
         _quoteLabel.Text = $"\"{stats.WinQuote}\"";
         _portrait.Texture = PixelUI.Tex(stats.BigPortraitPath);
         Visible = true;
-        _menu.Active = true;
+        _menu.Arm(40); // don't let a button still being mashed from the fight pick an option
     }
 }

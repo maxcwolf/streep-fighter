@@ -11,15 +11,17 @@ public partial class StageSelect : Control
 
     private int _selection = 0;
     private bool _confirmed;
-    private int _clock;
     private int _vsTicks = -1;
 
     private Control _picker;
+    private Control _versusCard;
     private Control _cursor;
     private Label _nameLabel, _locationLabel;
 
     public override void _Ready()
     {
+        _selection = Mathf.Clamp(GameState.StageIndex, 0, StageData.Stages.Length - 1);
+
         PixelUI.Fill(this);
         PixelUI.Image(this, "res://Assets/UI/select_bg.png", 0, 0);
 
@@ -42,7 +44,7 @@ public partial class StageSelect : Control
 
         _nameLabel = PixelUI.Centered(_picker, "", 192, 172, "bold", PixelUI.Yellow, 380);
         _locationLabel = PixelUI.Centered(_picker, "", 192, 185, "pixel", PixelUI.White, 380);
-        PixelUI.Centered(_picker, "A/D/W/S SELECT   F CONFIRM", 192, 204, "tiny", PixelUI.Grey, 380);
+        PixelUI.Centered(_picker, "A/D/W/S SELECT   F CONFIRM   ESC BACK", 192, 204, "tiny", PixelUI.Grey, 380);
 
         UpdateDisplay();
     }
@@ -53,7 +55,15 @@ public partial class StageSelect : Control
     public override void _Input(InputEvent @event)
     {
         if (@event is not InputEventKey and not InputEventJoypadButton and not InputEventJoypadMotion) return;
-        if (!@event.IsPressed() || @event.IsEcho() || _confirmed) return;
+        if (!@event.IsPressed() || @event.IsEcho()) return;
+
+        if (@event.IsActionPressed("ui_cancel"))
+        {
+            GetViewport().SetInputAsHandled();
+            GoBack();
+            return;
+        }
+        if (_confirmed) return;
 
         int count = StageData.Stages.Length;
         int row = _selection / Columns, col = _selection % Columns;
@@ -84,11 +94,24 @@ public partial class StageSelect : Control
 
     public override void _PhysicsProcess(double delta)
     {
-        _clock++;
-        _cursor.Visible = _clock / 6 % 2 == 0;
-
         if (_vsTicks > 0 && --_vsTicks == 0)
             GetTree().ChangeSceneToFile("res://Scenes/Stages/FightStage.tscn");
+    }
+
+    /// <summary>Esc: from the VS card back to the stage grid; from the grid back to player select.</summary>
+    private void GoBack()
+    {
+        AudioManager.Instance?.PlaySFX("menu_select");
+        if (_confirmed)
+        {
+            _confirmed = false;
+            _vsTicks = -1;
+            _versusCard?.QueueFree();
+            _versusCard = null;
+            _picker.Visible = true;
+            return;
+        }
+        GetTree().ChangeSceneToFile("res://Scenes/UI/CharacterSelect.tscn");
     }
 
     private void UpdateDisplay()
@@ -111,6 +134,7 @@ public partial class StageSelect : Control
         var card = new Control();
         PixelUI.Fill(card);
         AddChild(card);
+        _versusCard = card;
 
         for (int p = 0; p < 2; p++)
         {
