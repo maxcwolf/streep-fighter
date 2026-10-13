@@ -256,6 +256,9 @@ python3 Tools/art/build.py
 Pass `fighters`, `stages`, `ui`, `fx` or `fonts` to rebuild just one group. Open the project in the Godot
 editor afterwards (or run `godot --headless --import`) so it re-imports the changed images.
 
+After changing poses, `python3 Tools/art/audit.py [out.png]` measures every arm and leg in every frame and
+reports anything anatomically off (elbows or knees bending backwards, arms folded shut, hidden hands).
+
 To check the result without playing through by hand, `screenshot_tool.tscn` drives the real menus and a
 fight with synthetic key presses and saves native-resolution screenshots:
 
