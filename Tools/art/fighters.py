@@ -194,9 +194,9 @@ MIRANDA_POSES = {
                 hand_n="open", head=(-6, 0, 0), face="attack"),
     "sp3": dict(pelvis=(2, 43), lean=0, twist=0.2, ff=(12, 4), fn=(-10, 4), hf=(4, -14), hn=(19, -1),
                 hand_n="open", head=(8, 0, 0)),
-    "win0": dict(pelvis=(0, 46), lean=-2, twist=0.8, ff=(6, 4), fn=(-7, 4), hf=(3, -16), ef=1, hn=(15, -5),
+    "win0": dict(pelvis=(0, 46), lean=-2, twist=0.8, ff=(6, 4), fn=(-7, 4), hf=(3, -16), ef=1, hn=(17, -14),
                  hand_n="open", head=(8, 0, 0)),
-    "win1": dict(pelvis=(0, 46), lean=-2, twist=0.8, ff=(6, 4), fn=(-7, 4), hf=(3, -16), ef=1, hn=(19, -1),
+    "win1": dict(pelvis=(0, 46), lean=-2, twist=0.8, ff=(6, 4), fn=(-7, 4), hf=(3, -16), ef=1, hn=(22, -11),
                  hand_n="open", head=(8, 0, 0)),
 }
 
