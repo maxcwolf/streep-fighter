@@ -97,6 +97,19 @@ def build_docs():
     for i, (key, *_rest) in enumerate(ui.PORTRAITS):
         card = ui.roster_card(i, sheet.render_frame(key, "idle0"), names[i])
         card.resize((card.width * 3, card.height * 3), Image.NEAREST).save("docs/roster/%s.png" % key)
+    # each stage as framed in game (camera centred), with its home fighter celebrating
+    import fx
+    os.makedirs("docs/stages", exist_ok=True)
+    home = dict(zip(stages.KEYS, ["miranda", "julia", "thatcher", "witch", "donna", "aloysius"]))
+    for key in stages.KEYS:
+        far, main = stages.build(key)
+        cam = (stages.STAGE_W - stages.SCREEN_W) // 2
+        shot = far.crop((cam // 2, 0, cam // 2 + stages.SCREEN_W, stages.STAGE_H)).convert("RGBA")
+        shot.alpha_composite(main.crop((cam, 0, cam + stages.SCREEN_W, stages.STAGE_H)))
+        x, shadow = 112, fx.shadow()
+        shot.alpha_composite(shadow, (x - shadow.width // 2, stages.FLOOR_Y - 3))
+        shot.alpha_composite(sheet.render_frame(home[key], "win1"), (x - rig.ORG[0], stages.FLOOR_Y - rig.ORG[1]))
+        shot.convert("RGB").resize((shot.width * 2, shot.height * 2), Image.NEAREST).save("docs/stages/%s.png" % key)
     logo = ui.title_logo()
     logo = logo.crop(logo.getbbox())                   # trim the transparent margin
     logo.resize((logo.width * 2, logo.height * 2), Image.NEAREST).save("docs/logo.png")

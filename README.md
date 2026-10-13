@@ -34,10 +34,6 @@ high/low blocking, knockdowns and hit-stop.
 
 <img src="docs/screenshots/title.png" width="384" alt="Title screen" /> <img src="docs/screenshots/select.png" width="384" alt="Player select" />
 
-<img src="docs/screenshots/fight_kitchen.png" width="384" alt="Julia Child vs Margaret Thatcher in Julia's Kitchen" /> <img src="docs/screenshots/fight_forest.png" width="384" alt="The Witch vs Donna Sheridan in the Enchanted Woods" />
-
-<img src="docs/screenshots/fight_villa.png" width="384" alt="A Thatcher mirror match on Kalokairi Island" /> <img src="docs/screenshots/fight_church.png" width="384" alt="Sister Aloysius vs The Witch in St. Nicholas Church" />
-
 </div>
 
 ---
@@ -105,16 +101,60 @@ Six playable fighters, each with unique stats and a signature special move.
 
 ## 🗺️ Stages
 
-Six arenas inspired by Meryl's filmography, drawn as SNES-era pixel art: each is wider than the screen, with a half-speed parallax layer behind it.
+Six arenas, one per film, each the home turf of its fighter. Every stage is wider than the screen and scrolls
+as the fight moves, with the distant scenery drifting behind at half speed, so there is more to find than
+fits in one shot.
 
-| Stage                   | Film                    | Location              |
-| ----------------------- | ----------------------- | --------------------- |
-| **Runway Magazine**     | _The Devil Wears Prada_ | New York City         |
-| **Julia's Kitchen**     | _Julie & Julia_         | Paris, France         |
-| **House of Commons**    | _The Iron Lady_         | London, England       |
-| **Enchanted Woods**     | _Into the Woods_        | A dark magical forest |
-| **Kalokairi Island**    | _Mamma Mia!_            | Greece                |
-| **St. Nicholas Church** | _Doubt_                 | The Bronx, New York   |
+<table>
+<tr>
+<td align="center" width="50%" valign="top">
+<img src="docs/stages/runway.png" width="400" alt="Runway Magazine, with Miranda Priestly celebrating" /><br/>
+<b>Runway Magazine</b><br/>
+<i>The Devil Wears Prada</i> · New York City<br/>
+Home of Miranda Priestly<br/><br/>
+Dusk over Manhattan through floor-to-ceiling glass, a wall of <i>Runway</i> covers, a rack of this season's samples and the Book waiting on Miranda's desk.
+</td>
+<td align="center" width="50%" valign="top">
+<img src="docs/stages/kitchen.png" width="400" alt="Julia's Kitchen, with Julia Child celebrating" /><br/>
+<b>Julia's Kitchen</b><br/>
+<i>Julie &amp; Julia</i> · Paris, France<br/>
+Home of Julia Child<br/><br/>
+The pegboard of copper pans, a lobster in the stockpot, three bricks of <i>beurre</i> and the Eiffel Tower out the window. Scroll right and Paul is on the balcony, raising a glass.
+</td>
+</tr>
+<tr>
+<td align="center" width="50%" valign="top">
+<img src="docs/stages/parliament.png" width="400" alt="House of Commons, with Margaret Thatcher celebrating" /><br/>
+<b>House of Commons</b><br/>
+<i>The Iron Lady</i> · London, England<br/>
+Home of Margaret Thatcher<br/><br/>
+Packed benches of jeering MPs, the Speaker under his canopy, the mace on the Table and Big Ben through the windows. There is a handbag on the despatch box.
+</td>
+<td align="center" width="50%" valign="top">
+<img src="docs/stages/forest.png" width="400" alt="Enchanted Woods, with The Witch celebrating" /><br/>
+<b>Enchanted Woods</b><br/>
+<i>Into the Woods</i> · Once upon a time<br/>
+Home of The Witch<br/><br/>
+A full moon, Rapunzel's tower with its rope of golden hair, a beanstalk, Milky White, a snagged red cape and a golden slipper on a stump. Something in the bushes has yellow eyes.
+</td>
+</tr>
+<tr>
+<td align="center" width="50%" valign="top">
+<img src="docs/stages/villa.png" width="400" alt="Kalokairi Island, with Donna Sheridan celebrating" /><br/>
+<b>Kalokairi Island</b><br/>
+<i>Mamma Mia!</i> · Greece<br/>
+Home of Donna Sheridan<br/><br/>
+Villa Donna's terrace above the Aegean: bougainvillea, a goat on the roof, three possible dads sharing a table and the Dynamos mid-routine down on the jetty.
+</td>
+<td align="center" width="50%" valign="top">
+<img src="docs/stages/church.png" width="400" alt="St. Nicholas Church, with Sister Aloysius celebrating" /><br/>
+<b>St. Nicholas Church</b><br/>
+<i>Doubt</i> · The Bronx, New York<br/>
+Home of Sister Aloysius<br/><br/>
+Stained-glass saints that drift behind the arches as you move, altar boys either side of the altar, bingo on Friday at 7 — and one blown light bulb.
+</td>
+</tr>
+</table>
 
 ---
 
@@ -177,7 +217,7 @@ streep-fighter/
 │   ├── Managers/              # GameManager, GameState, StageData
 │   └── UI/                    # HUD, menus and screens (built in code at 384x216)
 ├── Tools/art/                 # The pixel-art generator (Python + Pillow)
-├── docs/                      # README images: screenshots + roster cards (`build.py docs`)
+├── docs/                      # README images: logo, screenshots, roster + stage cards (`build.py docs`)
 ├── screenshot_tool.tscn       # Dev tool: scripted playthrough that saves screenshots
 ├── project.godot
 └── StreepFighter.csproj
@@ -238,30 +278,6 @@ godot --path . res://screenshot_tool.tscn -- <out_dir> [fighter 0-5] [stage 0-5]
 2. Open `project.godot` in Godot 4.6 (.NET edition)
 3. Build the C# solution (`dotnet build` or via Godot editor)
 4. Hit Play (F5)
-
----
-
-## 🎥 Game Flow
-
-```
-🎬 Title Screen
-   ├── VS Player (PvP)
-   └── VS CPU
-         ↓
-🎭 Character Select
-   P1 picks fighter → P2 picks (or CPU auto-picks)
-         ↓
-🗺️ Stage Select
-   Pick your arena from 6 movie-themed stages
-         ↓
-🆚 VS Card
-         ↓
-👊 FIGHT!
-   Best of 3 rounds · 99 seconds each
-         ↓
-🏆 Victory Screen
-   Winner and win quote → Play again or main menu
-```
 
 ---
 
